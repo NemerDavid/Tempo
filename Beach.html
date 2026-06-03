@@ -1399,25 +1399,30 @@
 }
 
 
-/* CARDIA FIX — keep RSVP taps from dragging/snapping the panorama on mobile */
+/* CARDIA FIX — stop RSVP Yes/No taps from dragging or snapping the panorama on mobile */
+#rsvp,
+#rsvp *,
 .rsvp-card,
-.rsvp-card *,
-.rsvp-form,
-.guest-slot-list,
-.guest-slot,
-.guest-attendance,
-.guest-attendance label {
+.rsvp-card * {
+  overscroll-behavior: contain;
+}
+
+#rsvp .guest-attendance,
+#rsvp .guest-attendance label {
   touch-action: manipulation !important;
 }
 
-.rsvp-card {
-  overscroll-behavior: contain !important;
-}
-
-.guest-attendance label,
-.guest-attendance span {
-  -webkit-user-select: none !important;
-  user-select: none !important;
+#rsvp .guest-attendance input[type="radio"] {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  min-width: 1px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  clip-path: inset(50%) !important;
 }
 
   </style>
@@ -1934,52 +1939,76 @@ const points = [0.095, 0.165, 0.245, 0.47, 0.695, 0.9];
 
 
 
-    /* Make the custom Yes/No RSVP pills reliably clickable inside the draggable panorama.
-       On mobile, tapping a label/input inside a horizontally scrollable parent can make
-       the panorama jump sideways. We stop the RSVP interaction from reaching the panorama
-       and restore the exact RSVP scroll position after the tap. */
-    const rsvpCard = document.getElementById('rsvp');
-    let rsvpStableScrollLeft = 0;
+    /* CARDIA FIX — RSVP controls must not move the panoramic screen.
+       On mobile, tapping a hidden radio inside a draggable horizontal panorama can make
+       the browser scroll the panorama to the right while it tries to focus the radio.
+       We handle the Yes/No pills manually and immediately restore the exact RSVP scroll position. */
+    const rsvpCard = document.getElementById("rsvp");
 
-    function keepRsvpInPlace() {
-      if (!wrap) return;
-      const targetLeft = rsvpStableScrollLeft || wrap.scrollLeft;
-      requestAnimationFrame(() => {
-        wrap.scrollLeft = targetLeft;
-        requestAnimationFrame(() => {
-          wrap.scrollLeft = targetLeft;
-        });
-      });
+    function updatePanoProgressFromCurrentPosition() {
+      const maxScroll = wrap.scrollWidth - wrap.clientWidth;
+      const ratio = maxScroll ? wrap.scrollLeft / maxScroll : 0;
+      scrollProgressFill.style.width = `${Math.max(0, Math.min(100, ratio * 100))}%`;
+    }
+
+    function holdPanoAt(left) {
+      const restore = () => {
+        wrap.scrollLeft = left;
+        updatePanoProgressFromCurrentPosition();
+      };
+      restore();
+      requestAnimationFrame(restore);
+      setTimeout(restore, 0);
+      setTimeout(restore, 60);
+      setTimeout(restore, 180);
+      setTimeout(restore, 360);
+    }
+
+    function chooseAttendanceFromLabel(label) {
+      if (!label) return;
+      const keepLeft = wrap.scrollLeft;
+      const radio = label.querySelector('input[type="radio"]');
+      if (radio) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event('input', { bubbles: true }));
+        radio.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      holdPanoAt(keepLeft);
     }
 
     if (rsvpCard) {
-      ['pointerdown', 'pointerup', 'pointercancel', 'touchstart', 'touchend', 'mousedown', 'mouseup'].forEach((eventName) => {
+      ["pointerdown", "pointermove", "pointerup", "pointercancel", "touchstart", "touchmove", "touchend", "mousedown", "mouseup", "click", "input", "change", "focusin"].forEach((eventName) => {
         rsvpCard.addEventListener(eventName, (e) => {
-          rsvpStableScrollLeft = wrap.scrollLeft;
           e.stopPropagation();
-        }, { passive: true });
+          const keepLeft = wrap.scrollLeft;
+          requestAnimationFrame(() => holdPanoAt(keepLeft));
+        }, true);
       });
 
-      rsvpCard.addEventListener('click', (e) => {
-        rsvpStableScrollLeft = rsvpStableScrollLeft || wrap.scrollLeft;
-        e.stopPropagation();
-        keepRsvpInPlace();
-      });
+      rsvpCard.addEventListener("pointerdown", (e) => {
+        const label = e.target.closest('.guest-attendance label');
+        if (!label) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        label.dataset.panoKeepLeft = String(wrap.scrollLeft);
+      }, true);
+
+      rsvpCard.addEventListener("pointerup", (e) => {
+        const label = e.target.closest('.guest-attendance label');
+        if (!label) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        chooseAttendanceFromLabel(label);
+      }, true);
+
+      rsvpCard.addEventListener("click", (e) => {
+        const label = e.target.closest('.guest-attendance label');
+        if (!label) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        chooseAttendanceFromLabel(label);
+      }, true);
     }
-
-    document.addEventListener('click', (e) => {
-      const attendLabel = e.target.closest('.guest-attendance label');
-      if (!attendLabel) return;
-      e.preventDefault();
-      e.stopPropagation();
-      rsvpStableScrollLeft = rsvpStableScrollLeft || wrap.scrollLeft;
-      const radio = attendLabel.querySelector('input[type="radio"]');
-      if (radio) {
-        radio.checked = true;
-        radio.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-      keepRsvpInPlace();
-    }, true);
 
     wrap.addEventListener("pointerdown", (e) => {
       if (document.body.classList.contains("invitation-locked")) {
@@ -1989,7 +2018,7 @@ const points = [0.095, 0.165, 0.245, 0.47, 0.695, 0.9];
         }
         return;
       }
-      if (e.target.closest(".projector-album, .open-photo-album-btn, .photo-album-modal, input, select, textarea, button, label, .guest-attendance, .guest-slot")) return;
+      if (e.target.closest("#rsvp, .rsvp-card, .rsvp-form, .projector-album, .open-photo-album-btn, .photo-album-modal, input, select, textarea, button, label, .guest-attendance, .guest-slot")) return;
       isDown = true;
       startX = e.clientX;
       startLeft = wrap.scrollLeft;
