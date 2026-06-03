@@ -1425,6 +1425,22 @@
   clip-path: inset(50%) !important;
 }
 
+
+/* CARDIA FIX — Mobile RSVP keyboard stability */
+.rsvp-card,
+.rsvp-card *,
+.rsvp-form,
+.rsvp-form * {
+  touch-action: manipulation;
+}
+
+.rsvp-card input,
+.rsvp-card textarea,
+.rsvp-card select,
+.guest-attendance label {
+  scroll-margin: 0 !important;
+}
+
   </style>
 </head>
 
@@ -1689,6 +1705,15 @@ const points = [0.095, 0.165, 0.245, 0.47, 0.695, 0.9];
 
     window.addEventListener("resize", () => {
       if (document.body.classList.contains("invitation-locked")) return;
+
+      /* On mobile, opening/closing the keyboard fires resize events.
+         If an RSVP field was focused, do NOT snap to another panorama point;
+         keep the RSVP panel exactly where the user was typing. */
+      if (window.__rsvpKeyboardLock && typeof window.__rsvpKeyboardLeft === "number") {
+        requestAnimationFrame(() => window.__holdPanoAt(window.__rsvpKeyboardLeft));
+        return;
+      }
+
       requestAnimationFrame(() => scrollToPoint(currentPointIndex, "auto"));
     });
 
@@ -1915,6 +1940,10 @@ const points = [0.095, 0.165, 0.245, 0.47, 0.695, 0.9];
 
     wrap.addEventListener("scroll", () => {
       if (document.body.classList.contains("invitation-locked")) return;
+      if (window.__rsvpKeyboardLock && typeof window.__rsvpKeyboardLeft === "number") {
+        requestAnimationFrame(() => holdPanoAt(window.__rsvpKeyboardLeft));
+        return;
+      }
 
       const maxScroll = wrap.scrollWidth - wrap.clientWidth;
       const ratio = maxScroll ? wrap.scrollLeft / maxScroll : 0;
@@ -1962,6 +1991,40 @@ const points = [0.095, 0.165, 0.245, 0.47, 0.695, 0.9];
       setTimeout(restore, 60);
       setTimeout(restore, 180);
       setTimeout(restore, 360);
+      setTimeout(restore, 700);
+      setTimeout(restore, 1100);
+    }
+
+    window.__holdPanoAt = holdPanoAt;
+    window.__rsvpKeyboardLock = false;
+    window.__rsvpKeyboardLeft = null;
+    let rsvpKeyboardUnlockTimer = null;
+
+    function lockPanoForRsvpKeyboard(left = wrap.scrollLeft, duration = 1400) {
+      window.__rsvpKeyboardLock = true;
+      window.__rsvpKeyboardLeft = left;
+      currentPointIndex = 4;
+      holdPanoAt(left);
+
+      clearTimeout(rsvpKeyboardUnlockTimer);
+      rsvpKeyboardUnlockTimer = setTimeout(() => {
+        window.__rsvpKeyboardLock = false;
+      }, duration);
+    }
+
+    function activeElementIsInRsvp() {
+      return !!(rsvpCard && rsvpCard.contains(document.activeElement));
+    }
+
+    function keepRsvpStillDuringKeyboardChange() {
+      if (!window.__rsvpKeyboardLock && !activeElementIsInRsvp()) return;
+      const left = typeof window.__rsvpKeyboardLeft === "number" ? window.__rsvpKeyboardLeft : wrap.scrollLeft;
+      lockPanoForRsvpKeyboard(left, 1600);
+    }
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", keepRsvpStillDuringKeyboardChange);
+      window.visualViewport.addEventListener("scroll", keepRsvpStillDuringKeyboardChange);
     }
 
     function chooseAttendanceFromLabel(label) {
@@ -2008,6 +2071,29 @@ const points = [0.095, 0.165, 0.245, 0.47, 0.695, 0.9];
         e.stopImmediatePropagation();
         chooseAttendanceFromLabel(label);
       }, true);
+
+      rsvpCard.addEventListener("focusin", (e) => {
+        if (!e.target.matches("input, textarea, select")) return;
+        lockPanoForRsvpKeyboard(wrap.scrollLeft, 3000);
+      }, true);
+
+      rsvpCard.addEventListener("focusout", (e) => {
+        if (!e.target.matches("input, textarea, select")) return;
+        const keepLeft = typeof window.__rsvpKeyboardLeft === "number" ? window.__rsvpKeyboardLeft : wrap.scrollLeft;
+        /* Android Chrome moves the horizontal scroll when the keyboard closes.
+           This keeps restoring the same panorama position through that close animation. */
+        lockPanoForRsvpKeyboard(keepLeft, 1800);
+      }, true);
+
+      ["blur", "orientationchange"].forEach((eventName) => {
+        window.addEventListener(eventName, () => {
+          if (window.__rsvpKeyboardLock || activeElementIsInRsvp()) {
+            const keepLeft = typeof window.__rsvpKeyboardLeft === "number" ? window.__rsvpKeyboardLeft : wrap.scrollLeft;
+            lockPanoForRsvpKeyboard(keepLeft, 1800);
+          }
+        }, true);
+      });
+
     }
 
     wrap.addEventListener("pointerdown", (e) => {
