@@ -1398,6 +1398,28 @@
   }
 }
 
+
+/* CARDIA FIX — keep RSVP taps from dragging/snapping the panorama on mobile */
+.rsvp-card,
+.rsvp-card *,
+.rsvp-form,
+.guest-slot-list,
+.guest-slot,
+.guest-attendance,
+.guest-attendance label {
+  touch-action: manipulation !important;
+}
+
+.rsvp-card {
+  overscroll-behavior: contain !important;
+}
+
+.guest-attendance label,
+.guest-attendance span {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+
   </style>
 </head>
 
@@ -1644,7 +1666,7 @@ alt=""
     const scrollProgressFill = document.getElementById("scrollProgressFill");
     const openInvitationBtn = document.getElementById("openInvitationBtn");
 
-const points = [0.09, 0.165, 0.245, 0.47, 0.695, 0.9];
+const points = [0.095, 0.165, 0.245, 0.47, 0.695, 0.9];
     let currentPointIndex = 0;
 
     function scrollToPoint(index, behavior = "smooth") {
@@ -1912,17 +1934,52 @@ const points = [0.09, 0.165, 0.245, 0.47, 0.695, 0.9];
 
 
 
-    /* Make the custom Yes/No RSVP pills reliably clickable inside the draggable panorama. */
+    /* Make the custom Yes/No RSVP pills reliably clickable inside the draggable panorama.
+       On mobile, tapping a label/input inside a horizontally scrollable parent can make
+       the panorama jump sideways. We stop the RSVP interaction from reaching the panorama
+       and restore the exact RSVP scroll position after the tap. */
+    const rsvpCard = document.getElementById('rsvp');
+    let rsvpStableScrollLeft = 0;
+
+    function keepRsvpInPlace() {
+      if (!wrap) return;
+      const targetLeft = rsvpStableScrollLeft || wrap.scrollLeft;
+      requestAnimationFrame(() => {
+        wrap.scrollLeft = targetLeft;
+        requestAnimationFrame(() => {
+          wrap.scrollLeft = targetLeft;
+        });
+      });
+    }
+
+    if (rsvpCard) {
+      ['pointerdown', 'pointerup', 'pointercancel', 'touchstart', 'touchend', 'mousedown', 'mouseup'].forEach((eventName) => {
+        rsvpCard.addEventListener(eventName, (e) => {
+          rsvpStableScrollLeft = wrap.scrollLeft;
+          e.stopPropagation();
+        }, { passive: true });
+      });
+
+      rsvpCard.addEventListener('click', (e) => {
+        rsvpStableScrollLeft = rsvpStableScrollLeft || wrap.scrollLeft;
+        e.stopPropagation();
+        keepRsvpInPlace();
+      });
+    }
+
     document.addEventListener('click', (e) => {
       const attendLabel = e.target.closest('.guest-attendance label');
       if (!attendLabel) return;
+      e.preventDefault();
       e.stopPropagation();
+      rsvpStableScrollLeft = rsvpStableScrollLeft || wrap.scrollLeft;
       const radio = attendLabel.querySelector('input[type="radio"]');
       if (radio) {
         radio.checked = true;
         radio.dispatchEvent(new Event('change', { bubbles: true }));
       }
-    });
+      keepRsvpInPlace();
+    }, true);
 
     wrap.addEventListener("pointerdown", (e) => {
       if (document.body.classList.contains("invitation-locked")) {
