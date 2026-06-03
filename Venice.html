@@ -3480,6 +3480,19 @@ html, body{
     target = clamp(target, 0, maxOff());
     offset = clamp(offset, 0, maxOff());
   });
+
+function updateGuestScrollUI(){
+  const rows=document.querySelectorAll('.guest-row');
+  const up=document.querySelector('.guest-scroll-up');
+  const down=document.querySelector('.guest-scroll-down');
+  const bar=document.querySelector('.guest-scrollbar-wrap');
+  const needsScroll=rows.length>3;
+  if(up) up.style.display=needsScroll?'flex':'none';
+  if(down) down.style.display=needsScroll?'flex':'none';
+  if(bar) bar.style.display=needsScroll?'block':'none';
+}
+document.addEventListener('DOMContentLoaded',()=>setTimeout(updateGuestScrollUI,100));
+
 </script>
 </body>
 </html>
