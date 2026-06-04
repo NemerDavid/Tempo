@@ -382,6 +382,46 @@
     .match-grid { grid-template-columns: 1fr 1fr; }
   }
 
+  /* ── SPEAK BUTTON ── */
+  .speak-btn {
+    display: block;
+    margin: 8px auto 0;
+    background: linear-gradient(135deg, #FF8C42, #F78FB3);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.15);
+    transition: transform .15s, box-shadow .15s;
+    letter-spacing: 0.5px;
+  }
+  .speak-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 0 rgba(0,0,0,0.15); }
+  .speak-btn:active { transform: translateY(1px); }
+  .speak-btn.speaking { animation: pulse 0.6s infinite alternate; }
+  @keyframes pulse { from { opacity:1; } to { opacity:0.5; } }
+  .speak-btn-lg {
+    flex-shrink: 0;
+    font-size: 1.3rem;
+    padding: 8px 14px;
+    border-radius: 14px;
+    margin: 0;
+  }
+  /* Bubble speak button */
+  .bubble-speak {
+    background: none;
+    border: 2px solid #e0d9c8;
+    border-radius: 12px;
+    padding: 3px 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: background .15s;
+  }
+  .bubble-speak:hover { background: #f0e8d8; }
+  .bubble-speak.speaking { animation: pulse 0.6s infinite alternate; }
+
   /* ── COLOR STRIP ── */
   .color-strip { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0 20px; }
   .color-swatch {
@@ -531,7 +571,7 @@ const lessons = [
   color: "#FF8C42",
   render() {
     return `
-    <div class="vocab-tip">👆 Click each card to see how to pronounce it!</div>
+    <div class="vocab-tip">👆 Click each card to flip it · Press 🔊 to <strong>hear it spoken in French!</strong></div>
     <div class="vocab-grid">
       ${vc("👋","Bonjour","Hello","bon-ZHOOR")}
       ${vc("🌙","Bonsoir","Good evening","bon-SWAHR")}
@@ -556,6 +596,7 @@ const lessons = [
           <div class="bubble-french">Bonjour! Ça va?</div>
           <div class="bubble-english">Hello! How are you?</div>
           <div class="bubble-pron">bon-ZHOOR · sah VAH</div>
+          <button class="bubble-speak" onclick="speakFrench('Bonjour! Ça va?',this)">🔊 Listen</button>
         </div>
       </div>
       <div class="bubble-row right">
@@ -564,6 +605,7 @@ const lessons = [
           <div class="bubble-french">Ça va bien, merci! Et toi?</div>
           <div class="bubble-english">I'm fine, thanks! And you?</div>
           <div class="bubble-pron">sah vah BYEHN, mair-SEE · ay TWAH</div>
+          <button class="bubble-speak" onclick="speakFrench('Ça va bien, merci! Et toi?',this)">🔊 Listen</button>
         </div>
       </div>
       <div class="bubble-row">
@@ -572,6 +614,7 @@ const lessons = [
           <div class="bubble-french">Ça va! Au revoir!</div>
           <div class="bubble-english">I'm good! Goodbye!</div>
           <div class="bubble-pron">sah VAH · oh ruh-VWAHR</div>
+          <button class="bubble-speak" onclick="speakFrench('Ça va! Au revoir!',this)">🔊 Listen</button>
         </div>
       </div>
       <div class="bubble-row right">
@@ -580,6 +623,7 @@ const lessons = [
           <div class="bubble-french">Au revoir! À bientôt!</div>
           <div class="bubble-english">Goodbye! See you soon!</div>
           <div class="bubble-pron">oh ruh-VWAHR · ah byehn-TOH</div>
+          <button class="bubble-speak" onclick="speakFrench('Au revoir! À bientôt!',this)">🔊 Listen</button>
         </div>
       </div>
     </div>
@@ -618,7 +662,7 @@ const lessons = [
   color: "#6EC6F5",
   render() {
     return `
-    <div class="vocab-tip">👆 Click each animal card to flip it and see pronunciation!</div>
+    <div class="vocab-tip">👆 Click each animal card to flip it · Press 🔊 to <strong>hear it spoken in French!</strong></div>
     <div class="vocab-grid">
       ${vc("🐱","le chat","cat","luh SHAH")}
       ${vc("🐶","le chien","dog","luh SHYEHN")}
@@ -709,7 +753,7 @@ const lessons = [
     `).join('');
 
     return `
-    <div class="vocab-tip">👆 Click a number card to highlight it! Say it out loud!</div>
+    <div class="vocab-tip">👆 Click a number card to highlight it · Press 🔊 on any vocab card to <strong>hear it in French!</strong></div>
     <div class="number-grid">${numGrid}</div>
 
     <div class="section-title">🎵 Counting Song</div>
@@ -940,7 +984,7 @@ const lessons = [
   color: "#FF6B6B",
   render() {
     return `
-    <div class="vocab-tip">👆 Click the cards and point to that part of YOUR body!</div>
+    <div class="vocab-tip">👆 Click the cards and point to that body part · Press 🔊 to <strong>hear it spoken!</strong></div>
     <div class="vocab-grid">
       ${vc("👁️","les yeux","eyes","lay ZYUH")}
       ${vc("👃","le nez","nose","luh NAY")}
@@ -1074,23 +1118,27 @@ const lessons = [
 //  HELPERS: HTML BUILDERS
 // ─────────────────────────────────────────────────────
 
+function esc(s){ return s.replace(/'/g,"\\'"); }
+
 function vc(emoji, french, english, pron) {
   return `<div class="vocab-card" onclick="this.classList.toggle('flipped')">
     <span class="vocab-emoji">${emoji}</span>
     <span class="vocab-french">${french}</span>
     <span class="vocab-english">${english}</span>
     <span class="vocab-pronunciation">🔊 ${pron}</span>
+    <button class="speak-btn" onclick="event.stopPropagation();speakFrench('${esc(french)}',this)" title="Listen">🔊</button>
   </div>`;
 }
 
 function ph(emoji, french, english, pron) {
   return `<div class="phrase-card">
     <span class="pfc-emoji">${emoji}</span>
-    <div>
+    <div style="flex:1">
       <div class="pfc-french">${french}</div>
       <div class="pfc-english">${english}</div>
-      <div class="pfc-pron">🔊 ${pron}</div>
+      <div class="pfc-pron">👂 ${pron}</div>
     </div>
+    <button class="speak-btn speak-btn-lg" onclick="speakFrench('${esc(french)}',this)" title="Listen">🔊</button>
   </div>`;
 }
 
@@ -1397,6 +1445,36 @@ function updateLessonNav() {
   const btns = document.querySelectorAll('.lesson-btn');
   btns.forEach((b,i)=>{ if(lessonDone[i]) b.classList.add('done'); });
 }
+
+// ─────────────────────────────────────────────────────
+//  TEXT-TO-SPEECH
+// ─────────────────────────────────────────────────────
+function loadVoices() { window.speechSynthesis.getVoices(); }
+window.speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+
+function speakFrench(text, btnEl) {
+  if (!window.speechSynthesis) {
+    alert("Sorry, your browser doesn't support speech. Try Chrome or Safari!");
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'fr-FR';
+  utt.rate = 0.82;
+  utt.pitch = 1.05;
+  const fv = window.speechSynthesis.getVoices().find(v => v.lang.startsWith('fr')) || null;
+  if (fv) utt.voice = fv;
+  if (btnEl) {
+    const orig = btnEl.textContent;
+    btnEl.textContent = '🔈';
+    btnEl.classList.add('speaking');
+    utt.onend  = () => { btnEl.textContent = orig; btnEl.classList.remove('speaking'); };
+    utt.onerror= () => { btnEl.textContent = orig; btnEl.classList.remove('speaking'); };
+  }
+  window.speechSynthesis.speak(utt);
+}
+function speakText(text) { speakFrench(text, null); }
 
 // ─────────────────────────────────────────────────────
 //  INIT
