@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐸 Bonjour! French for Kids</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #6EC6F5;
+    --sun: #FFD54F;
+    --grass: #69C472;
+    --pink: #F78FB3;
+    --purple: #A78BFA;
+    --orange: #FF8C42;
+    --white: #FFFEF5;
+    --dark: #2D3436;
+    --card-bg: #FFFEF5;
+    --correct: #69C472;
+    --wrong: #FF6B6B;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(180deg, #B8E3F9 0%, #D4F5D4 100%);
+    min-height: 100vh;
+    color: var(--dark);
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #FF8C42, #F78FB3);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 0px rgba(0,0,0,0.12);
+    position: sticky; top: 0; z-index: 100;
+  }
+  header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: white;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+  }
+  .stars-bar {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 30px;
+    padding: 6px 16px;
+    color: white; font-weight: 800; font-size: 1.1rem;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+
+  /* ── LESSON NAV ── */
+  .lesson-nav {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 28px; justify-content: center;
+  }
+  .lesson-btn {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem;
+    border: 3px solid transparent;
+    border-radius: 20px;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    background: white;
+    color: var(--dark);
+    box-shadow: 0 4px 0 rgba(0,0,0,0.12);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .lesson-btn:hover { transform: translateY(-3px); box-shadow: 0 7px 0 rgba(0,0,0,0.12); }
+  .lesson-btn.active { color: white; border-color: rgba(255,255,255,0.5); transform: translateY(-3px); box-shadow: 0 7px 0 rgba(0,0,0,0.2); }
+  .lesson-btn.locked { opacity: 0.45; cursor: not-allowed; }
+  .lesson-btn.done::after { content: " ✓"; }
+
+  /* lesson color themes */
+  .l0.active { background: #FF8C42; }
+  .l1.active { background: #6EC6F5; }
+  .l2.active { background: #69C472; }
+  .l3.active { background: #A78BFA; }
+  .l4.active { background: #F78FB3; }
+  .l5.active { background: #FFD54F; color: #333; }
+  .l6.active { background: #FF6B6B; }
+  .l7.active { background: #26C6DA; }
+
+  /* ── LESSON CARD ── */
+  .lesson-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.1);
+    padding: 32px;
+    animation: popIn .35s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .lesson-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 24px;
+    border-bottom: 3px dashed #e0d9c8;
+    padding-bottom: 20px;
+  }
+  .lesson-icon { font-size: 3rem; }
+  .lesson-title { font-family: 'Fredoka One', cursive; font-size: 1.8rem; }
+  .lesson-subtitle { color: #888; font-size: 0.95rem; font-weight: 600; }
+
+  /* ── VOCAB GRID ── */
+  .vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .vocab-card {
+    background: white;
+    border-radius: 18px;
+    padding: 20px 12px;
+    text-align: center;
+    border: 3px solid #f0e8d8;
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s, border-color .2s;
+    box-shadow: 0 4px 0 #e0d9c8;
+    user-select: none;
+  }
+  .vocab-card:hover { transform: translateY(-5px) rotate(-1deg); box-shadow: 0 9px 0 #d0c9b8; }
+  .vocab-card.flipped { border-color: var(--orange); background: #FFF5E6; }
+  .vocab-emoji { font-size: 3.2rem; display: block; margin-bottom: 10px; }
+  .vocab-img {
+    width: 80px; height: 80px; object-fit: cover;
+    border-radius: 12px; margin-bottom: 10px;
+    border: 3px solid #f0e8d8;
+  }
+  .vocab-french {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.25rem;
+    color: var(--orange);
+    display: block;
+  }
+  .vocab-english {
+    font-size: 0.85rem;
+    color: #999;
+    font-weight: 700;
+    margin-top: 4px;
+    display: block;
+  }
+  .vocab-pronunciation {
+    font-size: 0.78rem;
+    color: #bbb;
+    margin-top: 3px;
+    font-style: italic;
+    display: none;
+  }
+  .vocab-card.flipped .vocab-pronunciation { display: block; }
+  .vocab-tip {
+    background: #FFF5E6;
+    border-left: 4px solid var(--orange);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+    color: #888;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    margin: 24px 0 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-box {
+    background: linear-gradient(135deg, #F0F9FF, #E8F5FF);
+    border: 3px solid #B8E3F9;
+    border-radius: 20px;
+    padding: 24px;
+    margin-top: 20px;
+  }
+  .quiz-question {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--dark);
+  }
+  .quiz-emoji { font-size: 4rem; display: block; text-align: center; margin-bottom: 14px; }
+  .quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .quiz-opt {
+    background: white;
+    border: 3px solid #B8E3F9;
+    border-radius: 14px;
+    padding: 14px 10px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.15rem;
+    cursor: pointer;
+    transition: transform .15s, background .15s, border-color .15s;
+    text-align: center;
+    box-shadow: 0 4px 0 #B8E3F9;
+  }
+  .quiz-opt:hover { transform: translateY(-3px); background: #E8F5FF; }
+  .quiz-opt.correct { background: #E8F8E8; border-color: var(--correct); color: var(--correct); box-shadow: 0 4px 0 #a8e8a8; }
+  .quiz-opt.wrong { background: #FFE8E8; border-color: var(--wrong); color: var(--wrong); box-shadow: 0 4px 0 #ffb8b8; }
+  .quiz-opt:disabled { cursor: default; }
+
+  .quiz-feedback {
+    text-align: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6rem;
+    margin-top: 18px;
+    display: none;
+    animation: popIn .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.win { color: var(--correct); }
+  .quiz-feedback.lose { color: var(--wrong); }
+
+  .btn-next {
+    display: block; margin: 18px auto 0;
+    background: var(--orange);
+    color: white;
+    border: none; border-radius: 14px;
+    padding: 12px 30px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #c96a20;
+    transition: transform .15s;
+  }
+  .btn-next:hover { transform: translateY(-3px); }
+  .btn-next:active { transform: translateY(2px); box-shadow: 0 2px 0 #c96a20; }
+
+  /* ── DIALOGUE BUBBLES ── */
+  .dialogue { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; }
+  .bubble-row { display: flex; align-items: flex-end; gap: 12px; }
+  .bubble-row.right { flex-direction: row-reverse; }
+  .bubble-avatar { font-size: 2.2rem; flex-shrink: 0; }
+  .bubble {
+    background: white;
+    border: 3px solid #e0d9c8;
+    border-radius: 20px;
+    padding: 14px 18px;
+    max-width: 75%;
+    position: relative;
+    box-shadow: 0 3px 0 #d0c9b8;
+  }
+  .bubble-row.right .bubble { background: #FFF0F8; border-color: #F78FB3; box-shadow: 0 3px 0 #e8a8c8; }
+  .bubble-french { font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--dark); }
+  .bubble-english { font-size: 0.82rem; color: #aaa; font-weight: 700; margin-top: 4px; }
+  .bubble-pron { font-size: 0.78rem; color: #ccc; font-style: italic; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap { margin-bottom: 24px; }
+  .progress-label { font-weight: 800; font-size: 0.88rem; color: #888; margin-bottom: 6px; }
+  .progress-bar { background: #e0d9c8; border-radius: 10px; height: 14px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--orange), #F78FB3); transition: width .5s ease; }
+
+  /* ── MATCHING GAME ── */
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .match-col { display: flex; flex-direction: column; gap: 10px; }
+  .match-item {
+    background: white;
+    border: 3px solid #e0d9c8;
+    border-radius: 14px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    text-align: center;
+    transition: border-color .2s, background .2s, transform .15s;
+    box-shadow: 0 4px 0 #d0c9b8;
+    user-select: none;
+  }
+  .match-item:hover { transform: translateY(-2px); }
+  .match-item.selected { border-color: var(--sky); background: #E8F5FF; }
+  .match-item.matched { border-color: var(--correct); background: #E8F8E8; color: var(--correct); cursor: default; }
+  .match-item.wrong-flash { border-color: var(--wrong); background: #FFE8E8; animation: shake .3s; }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}
+  }
+
+  /* ── FILL BLANK ── */
+  .fill-blank {
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap; margin: 14px 0;
+  }
+  .fill-blank span { font-family: 'Fredoka One', cursive; font-size: 1.4rem; }
+  .fill-input {
+    border: 3px solid #B8E3F9;
+    border-radius: 12px;
+    padding: 8px 14px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    width: 160px;
+    outline: none;
+    transition: border-color .2s;
+    background: white;
+  }
+  .fill-input:focus { border-color: var(--orange); }
+  .fill-input.correct-input { border-color: var(--correct); background: #E8F8E8; }
+  .fill-input.wrong-input { border-color: var(--wrong); background: #FFE8E8; }
+  .btn-check {
+    background: var(--purple);
+    color: white; border: none; border-radius: 12px;
+    padding: 10px 22px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.05rem;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #7c5cbf;
+    transition: transform .15s;
+  }
+  .btn-check:hover { transform: translateY(-2px); }
+
+  /* ── SONG / POEM BOX ── */
+  .song-box {
+    background: linear-gradient(135deg, #FFF5E6, #FFF0F8);
+    border: 3px dashed var(--orange);
+    border-radius: 20px;
+    padding: 22px 24px;
+    margin: 18px 0;
+    text-align: center;
+  }
+  .song-box p { font-family: 'Fredoka One', cursive; font-size: 1.15rem; line-height: 2; color: var(--dark); }
+  .song-box .transl { font-size: 0.82rem; color: #bbb; font-weight: 700; display: block; }
+
+  /* ── CONFETTI ── */
+  .confetti-piece {
+    position: fixed;
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    pointer-events: none;
+    z-index: 9999;
+    animation: confettiFall 2.2s forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-30px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ── STAR POPUP ── */
+  .star-popup {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%,-50%) scale(0);
+    font-family: 'Fredoka One', cursive;
+    font-size: 3rem;
+    background: white;
+    border-radius: 24px;
+    padding: 24px 40px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    z-index: 9998;
+    text-align: center;
+    transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  .star-popup.show { transform: translate(-50%,-50%) scale(1); }
+  .star-popup-sub { font-size: 1rem; color: #888; margin-top: 4px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.4rem; }
+    .lesson-card { padding: 20px; }
+    .vocab-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+    .quiz-options { grid-template-columns: 1fr; }
+    .match-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ── COLOR STRIP ── */
+  .color-strip { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0 20px; }
+  .color-swatch {
+    width: 60px; height: 60px;
+    border-radius: 14px;
+    border: 3px solid rgba(0,0,0,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.75rem;
+    text-align: center;
+    cursor: pointer;
+    transition: transform .15s;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.12);
+  }
+  .color-swatch:hover { transform: scale(1.1); }
+
+  /* Number grid */
+  .number-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px,1fr));
+    gap: 12px; margin-bottom: 20px;
+  }
+  .number-card {
+    background: white;
+    border: 3px solid #e0d9c8;
+    border-radius: 16px;
+    padding: 14px 10px;
+    text-align: center;
+    box-shadow: 0 4px 0 #d0c9b8;
+    transition: transform .15s;
+    cursor: pointer;
+  }
+  .number-card:hover { transform: translateY(-4px); }
+  .number-big { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--purple); }
+  .number-word { font-family: 'Fredoka One', cursive; font-size: 1rem; color: var(--dark); margin: 4px 0 2px; }
+  .number-eng { font-size: 0.78rem; color: #aaa; font-weight: 700; }
+
+  /* Body parts */
+  .body-wrap { position: relative; width: 200px; margin: 0 auto 20px; }
+  .body-wrap img { width: 100%; }
+  .body-label {
+    position: absolute;
+    background: white;
+    border: 2.5px solid var(--pink);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background .2s;
+    white-space: nowrap;
+    box-shadow: 0 2px 0 #e8a8c8;
+  }
+  .body-label:hover { background: #FFF0F8; }
+
+  /* Phrase cards */
+  .phrase-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+  .phrase-card {
+    display: flex; align-items: center; gap: 16px;
+    background: white; border: 3px solid #e0d9c8;
+    border-radius: 16px; padding: 14px 18px;
+    box-shadow: 0 4px 0 #d0c9b8;
+    cursor: pointer;
+    transition: border-color .2s, transform .15s;
+  }
+  .phrase-card:hover { transform: translateX(6px); border-color: var(--orange); }
+  .phrase-card .pfc-emoji { font-size: 2rem; }
+  .phrase-card .pfc-french { font-family: 'Fredoka One', cursive; font-size: 1.15rem; }
+  .phrase-card .pfc-english { font-size: 0.82rem; color: #aaa; font-weight: 700; margin-top: 2px; }
+  .phrase-card .pfc-pron { font-size: 0.78rem; color: #ccc; font-style: italic; }
+
+  /* Days/Months table */
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px,1fr));
+    gap: 10px; margin-bottom: 20px;
+  }
+  .day-card {
+    background: white; border: 3px solid #e0d9c8;
+    border-radius: 14px; padding: 12px 10px;
+    text-align: center; box-shadow: 0 4px 0 #d0c9b8;
+    cursor: pointer; transition: transform .15s;
+  }
+  .day-card:hover { transform: translateY(-3px); }
+  .day-num { font-family: 'Fredoka One', cursive; font-size: 1.6rem; color: var(--sky); }
+  .day-fr { font-family: 'Fredoka One', cursive; font-size: 1rem; }
+  .day-en { font-size: 0.78rem; color: #aaa; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🐸 Bonjour! French for Kids</h1>
+  <div class="stars-bar">⭐ <span id="star-count">0</span> stars</div>
+</header>
+
+<div class="container">
+
+  <!-- LESSON NAV -->
+  <div class="lesson-nav" id="lesson-nav">
+    <button class="lesson-btn l0 active" onclick="showLesson(0)">👋 Hello!</button>
+    <button class="lesson-btn l1" onclick="showLesson(1)">🐱 Animals</button>
+    <button class="lesson-btn l2" onclick="showLesson(2)">🔢 Numbers</button>
+    <button class="lesson-btn l3" onclick="showLesson(3)">🌈 Colors</button>
+    <button class="lesson-btn l4" onclick="showLesson(4)">👨‍👩‍👧 Family</button>
+    <button class="lesson-btn l5" onclick="showLesson(5)">🍎 Food</button>
+    <button class="lesson-btn l6" onclick="showLesson(6)">🧍 Body</button>
+    <button class="lesson-btn l7" onclick="showLesson(7)">📅 Days</button>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Lesson 1 of 8 — Keep going! 🚀</div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:12.5%"></div></div>
+  </div>
+
+  <!-- LESSON CONTAINER -->
+  <div id="lesson-container"></div>
+
+</div>
+
+<!-- Star popup -->
+<div class="star-popup" id="star-popup">
+  <div id="star-popup-text">⭐ +1 Star!</div>
+  <div class="star-popup-sub" id="star-popup-sub">Great job!</div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────────────
+let stars = 0;
+let currentLesson = 0;
+const lessonDone = Array(8).fill(false);
+
+// ─────────────────────────────────────────────────────
+//  LESSON DATA
+// ─────────────────────────────────────────────────────
+
+const lessons = [
+
+// ── 0: GREETINGS ──────────────────────────────────────
+{
+  icon: "👋",
+  title: "Greetings & Politeness",
+  subtitle: "How to say hello, goodbye, please and thank you!",
+  color: "#FF8C42",
+  render() {
+    return `
+    <div class="vocab-tip">👆 Click each card to see how to pronounce it!</div>
+    <div class="vocab-grid">
+      ${vc("👋","Bonjour","Hello","bon-ZHOOR")}
+      ${vc("🌙","Bonsoir","Good evening","bon-SWAHR")}
+      ${vc("😴","Bonne nuit","Good night","bon NWEE")}
+      ${vc("👋","Au revoir","Goodbye","oh ruh-VWAHR")}
+      ${vc("😊","Salut!","Hi / Bye (casual)","sah-LUE")}
+      ${vc("🙏","S'il vous plaît","Please","seel voo PLAY")}
+      ${vc("🤗","Merci","Thank you","mair-SEE")}
+      ${vc("😄","De rien","You're welcome","duh ree-YEN")}
+      ${vc("😔","Pardon","Sorry / Excuse me","par-DOHN")}
+      ${vc("🗣️","Comment tu t'appelles?","What's your name?","koh-MAHN tü tah-PEL")}
+      ${vc("😁","Je m'appelle...","My name is...","zhuh mah-PEL")}
+      ${vc("😀","Ça va?","How are you?","sah VAH")}
+      ${vc("🥰","Ça va bien!","I'm fine!","sah vah BYEHN")}
+    </div>
+
+    <div class="section-title">🎭 Mini Dialogue — Act it out!</div>
+    <div class="dialogue">
+      <div class="bubble-row">
+        <div class="bubble-avatar">🧒</div>
+        <div class="bubble">
+          <div class="bubble-french">Bonjour! Ça va?</div>
+          <div class="bubble-english">Hello! How are you?</div>
+          <div class="bubble-pron">bon-ZHOOR · sah VAH</div>
+        </div>
+      </div>
+      <div class="bubble-row right">
+        <div class="bubble-avatar">👧</div>
+        <div class="bubble">
+          <div class="bubble-french">Ça va bien, merci! Et toi?</div>
+          <div class="bubble-english">I'm fine, thanks! And you?</div>
+          <div class="bubble-pron">sah vah BYEHN, mair-SEE · ay TWAH</div>
+        </div>
+      </div>
+      <div class="bubble-row">
+        <div class="bubble-avatar">🧒</div>
+        <div class="bubble">
+          <div class="bubble-french">Ça va! Au revoir!</div>
+          <div class="bubble-english">I'm good! Goodbye!</div>
+          <div class="bubble-pron">sah VAH · oh ruh-VWAHR</div>
+        </div>
+      </div>
+      <div class="bubble-row right">
+        <div class="bubble-avatar">👧</div>
+        <div class="bubble">
+          <div class="bubble-french">Au revoir! À bientôt!</div>
+          <div class="bubble-english">Goodbye! See you soon!</div>
+          <div class="bubble-pron">oh ruh-VWAHR · ah byehn-TOH</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">🎵 Fun Rhyme!</div>
+    <div class="song-box">
+      <p>Bonjour, bonjour! 👋<br>
+      <span class="transl">Hello, hello!</span>
+      Comment tu t'appelles? 🤔<br>
+      <span class="transl">What's your name?</span>
+      Je m'appelle... [say your name]! 😄<br>
+      <span class="transl">My name is...!</span>
+      Ça va très bien! 🎉<br>
+      <span class="transl">I'm doing very well!</span></p>
+    </div>
+
+    ${quizHTML(0, [
+      { q: "How do you say 'Hello' in French?", emoji: "👋", opts: ["Bonjour","Au revoir","Merci","Bonsoir"], ans: 0 },
+      { q: "What does 'Merci' mean?", emoji: "🙏", opts: ["Please","Sorry","Thank you","Goodbye"], ans: 2 },
+      { q: "How do you say 'What's your name?'", emoji: "🗣️", opts: ["Ça va?","Au revoir!","Comment tu t'appelles?","De rien"], ans: 2 },
+      { q: "What does 'De rien' mean?", emoji: "😊", opts: ["Sorry","You're welcome","Goodnight","Hello"], ans: 1 },
+    ])}
+
+    ${matchHTML(0, [
+      ["Bonjour","Hello"], ["Merci","Thank you"], ["Au revoir","Goodbye"], ["S'il vous plaît","Please"]
+    ])}
+    `;
+  }
+},
+
+// ── 1: ANIMALS ────────────────────────────────────────
+{
+  icon: "🐱",
+  title: "Animals — Les Animaux",
+  subtitle: "Meet French animals!",
+  color: "#6EC6F5",
+  render() {
+    return `
+    <div class="vocab-tip">👆 Click each animal card to flip it and see pronunciation!</div>
+    <div class="vocab-grid">
+      ${vc("🐱","le chat","cat","luh SHAH")}
+      ${vc("🐶","le chien","dog","luh SHYEHN")}
+      ${vc("🐴","le cheval","horse","luh shuh-VAL")}
+      ${vc("🐮","la vache","cow","lah VASH")}
+      ${vc("🐑","le mouton","sheep","luh moo-TOHN")}
+      ${vc("🐷","le cochon","pig","luh koh-SHOHN")}
+      ${vc("🐔","la poule","chicken","lah POOL")}
+      ${vc("🐇","le lapin","rabbit","luh lah-PAN")}
+      ${vc("🐟","le poisson","fish","luh pwah-SOHN")}
+      ${vc("🐦","l'oiseau","bird","lwah-ZOH")}
+      ${vc("🐘","l'éléphant","elephant","lay-lay-FAHN")}
+      ${vc("🦁","le lion","lion","luh lyohn")}
+      ${vc("🐬","le dauphin","dolphin","luh doh-FAN")}
+      ${vc("🐸","la grenouille","frog","lah gruh-NOO-ee")}
+      ${vc("🦊","le renard","fox","luh ruh-NAR")}
+    </div>
+
+    <div class="section-title">💬 Say it!</div>
+    <div class="phrase-list">
+      ${ph("🐱","C'est un chat.","It's a cat.","say tun SHAH")}
+      ${ph("🐶","J'aime les chiens!","I love dogs!","ZHEHM lay shyehn")}
+      ${ph("🐘","L'éléphant est grand.","The elephant is big.","lay-lay-FAHN ay GRAHN")}
+      ${ph("🐱","Le chat est mignon.","The cat is cute.","luh SHAH ay meen-YOHN")}
+    </div>
+
+    <div class="section-title">🎵 Old MacDonald in French!</div>
+    <div class="song-box">
+      <p>Dans la ferme de Mathurin 🚜<br>
+      <span class="transl">On Old MacDonald's farm</span>
+      Il y avait des vaches: Meuh meuh meuh! 🐮<br>
+      <span class="transl">There were cows: Moo moo moo!</span>
+      Il y avait des cochons: Groin groin! 🐷<br>
+      <span class="transl">There were pigs: Oink oink!</span>
+      Et des poules: Cot cot codet! 🐔<br>
+      <span class="transl">And chickens: Cluck cluck!</span></p>
+    </div>
+
+    ${quizHTML(1, [
+      { q: "What is 'le chat'?", emoji: "🐱", opts: ["dog","cat","fish","bird"], ans: 1 },
+      { q: "How do you say 'horse' in French?", emoji: "🐴", opts: ["le lapin","le cochon","le cheval","la vache"], ans: 2 },
+      { q: "What does 'la grenouille' mean?", emoji: "🐸", opts: ["lion","rabbit","pig","frog"], ans: 3 },
+      { q: "How do you say 'fish' in French?", emoji: "🐟", opts: ["le poisson","l'oiseau","le dauphin","le renard"], ans: 0 },
+    ])}
+
+    ${matchHTML(1, [
+      ["le chien","dog"], ["la vache","cow"], ["le lapin","rabbit"], ["l'oiseau","bird"]
+    ])}
+    `;
+  }
+},
+
+// ── 2: NUMBERS ────────────────────────────────────────
+{
+  icon: "🔢",
+  title: "Numbers — Les Chiffres",
+  subtitle: "Count from 1 to 20 in French!",
+  color: "#69C472",
+  render() {
+    const nums = [
+      [1,"un","un"],
+      [2,"deux","duh"],
+      [3,"trois","TWAH"],
+      [4,"quatre","KAT-ruh"],
+      [5,"cinq","SANK"],
+      [6,"six","SEES"],
+      [7,"sept","SET"],
+      [8,"huit","WEET"],
+      [9,"neuf","NUF"],
+      [10,"dix","DEES"],
+      [11,"onze","OHNZ"],
+      [12,"douze","DOOZ"],
+      [13,"treize","TREHZ"],
+      [14,"quatorze","kah-TORZ"],
+      [15,"quinze","KANZ"],
+      [16,"seize","SEZ"],
+      [17,"dix-sept","dee-SET"],
+      [18,"dix-huit","deez-WEET"],
+      [19,"dix-neuf","deez-NUF"],
+      [20,"vingt","VAN"],
+    ];
+    const numGrid = nums.map(([n,fr,pr])=>`
+      <div class="number-card" onclick="this.style.background='#F0FFF0'">
+        <div class="number-big">${n}</div>
+        <div class="number-word">${fr}</div>
+        <div class="number-eng">${pr}</div>
+      </div>
+    `).join('');
+
+    return `
+    <div class="vocab-tip">👆 Click a number card to highlight it! Say it out loud!</div>
+    <div class="number-grid">${numGrid}</div>
+
+    <div class="section-title">🎵 Counting Song</div>
+    <div class="song-box">
+      <p>Un, deux, trois, quatre, cinq! 🖐️<br>
+      <span class="transl">1, 2, 3, 4, 5!</span>
+      Six, sept, huit, neuf, dix! 🤲<br>
+      <span class="transl">6, 7, 8, 9, 10!</span>
+      Onze, douze, treize, quatorze, quinze!<br>
+      <span class="transl">11, 12, 13, 14, 15!</span>
+      Seize, dix-sept, dix-huit, dix-neuf, vingt! 🎉<br>
+      <span class="transl">16, 17, 18, 19, 20!</span></p>
+    </div>
+
+    <div class="section-title">💬 Use Numbers!</div>
+    <div class="phrase-list">
+      ${ph("🎂","J'ai huit ans.","I am 8 years old.","zhay WEET ahn")}
+      ${ph("🐶","J'ai deux chiens!","I have two dogs!","zhay duh shyehn")}
+      ${ph("📚","Il y a cinq livres.","There are 5 books.","eel ee ah SANK lee-vruh")}
+    </div>
+
+    ${quizHTML(2, [
+      { q: "What number is 'sept'?", emoji: "7️⃣", opts: ["5","6","7","8"], ans: 2 },
+      { q: "How do you say '3' in French?", emoji: "3️⃣", opts: ["deux","quatre","cinq","trois"], ans: 3 },
+      { q: "What is 'vingt'?", emoji: "2️⃣0️⃣", opts: ["12","20","15","17"], ans: 1 },
+      { q: "How do you say '10' in French?", emoji: "🔟", opts: ["neuf","huit","onze","dix"], ans: 3 },
+    ])}
+
+    ${matchHTML(2, [
+      ["un","1"], ["cinq","5"], ["dix","10"], ["vingt","20"]
+    ])}
+    `;
+  }
+},
+
+// ── 3: COLORS ─────────────────────────────────────────
+{
+  icon: "🌈",
+  title: "Colors — Les Couleurs",
+  subtitle: "Learn all the colors in French!",
+  color: "#A78BFA",
+  render() {
+    const colors = [
+      {fr:"rouge",en:"red",hex:"#FF6B6B",pr:"ROOZH"},
+      {fr:"bleu",en:"blue",hex:"#6EC6F5",pr:"BLUH"},
+      {fr:"vert",en:"green",hex:"#69C472",pr:"VAIR"},
+      {fr:"jaune",en:"yellow",hex:"#FFD54F",pr:"ZHOHN"},
+      {fr:"orange",en:"orange",hex:"#FF8C42",pr:"oh-RAHNZH"},
+      {fr:"rose",en:"pink",hex:"#F78FB3",pr:"ROHZ"},
+      {fr:"violet",en:"purple",hex:"#A78BFA",pr:"vyoh-LAY"},
+      {fr:"blanc",en:"white",hex:"#F5F5F0",pr:"BLAHN"},
+      {fr:"noir",en:"black",hex:"#2D3436",pr:"NWAHR"},
+      {fr:"marron",en:"brown",hex:"#8B6355",pr:"mah-ROHN"},
+      {fr:"gris",en:"gray",hex:"#95A5A6",pr:"GREE"},
+    ];
+    const swatches = colors.map(c=>`
+      <div class="color-swatch" style="background:${c.hex};color:${c.hex==='#F5F5F0'||c.hex==='#FFD54F'?'#555':'white'}" 
+           title="${c.en}" onclick="showColorPop('${c.fr}','${c.en}','${c.pr}')">
+        ${c.fr}
+      </div>
+    `).join('');
+
+    return `
+    <div class="section-title">🎨 Color Swatches — Click to learn!</div>
+    <div class="color-strip">${swatches}</div>
+    <div id="color-pop" style="background:white;border:3px solid #e0d9c8;border-radius:16px;padding:14px 18px;display:none;margin-bottom:16px;font-family:'Fredoka One',cursive;font-size:1.2rem;"></div>
+
+    <div class="vocab-tip">💡 In French: "Le ciel est bleu." (The sky is blue) · "La pomme est rouge." (The apple is red)</div>
+
+    <div class="vocab-grid">
+      ${vc("🍎","rouge","red","ROOZH")}
+      ${vc("🌊","bleu","blue","BLUH")}
+      ${vc("🍀","vert","green","VAIR")}
+      ${vc("🌻","jaune","yellow","ZHOHN")}
+      ${vc("🍊","orange","orange","oh-RAHNZH")}
+      ${vc("🌸","rose","pink","ROHZ")}
+      ${vc("🍇","violet","purple","vyoh-LAY")}
+      ${vc("⬜","blanc","white","BLAHN")}
+      ${vc("⬛","noir","black","NWAHR")}
+      ${vc("🐻","marron","brown","mah-ROHN")}
+    </div>
+
+    <div class="section-title">💬 Describe things!</div>
+    <div class="phrase-list">
+      ${ph("🍎","La pomme est rouge.","The apple is red.","lah POM ay ROOZH")}
+      ${ph("🌊","Le ciel est bleu.","The sky is blue.","luh SYEL ay BLUH")}
+      ${ph("🌻","La fleur est jaune.","The flower is yellow.","lah FLUR ay ZHOHN")}
+      ${ph("🌈","J'aime toutes les couleurs!","I love all colors!","ZHEHM toot lay koo-LUR")}
+    </div>
+
+    ${quizHTML(3, [
+      { q: "What color is 'rouge'?", emoji: "🔴", opts: ["blue","green","red","yellow"], ans: 2 },
+      { q: "How do you say 'yellow'?", emoji: "🟡", opts: ["vert","jaune","bleu","rose"], ans: 1 },
+      { q: "What does 'noir' mean?", emoji: "⬛", opts: ["white","gray","black","brown"], ans: 2 },
+      { q: "How do you say 'green'?", emoji: "🟢", opts: ["rouge","violet","marron","vert"], ans: 3 },
+    ])}
+
+    ${matchHTML(3, [
+      ["bleu","blue"], ["rose","pink"], ["jaune","yellow"], ["violet","purple"]
+    ])}
+    `;
+  }
+},
+
+// ── 4: FAMILY ─────────────────────────────────────────
+{
+  icon: "👨‍👩‍👧",
+  title: "Family — La Famille",
+  subtitle: "Talk about your family in French!",
+  color: "#F78FB3",
+  render() {
+    return `
+    <div class="vocab-tip">👆 Click each card to hear the pronunciation guide!</div>
+    <div class="vocab-grid">
+      ${vc("👨","le père","father","luh PAIR")}
+      ${vc("👩","la mère","mother","lah MAIR")}
+      ${vc("👦","le frère","brother","luh FRAIR")}
+      ${vc("👧","la sœur","sister","lah SUR")}
+      ${vc("👴","le grand-père","grandfather","luh grahn-PAIR")}
+      ${vc("👵","la grand-mère","grandmother","lah grahn-MAIR")}
+      ${vc("👶","le bébé","baby","luh bay-BAY")}
+      ${vc("🧑","l'enfant","child","lahn-FAHN")}
+      ${vc("👨‍👩‍👧","la famille","family","lah fah-MEE")}
+      ${vc("🐕","l'animal de compagnie","pet","lah-nee-MAL duh kohm-pahn-YEE")}
+    </div>
+
+    <div class="section-title">🎭 Talk about YOUR family!</div>
+    <div class="phrase-list">
+      ${ph("👨","Mon père s'appelle...","My dad's name is...","mohn PAIR sah-PEL")}
+      ${ph("👩","Ma mère s'appelle...","My mom's name is...","mah MAIR sah-PEL")}
+      ${ph("👦","J'ai un frère.","I have a brother.","zhay un FRAIR")}
+      ${ph("👧","J'ai une sœur.","I have a sister.","zhay ün SUR")}
+      ${ph("👴","Mon grand-père est sympa!","My grandfather is nice!","mohn grahn-PAIR ay SAM-pah")}
+      ${ph("👶","Le bébé est mignon.","The baby is cute.","luh bay-BAY ay meen-YOHN")}
+    </div>
+
+    <div class="section-title">🎵 Family Song</div>
+    <div class="song-box">
+      <p>Voici ma famille! 👨‍👩‍👧‍👦<br>
+      <span class="transl">Here is my family!</span>
+      Mon père, ma mère, 👨👩<br>
+      <span class="transl">My father, my mother,</span>
+      Mon frère, ma sœur, 👦👧<br>
+      <span class="transl">My brother, my sister,</span>
+      Et moi! Je les aime! ❤️<br>
+      <span class="transl">And me! I love them!</span></p>
+    </div>
+
+    ${quizHTML(4, [
+      { q: "What is 'la mère'?", emoji: "👩", opts: ["sister","grandmother","mother","aunt"], ans: 2 },
+      { q: "How do you say 'brother'?", emoji: "👦", opts: ["la sœur","le père","le grand-père","le frère"], ans: 3 },
+      { q: "What does 'la famille' mean?", emoji: "👨‍👩‍👧", opts: ["friend","baby","family","child"], ans: 2 },
+      { q: "How do you say 'grandfather'?", emoji: "👴", opts: ["le bébé","le grand-père","le frère","le père"], ans: 1 },
+    ])}
+
+    ${matchHTML(4, [
+      ["le père","father"], ["la mère","mother"], ["le bébé","baby"], ["la sœur","sister"]
+    ])}
+    `;
+  }
+},
+
+// ── 5: FOOD ───────────────────────────────────────────
+{
+  icon: "🍎",
+  title: "Food — La Nourriture",
+  subtitle: "Yummy French food words!",
+  color: "#FFD54F",
+  render() {
+    return `
+    <div class="vocab-tip">🍽️ France is famous for its food! Let's learn the delicious words!</div>
+    <div class="vocab-grid">
+      ${vc("🍞","le pain","bread","luh PAN")}
+      ${vc("🧀","le fromage","cheese","luh froh-MAHZH")}
+      ${vc("🥛","le lait","milk","luh LAY")}
+      ${vc("🍎","la pomme","apple","lah POM")}
+      ${vc("🍌","la banane","banana","lah bah-NAN")}
+      ${vc("🍓","la fraise","strawberry","lah FREHZ")}
+      ${vc("🥕","la carotte","carrot","lah kah-ROT")}
+      ${vc("🍕","la pizza","pizza","lah PEET-zah")}
+      ${vc("🍰","le gâteau","cake","luh gah-TOH")}
+      ${vc("🧁","le cupcake","cupcake","luh KUP-kayk")}
+      ${vc("🍫","le chocolat","chocolate","luh shoh-koh-LAH")}
+      ${vc("🥤","le jus","juice","luh ZHUE")}
+      ${vc("🍝","les pâtes","pasta","lay PAHT")}
+      ${vc("🥚","l'œuf","egg","LUF")}
+    </div>
+
+    <div class="section-title">💬 Say what you like!</div>
+    <div class="phrase-list">
+      ${ph("😋","J'aime le chocolat!","I love chocolate!","ZHEHM luh shoh-koh-LAH")}
+      ${ph("🤢","Je n'aime pas les carottes.","I don't like carrots.","zhuh NEHM pah lay kah-ROT")}
+      ${ph("🙏","Je voudrais du pain, s'il vous plaît.","I'd like some bread please.","zhuh voo-DREH due PAN")}
+      ${ph("🍎","C'est délicieux!","It's delicious!","say day-lee-SYUH")}
+    </div>
+
+    <div class="section-title">🎵 Miam Miam! (Yum Yum!)</div>
+    <div class="song-box">
+      <p>Du pain, du fromage! 🥖🧀<br>
+      <span class="transl">Bread, cheese!</span>
+      Du lait et des gâteaux! 🥛🎂<br>
+      <span class="transl">Milk and cakes!</span>
+      Du chocolat — Miam! 🍫<br>
+      <span class="transl">Chocolate — Yum!</span>
+      J'aime manger, c'est très beau! 😄<br>
+      <span class="transl">I love eating, it's great!</span></p>
+    </div>
+
+    ${quizHTML(5, [
+      { q: "What is 'le pain'?", emoji: "🍞", opts: ["cake","cheese","bread","milk"], ans: 2 },
+      { q: "How do you say 'apple'?", emoji: "🍎", opts: ["la fraise","la banane","la pomme","la carotte"], ans: 2 },
+      { q: "What does 'le gâteau' mean?", emoji: "🎂", opts: ["pizza","cake","cheese","juice"], ans: 1 },
+      { q: "How do you say 'I love chocolate!'", emoji: "🍫", opts: ["C'est délicieux!","Je n'aime pas...","J'aime le chocolat!","Je voudrais..."], ans: 2 },
+    ])}
+
+    ${matchHTML(5, [
+      ["le fromage","cheese"], ["la fraise","strawberry"], ["le chocolat","chocolate"], ["le jus","juice"]
+    ])}
+    `;
+  }
+},
+
+// ── 6: BODY PARTS ────────────────────────────────────
+{
+  icon: "🧍",
+  title: "Body Parts — Le Corps",
+  subtitle: "Name the parts of your body in French!",
+  color: "#FF6B6B",
+  render() {
+    return `
+    <div class="vocab-tip">👆 Click the cards and point to that part of YOUR body!</div>
+    <div class="vocab-grid">
+      ${vc("👁️","les yeux","eyes","lay ZYUH")}
+      ${vc("👃","le nez","nose","luh NAY")}
+      ${vc("👄","la bouche","mouth","lah BOOSH")}
+      ${vc("👂","les oreilles","ears","layz oh-RAY")}
+      ${vc("🦷","les dents","teeth","lay DAHN")}
+      ${vc("💇","la tête","head","lah TET")}
+      ${vc("💪","le bras","arm","luh BRAH")}
+      ${vc("🤚","la main","hand","lah MAN")}
+      ${vc("🦵","la jambe","leg","lah ZHAMB")}
+      ${vc("🦶","le pied","foot","luh PYAY")}
+      ${vc("🫁","le ventre","belly","luh VAHN-truh")}
+      ${vc("❤️","le cœur","heart","luh KUR")}
+    </div>
+
+    <div class="section-title">🎵 Head, Shoulders, Knees & Toes — In French!</div>
+    <div class="song-box">
+      <p>Tête, épaules, genoux et pieds, 🎵<br>
+      <span class="transl">Head, shoulders, knees and toes,</span>
+      Genoux et pieds! 👐<br>
+      <span class="transl">Knees and toes!</span>
+      Et les yeux, et les oreilles,<br>
+      <span class="transl">And eyes, and ears,</span>
+      Et la bouche et le nez! 👃<br>
+      <span class="transl">And mouth and nose!</span></p>
+    </div>
+
+    <div class="section-title">💬 Describe!</div>
+    <div class="phrase-list">
+      ${ph("👁️","J'ai les yeux bleus.","I have blue eyes.","zhay layz ZYUH BLUH")}
+      ${ph("💪","Mon bras est fort!","My arm is strong!","mohn BRAH ay FOR")}
+      ${ph("🤢","J'ai mal à la tête.","I have a headache.","zhay MAL ah lah TET")}
+      ${ph("❤️","Mon cœur est content!","My heart is happy!","mohn KUR ay kohn-TAHN")}
+    </div>
+
+    ${quizHTML(6, [
+      { q: "What are 'les yeux'?", emoji: "👁️", opts: ["ears","nose","eyes","mouth"], ans: 2 },
+      { q: "How do you say 'hand'?", emoji: "🤚", opts: ["le pied","le bras","la jambe","la main"], ans: 3 },
+      { q: "What does 'la bouche' mean?", emoji: "👄", opts: ["nose","mouth","tooth","ear"], ans: 1 },
+      { q: "How do you say 'head'?", emoji: "💆", opts: ["le ventre","la jambe","la tête","le nez"], ans: 2 },
+    ])}
+
+    ${matchHTML(6, [
+      ["le nez","nose"], ["la main","hand"], ["le pied","foot"], ["les dents","teeth"]
+    ])}
+    `;
+  }
+},
+
+// ── 7: DAYS & MONTHS ──────────────────────────────────
+{
+  icon: "📅",
+  title: "Days & Months — Jours & Mois",
+  subtitle: "Tell the day and month in French!",
+  color: "#26C6DA",
+  render() {
+    const days = [
+      [1,"lundi","Monday"],
+      [2,"mardi","Tuesday"],
+      [3,"mercredi","Wednesday"],
+      [4,"jeudi","Thursday"],
+      [5,"vendredi","Friday"],
+      [6,"samedi","Saturday"],
+      [7,"dimanche","Sunday"],
+    ];
+    const months = [
+      ["janvier","January"],["février","February"],["mars","March"],
+      ["avril","April"],["mai","May"],["juin","June"],
+      ["juillet","July"],["août","August"],["septembre","September"],
+      ["octobre","October"],["novembre","November"],["décembre","December"],
+    ];
+    const dayCards = days.map(([n,fr,en])=>`
+      <div class="day-card" onclick="this.style.background='#E8FEFF'">
+        <div class="day-num">${n}</div>
+        <div class="day-fr">${fr}</div>
+        <div class="day-en">${en}</div>
+      </div>
+    `).join('');
+    const monthCards = months.map(([fr,en])=>`
+      <div class="day-card" onclick="this.style.background='#E8FEFF'">
+        <div class="day-fr" style="font-size:1.05rem">${fr}</div>
+        <div class="day-en">${en}</div>
+      </div>
+    `).join('');
+
+    return `
+    <div class="section-title">📆 Days of the Week</div>
+    <div class="vocab-tip">👆 Click a day to highlight it!</div>
+    <div class="days-grid">${dayCards}</div>
+
+    <div class="section-title">🗓️ Months of the Year</div>
+    <div class="days-grid">${monthCards}</div>
+
+    <div class="section-title">💬 Talk about dates!</div>
+    <div class="phrase-list">
+      ${ph("📅","Aujourd'hui, c'est lundi.","Today is Monday.","oh-zhoor-DWEE say lun-DEE")}
+      ${ph("🎂","Mon anniversaire est en janvier.","My birthday is in January.","mohn ah-nee-vair-SAIR ay ahn zhahn-VYAY")}
+      ${ph("☀️","Quel jour sommes-nous?","What day is it?","KEL ZHOOR som-NOO")}
+      ${ph("🎉","Demain, c'est vendredi!","Tomorrow is Friday!","duh-MAN say vahn-druh-DEE")}
+    </div>
+
+    <div class="section-title">🎵 Days Song</div>
+    <div class="song-box">
+      <p>Lundi, mardi, mercredi, 🎵<br>
+      <span class="transl">Monday, Tuesday, Wednesday,</span>
+      Jeudi, vendredi — Youpi! 🎉<br>
+      <span class="transl">Thursday, Friday — Yay!</span>
+      Samedi, dimanche aussi,<br>
+      <span class="transl">Saturday, Sunday too,</span>
+      Sept jours dans la semaine ici! 📅<br>
+      <span class="transl">Seven days in a week here!</span></p>
+    </div>
+
+    ${quizHTML(7, [
+      { q: "Which day comes after 'lundi'?", emoji: "📅", opts: ["mercredi","dimanche","vendredi","mardi"], ans: 3 },
+      { q: "What is 'juillet' in English?", emoji: "☀️", opts: ["June","August","July","January"], ans: 2 },
+      { q: "How do you say 'today is Friday'?", emoji: "🎉", opts: ["Aujourd'hui, c'est lundi.","Aujourd'hui, c'est vendredi.","Demain c'est samedi.","C'est dimanche."], ans: 1 },
+      { q: "Which month is 'décembre'?", emoji: "🎄", opts: ["November","October","February","December"], ans: 3 },
+    ])}
+
+    ${matchHTML(7, [
+      ["lundi","Monday"], ["samedi","Saturday"], ["mars","March"], ["décembre","December"]
+    ])}
+    `;
+  }
+},
+
+]; // end lessons
+
+// ─────────────────────────────────────────────────────
+//  HELPERS: HTML BUILDERS
+// ─────────────────────────────────────────────────────
+
+function vc(emoji, french, english, pron) {
+  return `<div class="vocab-card" onclick="this.classList.toggle('flipped')">
+    <span class="vocab-emoji">${emoji}</span>
+    <span class="vocab-french">${french}</span>
+    <span class="vocab-english">${english}</span>
+    <span class="vocab-pronunciation">🔊 ${pron}</span>
+  </div>`;
+}
+
+function ph(emoji, french, english, pron) {
+  return `<div class="phrase-card">
+    <span class="pfc-emoji">${emoji}</span>
+    <div>
+      <div class="pfc-french">${french}</div>
+      <div class="pfc-english">${english}</div>
+      <div class="pfc-pron">🔊 ${pron}</div>
+    </div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────────────────
+//  QUIZ BUILDER
+// ─────────────────────────────────────────────────────
+let quizStates = {}; // lessonIdx -> { qIdx, score }
+
+function quizHTML(lessonIdx, questions) {
+  const q = questions[0];
+  const optsHTML = q.opts.map((o,i)=>
+    `<button class="quiz-opt" onclick="handleQuizOpt(this,${i},${q.ans},${lessonIdx})">${o}</button>`
+  ).join('');
+  return `
+  <div class="section-title">🧠 Quiz Time!</div>
+  <div class="quiz-box" id="quiz-${lessonIdx}">
+    <div id="quiz-progress-${lessonIdx}" style="text-align:center;font-weight:800;color:#aaa;font-size:0.88rem;margin-bottom:10px;">
+      Question 1 of ${questions.length}
+    </div>
+    <div class="quiz-emoji" id="quiz-emoji-${lessonIdx}">${q.emoji}</div>
+    <div class="quiz-question" id="quiz-q-${lessonIdx}">${q.q}</div>
+    <div class="quiz-options" id="quiz-opts-${lessonIdx}">${optsHTML}</div>
+    <div class="quiz-feedback" id="quiz-fb-${lessonIdx}"></div>
+    <button class="btn-next" id="quiz-next-${lessonIdx}" style="display:none" 
+      onclick="nextQuestion(${lessonIdx})">Next ➡️</button>
+  </div>`;
+}
+
+// Store questions per lesson
+const quizData = lessons.map(l => null); // placeholder
+
+function handleQuizOpt(btn, chosen, correct, lessonIdx) {
+  const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.disabled = true);
+  const fb = document.getElementById(`quiz-fb-${lessonIdx}`);
+  const nextBtn = document.getElementById(`quiz-next-${lessonIdx}`);
+  if (chosen === correct) {
+    btn.classList.add('correct');
+    fb.textContent = ['🎉 Excellent!','⭐ Super!','🥳 Parfait!','🌟 Bravo!'][Math.floor(Math.random()*4)];
+    fb.className = 'quiz-feedback show win';
+    addStar(1);
+  } else {
+    btn.classList.add('wrong');
+    opts[correct].classList.add('correct');
+    fb.textContent = '😅 Pas tout à fait... (Not quite!) Try the next one!';
+    fb.className = 'quiz-feedback show lose';
+  }
+  nextBtn.style.display = 'block';
+}
+
+// We need to store question arrays accessible by index:
+const allQuizQuestions = [
+  // 0: greetings
+  [
+    { q:"How do you say 'Hello' in French?", emoji:"👋", opts:["Bonjour","Au revoir","Merci","Bonsoir"], ans:0 },
+    { q:"What does 'Merci' mean?", emoji:"🙏", opts:["Please","Sorry","Thank you","Goodbye"], ans:2 },
+    { q:"How do you say 'What's your name?'", emoji:"🗣️", opts:["Ça va?","Au revoir!","Comment tu t'appelles?","De rien"], ans:2 },
+    { q:"What does 'De rien' mean?", emoji:"😊", opts:["Sorry","You're welcome","Goodnight","Hello"], ans:1 },
+  ],
+  // 1: animals
+  [
+    { q:"What is 'le chat'?", emoji:"🐱", opts:["dog","cat","fish","bird"], ans:1 },
+    { q:"How do you say 'horse' in French?", emoji:"🐴", opts:["le lapin","le cochon","le cheval","la vache"], ans:2 },
+    { q:"What does 'la grenouille' mean?", emoji:"🐸", opts:["lion","rabbit","pig","frog"], ans:3 },
+    { q:"How do you say 'fish' in French?", emoji:"🐟", opts:["le poisson","l'oiseau","le dauphin","le renard"], ans:0 },
+  ],
+  // 2: numbers
+  [
+    { q:"What number is 'sept'?", emoji:"7️⃣", opts:["5","6","7","8"], ans:2 },
+    { q:"How do you say '3' in French?", emoji:"3️⃣", opts:["deux","quatre","cinq","trois"], ans:3 },
+    { q:"What is 'vingt'?", emoji:"2️⃣0️⃣", opts:["12","20","15","17"], ans:1 },
+    { q:"How do you say '10' in French?", emoji:"🔟", opts:["neuf","huit","onze","dix"], ans:3 },
+  ],
+  // 3: colors
+  [
+    { q:"What color is 'rouge'?", emoji:"🔴", opts:["blue","green","red","yellow"], ans:2 },
+    { q:"How do you say 'yellow'?", emoji:"🟡", opts:["vert","jaune","bleu","rose"], ans:1 },
+    { q:"What does 'noir' mean?", emoji:"⬛", opts:["white","gray","black","brown"], ans:2 },
+    { q:"How do you say 'green'?", emoji:"🟢", opts:["rouge","violet","marron","vert"], ans:3 },
+  ],
+  // 4: family
+  [
+    { q:"What is 'la mère'?", emoji:"👩", opts:["sister","grandmother","mother","aunt"], ans:2 },
+    { q:"How do you say 'brother'?", emoji:"👦", opts:["la sœur","le père","le grand-père","le frère"], ans:3 },
+    { q:"What does 'la famille' mean?", emoji:"👨‍👩‍👧", opts:["friend","baby","family","child"], ans:2 },
+    { q:"How do you say 'grandfather'?", emoji:"👴", opts:["le bébé","le grand-père","le frère","le père"], ans:1 },
+  ],
+  // 5: food
+  [
+    { q:"What is 'le pain'?", emoji:"🍞", opts:["cake","cheese","bread","milk"], ans:2 },
+    { q:"How do you say 'apple'?", emoji:"🍎", opts:["la fraise","la banane","la pomme","la carotte"], ans:2 },
+    { q:"What does 'le gâteau' mean?", emoji:"🎂", opts:["pizza","cake","cheese","juice"], ans:1 },
+    { q:"How do you say 'I love chocolate!'", emoji:"🍫", opts:["C'est délicieux!","Je n'aime pas...","J'aime le chocolat!","Je voudrais..."], ans:2 },
+  ],
+  // 6: body
+  [
+    { q:"What are 'les yeux'?", emoji:"👁️", opts:["ears","nose","eyes","mouth"], ans:2 },
+    { q:"How do you say 'hand'?", emoji:"🤚", opts:["le pied","le bras","la jambe","la main"], ans:3 },
+    { q:"What does 'la bouche' mean?", emoji:"👄", opts:["nose","mouth","tooth","ear"], ans:1 },
+    { q:"How do you say 'head'?", emoji:"💆", opts:["le ventre","la jambe","la tête","le nez"], ans:2 },
+  ],
+  // 7: days
+  [
+    { q:"Which day comes after 'lundi'?", emoji:"📅", opts:["mercredi","dimanche","vendredi","mardi"], ans:3 },
+    { q:"What is 'juillet' in English?", emoji:"☀️", opts:["June","August","July","January"], ans:2 },
+    { q:"How do you say 'today is Friday'?", emoji:"🎉", opts:["Aujourd'hui, c'est lundi.","Aujourd'hui, c'est vendredi.","Demain c'est samedi.","C'est dimanche."], ans:1 },
+    { q:"Which month is 'décembre'?", emoji:"🎄", opts:["November","October","February","December"], ans:3 },
+  ],
+];
+
+// Track current question index per lesson
+const currentQIdx = Array(8).fill(0);
+
+function nextQuestion(lessonIdx) {
+  currentQIdx[lessonIdx]++;
+  const questions = allQuizQuestions[lessonIdx];
+  if (currentQIdx[lessonIdx] >= questions.length) {
+    // Done with quiz
+    document.getElementById(`quiz-${lessonIdx}`).innerHTML = `
+      <div style="text-align:center;padding:20px">
+        <div style="font-size:3rem">🎊</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.6rem;color:#69C472;margin:10px 0">Quiz Complete!</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:#aaa">Très bien! Very good!</div>
+      </div>`;
+    lessonDone[lessonIdx] = true;
+    updateLessonNav();
+    confetti();
+    return;
+  }
+  const q = questions[currentQIdx[lessonIdx]];
+  const total = questions.length;
+  const optsHTML = q.opts.map((o,i)=>
+    `<button class="quiz-opt" onclick="handleQuizOpt(this,${i},${q.ans},${lessonIdx})">${o}</button>`
+  ).join('');
+  document.getElementById(`quiz-progress-${lessonIdx}`).textContent = `Question ${currentQIdx[lessonIdx]+1} of ${total}`;
+  document.getElementById(`quiz-emoji-${lessonIdx}`).textContent = q.emoji;
+  document.getElementById(`quiz-q-${lessonIdx}`).textContent = q.q;
+  document.getElementById(`quiz-opts-${lessonIdx}`).innerHTML = optsHTML;
+  const fb = document.getElementById(`quiz-fb-${lessonIdx}`);
+  fb.textContent = '';
+  fb.className = 'quiz-feedback';
+  document.getElementById(`quiz-next-${lessonIdx}`).style.display = 'none';
+}
+
+// ─────────────────────────────────────────────────────
+//  MATCHING GAME BUILDER
+// ─────────────────────────────────────────────────────
+const matchAllData = [
+  [["Bonjour","Hello"],["Merci","Thank you"],["Au revoir","Goodbye"],["S'il vous plaît","Please"]],
+  [["le chien","dog"],["la vache","cow"],["le lapin","rabbit"],["l'oiseau","bird"]],
+  [["un","1"],["cinq","5"],["dix","10"],["vingt","20"]],
+  [["bleu","blue"],["rose","pink"],["jaune","yellow"],["violet","purple"]],
+  [["le père","father"],["la mère","mother"],["le bébé","baby"],["la sœur","sister"]],
+  [["le fromage","cheese"],["la fraise","strawberry"],["le chocolat","chocolate"],["le jus","juice"]],
+  [["le nez","nose"],["la main","hand"],["le pied","foot"],["les dents","teeth"]],
+  [["lundi","Monday"],["samedi","Saturday"],["mars","March"],["décembre","December"]],
+];
+
+function matchHTML(lessonIdx, pairs) {
+  const shuffledRight = [...pairs.map(p=>p[1])].sort(()=>Math.random()-.5);
+  const leftItems = pairs.map((p,i)=>
+    `<div class="match-item" id="ml-${lessonIdx}-${i}" onclick="selectMatch(this,'left',${lessonIdx},${i},'${p[0].replace(/'/g,"&#39;")}')">${p[0]}</div>`
+  ).join('');
+  const rightItems = shuffledRight.map((en,i)=>
+    `<div class="match-item" id="mr-${lessonIdx}-${i}" onclick="selectMatch(this,'right',${lessonIdx},${i},'${en.replace(/'/g,"&#39;")}')">${en}</div>`
+  ).join('');
+  return `
+  <div class="section-title">🔗 Match It! — Connect French to English</div>
+  <div id="match-score-${lessonIdx}" style="text-align:right;font-family:'Fredoka One',cursive;font-size:1rem;color:#aaa;margin-bottom:8px;">✅ 0 / ${pairs.length}</div>
+  <div class="match-grid">
+    <div class="match-col" id="match-left-${lessonIdx}">${leftItems}</div>
+    <div class="match-col" id="match-right-${lessonIdx}">${rightItems}</div>
+  </div>`;
+}
+
+// Match state per lesson: {side, idx, val, el}
+const matchSelected = {};
+const matchScores = Array(8).fill(0);
+const matchTotals = [4,4,4,4,4,4,4,4];
+// Store original pair data for matching
+const matchPairs = matchAllData;
+
+function selectMatch(el, side, lessonIdx, idx, val) {
+  if (el.classList.contains('matched')) return;
+  const key = `${lessonIdx}`;
+  if (!matchSelected[key]) {
+    // First selection
+    el.classList.add('selected');
+    matchSelected[key] = { side, idx, val, el };
+  } else {
+    const prev = matchSelected[key];
+    if (prev.side === side) {
+      // Same side, switch selection
+      prev.el.classList.remove('selected');
+      el.classList.add('selected');
+      matchSelected[key] = { side, idx, val, el };
+      return;
+    }
+    // Different sides — check match
+    const leftVal = side === 'left' ? val : prev.val;
+    const rightVal = side === 'right' ? val : prev.val;
+    const leftEl = side === 'left' ? el : prev.el;
+    const rightEl = side === 'right' ? el : prev.el;
+    // Find if they're a pair
+    const isMatch = matchPairs[lessonIdx].some(p => p[0] === leftVal && p[1] === rightVal);
+    if (isMatch) {
+      leftEl.classList.remove('selected'); leftEl.classList.add('matched');
+      rightEl.classList.remove('selected'); rightEl.classList.add('matched');
+      matchScores[lessonIdx]++;
+      document.getElementById(`match-score-${lessonIdx}`).textContent = `✅ ${matchScores[lessonIdx]} / ${matchTotals[lessonIdx]}`;
+      if (matchScores[lessonIdx] === matchTotals[lessonIdx]) {
+        addStar(2);
+        setTimeout(()=>confetti(), 200);
+      } else {
+        addStar(1);
+      }
+    } else {
+      leftEl.classList.add('wrong-flash'); rightEl.classList.add('wrong-flash');
+      setTimeout(()=>{ leftEl.classList.remove('wrong-flash','selected'); rightEl.classList.remove('wrong-flash','selected'); }, 500);
+    }
+    delete matchSelected[key];
+  }
+}
+
+// ─────────────────────────────────────────────────────
+//  STAR & CONFETTI
+// ─────────────────────────────────────────────────────
+function addStar(n) {
+  stars += n;
+  document.getElementById('star-count').textContent = stars;
+  const popup = document.getElementById('star-popup');
+  const msgs = ['Très bien! 🌟','Bravo! 🎉','Super! 🥳','Magnifique! ✨','Excellent! 🏆'];
+  document.getElementById('star-popup-text').textContent = `⭐ +${n} Star${n>1?'s':''}!`;
+  document.getElementById('star-popup-sub').textContent = msgs[Math.floor(Math.random()*msgs.length)];
+  popup.classList.add('show');
+  setTimeout(()=>popup.classList.remove('show'), 1800);
+}
+
+function confetti() {
+  const colors = ['#FF8C42','#F78FB3','#69C472','#6EC6F5','#FFD54F','#A78BFA','#FF6B6B'];
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.cssText = `
+      left: ${Math.random()*100}vw;
+      top: -20px;
+      background: ${colors[Math.floor(Math.random()*colors.length)]};
+      animation-delay: ${Math.random()*1}s;
+      animation-duration: ${1.5+Math.random()*1.5}s;
+      transform: rotate(${Math.random()*360}deg);
+      width: ${8+Math.random()*12}px;
+      height: ${8+Math.random()*12}px;
+      border-radius: ${Math.random()>0.5?'50%':'3px'};
+    `;
+    document.body.appendChild(piece);
+    setTimeout(()=>piece.remove(), 3000);
+  }
+}
+
+// ─────────────────────────────────────────────────────
+//  COLOR POP
+// ─────────────────────────────────────────────────────
+function showColorPop(fr, en, pr) {
+  const pop = document.getElementById('color-pop');
+  pop.innerHTML = `🎨 <strong>${fr}</strong> = ${en} &nbsp;·&nbsp; <span style="color:#aaa;font-size:0.88rem">🔊 ${pr}</span>`;
+  pop.style.display = 'block';
+}
+
+// ─────────────────────────────────────────────────────
+//  LESSON NAVIGATION
+// ─────────────────────────────────────────────────────
+function showLesson(idx) {
+  currentLesson = idx;
+  const lesson = lessons[idx];
+  document.getElementById('lesson-container').innerHTML = `
+    <div class="lesson-card">
+      <div class="lesson-header">
+        <div class="lesson-icon">${lesson.icon}</div>
+        <div>
+          <div class="lesson-title" style="color:${lesson.color}">${lesson.title}</div>
+          <div class="lesson-subtitle">${lesson.subtitle}</div>
+        </div>
+      </div>
+      ${lesson.render()}
+    </div>`;
+
+  // Update nav
+  const btns = document.querySelectorAll('.lesson-btn');
+  btns.forEach((b,i)=>{
+    b.classList.remove('active');
+    if (i === idx) b.classList.add('active');
+    if (lessonDone[i]) b.classList.add('done');
+  });
+
+  // Update progress
+  const pct = ((idx + 1) / lessons.length * 100).toFixed(0);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `Lesson ${idx+1} of ${lessons.length} — Keep going! 🚀`;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateLessonNav() {
+  const btns = document.querySelectorAll('.lesson-btn');
+  btns.forEach((b,i)=>{ if(lessonDone[i]) b.classList.add('done'); });
+}
+
+// ─────────────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────────────
+showLesson(0);
+</script>
+</body>
+</html>
