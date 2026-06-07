@@ -1988,6 +1988,187 @@ color:rgba(255,224,130,.98);
   }
 
 
+
+  /* ═════════ FINAL REQUEST UPDATES ═════════ */
+  .scroll-transition {
+    position: relative;
+    z-index: 250;
+    height: 112px;
+    margin: -56px auto -56px;
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255,248,235,.95) 0%, rgba(255,248,235,.78) 34%, rgba(255,248,235,0) 68%);
+  }
+
+  .scroll-transition-line {
+    width: 92px;
+    max-width: 24%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,82,42,.34), transparent);
+  }
+
+  .scroll-transition-pill {
+    min-width: 150px;
+    padding: 12px 20px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(200,82,42,.30);
+    background: rgba(255,250,242,.96);
+    color: #C8522A;
+    box-shadow:
+      0 14px 30px rgba(200,82,42,.10),
+      inset 0 1px 0 rgba(255,255,255,.95);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 600;
+    font-style: italic;
+    letter-spacing: .14em;
+    text-transform: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .scroll-transition-pill span:first-child {
+    transform: translateY(-1px);
+  }
+
+  .scroll-transition-arrow {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid rgba(200,82,42,.24);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    line-height: 15px;
+    text-align: center;
+    margin-top: 1px;
+    animation: scrollArrowBounce 1.45s ease-in-out infinite;
+  }
+
+  @keyframes scrollArrowBounce {
+    0%, 100% { transform: translateY(-1px); opacity: .78; }
+    50% { transform: translateY(4px); opacity: 1; }
+  }
+
+  .footer {
+    position: relative;
+    min-height: 46svh !important;
+    padding: 82px 28px 78px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: url('https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Page3c.png') center center / cover no-repeat !important;
+  }
+
+  .footer::before,
+  .footer::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: min(70%, 330px);
+    height: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent, rgba(200,82,42,.50), transparent);
+  }
+
+  .footer::before { top: 54px; }
+  .footer::after { bottom: 54px; }
+
+  .footer .names,
+  .footer .date-line,
+  .footer .cardia-credit a {
+    color: #C8522A !important;
+    text-shadow: none !important;
+  }
+
+  .footer .thin-line {
+    background: rgba(200,82,42,.62) !important;
+  }
+
+  .footer .names {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(58px, 13vw, 82px) !important;
+    line-height: .95;
+    margin-bottom: 16px;
+  }
+
+  .footer .date-line {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: .24em !important;
+    text-transform: uppercase;
+    margin-top: 0 !important;
+  }
+
+  .footer .thin-line {
+    width: 76px;
+    margin: 22px auto 20px;
+  }
+
+  .cardia-credit {
+    margin-top: 0 !important;
+  }
+
+  .cardia-credit .powered-label {
+    display: block;
+    margin-bottom: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .34em;
+    text-transform: uppercase;
+    color: #C8522A;
+    text-shadow: none;
+  }
+
+  .cardia-credit a {
+    font-size: 13px !important;
+    letter-spacing: .24em !important;
+    text-decoration: none !important;
+  }
+
+  .cardia-credit a u {
+    text-decoration: none !important;
+  }
+
+  .final-photo-section {
+    position: relative;
+    width: 100%;
+    min-height: 100svh;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .final-photo-section img {
+    width: 100%;
+    height: 100svh;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+  }
+
+  @media (max-width: 560px) {
+    .footer {
+      min-height: 44svh !important;
+      padding: 76px 22px 72px !important;
+    }
+
+    .footer::before { top: 48px; }
+    .footer::after { bottom: 48px; }
+  }
+
+
 </style>
 </head>
 
@@ -1997,9 +2178,9 @@ color:rgba(255,224,130,.98);
   <section class="intro-cover" id="introCover" aria-label="Invitation cover">
     <img class="intro-cover-img" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Envelope3.png" alt="Wedding invitation cover" />
     <div class="intro-cover-text">
-      <div class="intro-cover-names">Thomas</div>
+      <div class="intro-cover-names">Raymond</div>
       <div class="intro-cover-amp">&amp;</div>
-      <div class="intro-cover-names">Sarah</div>
+      <div class="intro-cover-names">Celia</div>
     </div>
     <button class="intro-open-btn" id="introOpenBtn" type="button">Open Invitation</button>
   </section>
@@ -2095,24 +2276,28 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
       <div class="invite-heart-line"><span>♥</span></div>
       <p class="family-kicker">TOGETHER WITH THEIR FAMILIES</p>
       <div class="parents-line">
-        <div class="parent-script"><span><strong>Robert &amp; Tina</strong></span><strong>Martin</strong></div>
+        <div class="parent-script"><span><strong>Michael &amp; Salma</strong></span><strong>Dahdah</strong></div>
         <div class="parent-amp">&amp;</div>
-        <div class="parent-script"><span><strong>Michael &amp; Anne</strong></span><strong>Clarke</strong></div>
+        <div class="parent-script"><span><strong>Georges  &amp; Lara</strong></span><strong>Hasrouny</strong></div>
       </div>
       <p class="request-line">Request the honor of your presence at the wedding of their son and daughter</p>
       <div class="couple-script">
-        <span>Thomas</span>
+        <span>Raymond</span>
         <div class="intro-cover-amp">&amp;</div>
-        <span>Sarah</span>
+        <span>Celia</span>
       </div>
     </div>
   </section>
 
-
-
-
-
-
+  <!-- PAGE 1 → SAVE THE DATE TRANSITION -->
+  <div class="scroll-transition" aria-hidden="true">
+    <span class="scroll-transition-line"></span>
+    <div class="scroll-transition-pill">
+      <span>Scroll down</span>
+      <span class="scroll-transition-arrow">⌄</span>
+    </div>
+    <span class="scroll-transition-line"></span>
+  </div>
 
 
   <!-- PAGE 3 — CALENDAR + COUNTDOWN -->
@@ -2133,7 +2318,7 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
     <div class="page-card reveal">
       <p class="kicker">Save the date</p>
       <h2 class="section-title">Wedding Day</h2>
-      <div class="calendar-card"><p class="cal-month">August 2027</p><div class="cal-grid" id="calGrid"></div></div>
+      <div class="calendar-card"><p class="cal-month">July 2026</p><div class="cal-grid" id="calGrid"></div></div>
       <div class="countdown flower-countdown" aria-label="Wedding countdown">
         <img class="countdown-flowers" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Countdown1.png" alt="" />
         <div class="flower-count-grid flower-count-numbers">
@@ -2224,7 +2409,7 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
         <p class="kicker"></p>
         <p class="kicker"></p>
       <h2 class="section-title">RSVP</h2>
-      <p class="subtitle">Before July 14, 2027</p>
+      <p class="subtitle">Before July 14, 2026</p>
 
       <div class="rsvp-box">
         <div class="step-dots">
@@ -2233,7 +2418,7 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
         </div>
 
         <div id="step1" class="rsvp-step guest-welcome-step">
-          <h3 class="guest-welcome-title">Dear <span id="guestWelcomeName">Guest</span>,</h3>
+         
           <p id="personalGuestNote" class="guest-welcome-note">Please confirm who can attend from this invitation.</p>
 
           <div id="manualGuestListWrap" class="manual-guest-list-wrap">
@@ -2247,7 +2432,7 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
 
         <div id="step3" class="rsvp-step" style="display:none;">
           <label class="form-label" for="guestMsg">Leave a wish <span style="font-weight:400;">(optional)</span></label>
-          <textarea id="guestMsg" class="form-field" rows="4" placeholder="Share a wish for Thomas & Sarah…"></textarea>
+          <textarea id="guestMsg" class="form-field" rows="4" placeholder="Share a wish for Raymond & Celia…"></textarea>
           <div class="btn-grid">
             <button class="btn-soft" type="button" onclick="goStep(3,1)">← Back</button>
             <button class="btn-solid" id="sendBtn" type="button" onclick="submitRSVP()">Send ✦</button>
@@ -2264,13 +2449,19 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
   </section>
 
   <footer class="footer">
-    <h2 class="names">Thomas &amp; Sarah</h2>
-    <p class="date-line">August 14, 2027 · Ehden, Lebanon</p>
+    <h2 class="names">Raymond &amp; Celia</h2>
+    <p class="date-line">July 16, 2026 · Ehden, Lebanon</p>
     <div class="thin-line"></div>
     <div class="cardia-credit">
-      <a href="https://www.cardiastudios.com/" target="_blank" rel="noopener">Powered by <u>Cardia Studios</u></a>
+      <span class="powered-label">Powered by</span>
+      <a href="https://www.cardiastudios.com/" target="_blank" rel="noopener"><u>Cardia Studios</u></a>
     </div>
   </footer>
+
+
+  <section class="final-photo-section" aria-label="Raymond and Celia photo">
+    <img src="https://raw.githubusercontent.com/NemerDavid/web-des/main/Raymond/Ray_Celia.jpg" alt="Raymond and Celia" loading="lazy" decoding="async">
+  </section>
 
 </div>
 
@@ -2358,7 +2549,7 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
       el.textContent = day;
       grid.appendChild(el);
     });
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 2; i++) {
       const el = document.createElement('div');
       el.className = 'cal-cell empty';
       el.textContent = '.';
@@ -2366,13 +2557,13 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
     }
     for (let day = 1; day <= 31; day++) {
       const el = document.createElement('div');
-      el.className = 'cal-cell' + (day === 14 ? ' highlight' : '');
-      el.innerHTML = day === 14 ? '<span class="day-txt">14</span>' : day;
+      el.className = 'cal-cell' + (day === 16 ? ' highlight' : '');
+      el.innerHTML = day === 16 ? '<span class="day-txt">16</span>' : day;
       grid.appendChild(el);
     }
   })();
 
-  const TARGET = new Date('2027-08-14T18:00:00');
+  const TARGET = new Date('2026-07-16T18:00:00');
   function tickCountdown() {
     const diff = Math.max(0, TARGET - new Date());
     const pad = n => String(n).padStart(2, '0');
@@ -2606,7 +2797,7 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
     [1,2].forEach(i => document.getElementById('dot-' + i).classList.toggle('on', i <= activeDot));
   }
 
-  const COUPLE_NAME = 'Thomas & Sarah';
+  const COUPLE_NAME = 'Raymond & Celia';
   const CUSTOMER_EMAIL = 'cardiastudios@gmail.com';
   const RSVP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJmJqBu9U9t6lKlbBMCvHtkXNBo6026SirsYWAhVMo_H5l9gRhoBmXipvAvI47c5v4lw/exec';
 
