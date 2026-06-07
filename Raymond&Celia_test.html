@@ -2821,8 +2821,8 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
   }
 
   const COUPLE_NAME = 'Raymond & Celia';
-  const CUSTOMER_EMAIL = 'cardiastudios@gmail.com';
-  const RSVP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqokTQKG89eDOpSLqz_5kesM7hue6p6C5Yz1IM5SyNFJR2HFC5zgS5KrujmFUxGh0Y-A/exec';
+  const CUSTOMER_EMAIL = 'hasrounycelia@gmail.com';
+  const RSVP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwynzVP1zfdldoAW7lSYPxik2zl-iEkqQ2c2ADwMtS1pxApThijiJtO0KJi-AF8CZxc3A/exec';
 
   function showRSVPThankYou(groupName, attendingCount) {
     ['step1','step2','step3'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
@@ -2878,13 +2878,32 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
       if (!guest.name || !guest.name.trim()) guest.attending = 'No';
     });
 
-    const attendingCount = guestResponses.filter(guest => guest.name && guest.name.trim() && guest.attending === 'Yes').length;
-    const submittedGuestNames = guestResponses.map(guest => guest.name.trim()).filter(Boolean);
-    const groupName = formatGuestNames(submittedGuestNames);
-    const responseLines = guestResponses
+    const namedResponses = guestResponses
       .filter(guest => guest.name && guest.name.trim())
-      .map(guest => guest.slot + ' - ' + guest.name + ': ' + guest.attending)
+      .map(guest => ({
+        slot: guest.slot || '',
+        name: guest.name.trim(),
+        attending: guest.attending === 'Yes' ? 'Yes' : 'No'
+      }));
+
+    const attendingGuestsList = namedResponses
+      .filter(guest => guest.attending === 'Yes')
+      .map(guest => guest.name);
+
+    const notAttendingGuestsList = namedResponses
+      .filter(guest => guest.attending !== 'Yes')
+      .map(guest => guest.name);
+
+    const attendingCount = attendingGuestsList.length;
+    const submittedGuestNames = namedResponses.map(guest => guest.name);
+    const groupName = formatGuestNames(submittedGuestNames);
+
+    const responseLines = namedResponses
+      .map(guest => guest.name + ' — ' + (guest.attending === 'Yes' ? 'Attending' : 'Not attending'))
       .join('\n');
+
+    const attendingGuests = attendingGuestsList.join(', ');
+    const notAttendingGuests = notAttendingGuestsList.join(', ');
 
     const payload = {
       event: COUPLE_NAME,
@@ -2892,10 +2911,20 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
       guest_name: groupName,
       invited_guest_from_link: invitedGroupForClient,
       attending: attendingCount > 0 ? 'Yes' : 'No',
-      attending_summary: responseLines,
       guest_count: attendingCount,
       guest_limit: guestLimit,
-      guests_json: JSON.stringify(guestResponses),
+
+      /* These fields are used by the Google Sheet + email script */
+      attending_guests: attendingGuests,
+      not_attending_guests: notAttendingGuests,
+      individual_responses: responseLines,
+
+      /* Kept for compatibility with older Google Sheet scripts */
+      attending_summary: responseLines,
+      guest_responses: responseLines,
+      responses: responseLines,
+      guests_json: JSON.stringify(namedResponses),
+
       message: msg || '',
       page_url: window.location.href,
       submitted_at: new Date().toISOString()
