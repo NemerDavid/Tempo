@@ -1861,24 +1861,28 @@ color:rgba(255,224,130,.98);
 .page-transition-girland-wrap {
     position: relative;
     z-index: 120;
-    width: 95%;
+    width: 40%;
     height: 0;
     overflow: visible;
     pointer-events: none;
   }
   .page-transition-girland {
     position: absolute;
-    left: 50%;
-    top: -125px; /* use px or vh, not % */
-    width: 124%;
-    height: auto;
+    left: 120%;
+    top: -105px;
+
+    /* Fixed visual sizing: keeps Girland15.png in the same relative
+       place/size instead of resizing with every screen width. */
+    width: 645px !important;
+    height: auto !important;
     max-width: none !important;
-    transform: translate(-50%, 0);
+
+    transform: translateX(-50%) scaleX(-1);
+    transform-origin: center top;
     z-index: 120;
     pointer-events: none;
     user-select: none;
     filter: drop-shadow(0 8px 14px rgba(200,82,42,.16));
-    transform: translate(-50%, 0) scaleX(-1);
   }
 
 
@@ -1904,7 +1908,9 @@ color:rgba(255,224,130,.98);
 
   @media (max-width: 420px) {
     .page-transition-girland {
-      width: 112%;
+      width: 645px !important;
+      left: 50%;
+      top: -125px;
     }
   }
 
@@ -2105,7 +2111,7 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
 
   <!-- Seam decoration: centered exactly on the transition line between Page 1 and Page 2 -->
   <div class="page-transition-girland-wrap" aria-hidden="true">
-    <img class="page-transition-girland" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Girland15.png" alt="" />
+    <img class="page-transition-girland" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Girland14.png" alt="" />
   </div>
 
 
