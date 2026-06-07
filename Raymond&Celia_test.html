@@ -109,14 +109,14 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.18));
+    background: linear-gradient(180deg, rgba(255,255,255,.01), rgba(0,0,0,.10));
     z-index: 1;
     pointer-events: none;
   }
 
   .intro-cover-text {
     position: absolute;
-    top: 14%;
+    top: 18%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 2;
@@ -137,7 +137,7 @@
 
   .intro-cover-names {
     font-family: 'Great Vibes', cursive;
-    font-size: clamp(58px, 15vw, 88px);
+    font-size: clamp(52px, 13vw, 78px);
     line-height: .9;
     margin-top: -3px;
     font-weight: 400;
@@ -1993,69 +1993,82 @@ color:rgba(255,224,130,.98);
   .scroll-transition {
     position: relative;
     z-index: 250;
-    height: 112px;
-    margin: -56px auto -56px;
+    height: 108px;
+    margin: -54px auto -54px;
     width: 100%;
     max-width: 520px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
     pointer-events: none;
+  }
+
+  .scroll-transition::before {
+    content: '';
+    position: absolute;
+    inset: 0;
     background:
-      radial-gradient(circle at 50% 50%, rgba(255,248,235,.95) 0%, rgba(255,248,235,.78) 34%, rgba(255,248,235,0) 68%);
+      radial-gradient(circle at center, rgba(255,248,235,.34) 0 15%, rgba(255,248,235,.16) 26%, rgba(255,248,235,0) 58%),
+      linear-gradient(180deg, rgba(255,248,235,0) 0%, rgba(255,248,235,.30) 42%, rgba(255,248,235,.26) 58%, rgba(255,248,235,0) 100%);
+    filter: blur(.2px);
   }
 
-  .scroll-transition-line {
-    width: 92px;
-    max-width: 24%;
+  .scroll-transition::after {
+    content: '';
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: 50%;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(200,82,42,.34), transparent);
+    transform: translateY(-50%);
+    background: linear-gradient(90deg, transparent, rgba(200,82,42,.16), transparent);
   }
 
-  .scroll-transition-pill {
-    min-width: 150px;
-    padding: 12px 20px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(200,82,42,.30);
-    background: rgba(255,250,242,.96);
-    color: #C8522A;
-    box-shadow:
-      0 14px 30px rgba(200,82,42,.10),
-      inset 0 1px 0 rgba(255,255,255,.95);
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 15px;
-    font-weight: 600;
-    font-style: italic;
-    letter-spacing: .14em;
-    text-transform: none;
-    display: flex;
+  .scroll-transition-symbol {
+    position: relative;
+    z-index: 3;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    color: #C8522A;
+    background: rgba(255,250,242,.30);
+    border: 1px solid rgba(200,82,42,.18);
+    box-shadow:
+      0 8px 18px rgba(200,82,42,.045),
+      inset 0 1px 0 rgba(255,255,255,.45);
+    backdrop-filter: blur(1.5px);
   }
 
-  .scroll-transition-pill span:first-child {
-    transform: translateY(-1px);
+  .scroll-transition-symbol::before,
+  .scroll-transition-symbol::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 13px;
+    height: 13px;
+    border-right: 1.45px solid currentColor;
+    border-bottom: 1.45px solid currentColor;
+    transform: translateX(-50%) rotate(45deg);
+    opacity: .58;
+    animation: scrollSymbolFloat 2.1s ease-in-out infinite;
   }
 
-  .scroll-transition-arrow {
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 1px solid rgba(200,82,42,.24);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
-    line-height: 15px;
-    text-align: center;
-    margin-top: 1px;
-    animation: scrollArrowBounce 1.45s ease-in-out infinite;
+  .scroll-transition-symbol::before {
+    top: 12px;
+    opacity: .28;
+    animation-delay: .16s;
   }
 
-  @keyframes scrollArrowBounce {
-    0%, 100% { transform: translateY(-1px); opacity: .78; }
-    50% { transform: translateY(4px); opacity: 1; }
+  .scroll-transition-symbol::after {
+    top: 20px;
+  }
+
+  @keyframes scrollSymbolFloat {
+    0%, 100% { transform: translateX(-50%) translateY(-1px) rotate(45deg); opacity: .34; }
+    50% { transform: translateX(-50%) translateY(3px) rotate(45deg); opacity: .68; }
   }
 
   .footer {
@@ -2140,6 +2153,14 @@ color:rgba(255,224,130,.98);
 
   .cardia-credit a u {
     text-decoration: none !important;
+  }
+
+  .cardia-credit .instagram-underline {
+    display: block;
+    width: 112px;
+    height: 1px;
+    margin: 10px auto 0;
+    background: linear-gradient(90deg, transparent, rgba(200,82,42,.76), transparent);
   }
 
   .final-photo-section {
@@ -2291,12 +2312,7 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
 
   <!-- PAGE 1 → SAVE THE DATE TRANSITION -->
   <div class="scroll-transition" aria-hidden="true">
-    <span class="scroll-transition-line"></span>
-    <div class="scroll-transition-pill">
-      <span>Scroll down</span>
-      <span class="scroll-transition-arrow">⌄</span>
-    </div>
-    <span class="scroll-transition-line"></span>
+    <span class="scroll-transition-symbol"></span>
   </div>
 
 
@@ -2394,7 +2410,7 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
       <p class="kicker">With love</p>
       <h2 class="section-title">Gift Registry</h2>
       <p class="body-text">Your love, laughter, and presence are all we could wish for. For those who wish, a wedding list is available at all Whish Money branches.</p>
-      <div class="info-card"><h3 class="bank-name">Whish Money</h3><div class="thin-line"></div><p class="bank-line">ACC# xxxxxx</p></div>
+      <div class="info-card"><h3 class="bank-name">Whish Money</h3><div class="thin-line"></div><p class="bank-line">ACC# 31424431-03</p></div>
     </div>
   </section>
 
@@ -2454,7 +2470,8 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
     <div class="thin-line"></div>
     <div class="cardia-credit">
       <span class="powered-label">Powered by</span>
-      <a href="https://www.cardiastudios.com/" target="_blank" rel="noopener"><u>Cardia Studios</u></a>
+      <a href="https://www.instagram.com/cardiastudios/" target="_blank" rel="noopener"><u>Cardia Studios</u></a>
+      <span class="instagram-underline" aria-hidden="true"></span>
     </div>
   </footer>
 
