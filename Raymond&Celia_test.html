@@ -1858,35 +1858,36 @@ color:rgba(255,224,130,.98);
   /* ═════════ PAGE 1 → PAGE 2 TRANSITION GIRLAND ═════════
      Put the PNG BETWEEN the two pages, not only inside Page 2.
      The negative margins center it over the seam and cover the hard separating line. */
-.page-transition-girland-wrap {
+  .page-transition-girland-wrap {
     position: relative;
     z-index: 120;
-    width: 40%;
+    width: 100%;
     height: 0;
     overflow: visible;
     pointer-events: none;
   }
+
   .page-transition-girland {
     position: absolute;
-    left: 120%;
-    top: -5px;
+    left: 50%;
 
-    /* Fixed visual sizing: keeps Girland15.png in the same relative
-       place/size instead of resizing with every screen width. */
-    width: 645px !important;
-    height: auto !important;
+    /*
+      Keep Girland15.png locked to the invitation page size, not the viewport.
+      The page is max 520px wide, so these values scale from the real page width
+      on mobile and stay identical on desktop.
+    */
+    --girland-page-w: min(100vw, 520px);
+    top: calc(var(--girland-page-w) * 0.67);
+    width: calc(var(--girland-page-w) * 1.24);
+
+    height: auto;
     max-width: none !important;
-
-    transform: translateX(-50%) scaleX(-1);
-    transform-origin: center top;
+    transform: translate(-50%, -50%) scaleX(-1);
     z-index: 120;
     pointer-events: none;
     user-select: none;
     filter: drop-shadow(0 8px 14px rgba(200,82,42,.16));
   }
-
-
-
 
 
 
@@ -1906,13 +1907,12 @@ color:rgba(255,224,130,.98);
     z-index: 1;
   }
 
-  @media (max-width: 420px) {
+   @media (max-width: 420px) {
     .page-transition-girland {
-      width: 625px !important;
-      left: 70%;
-      top: -105px;
+      /* width and top are already tied to the page width above */
     }
   }
+
 
 
   /* ═════════ USER REQUEST FINAL ADJUSTMENTS ═════════
@@ -2111,7 +2111,7 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
 
   <!-- Seam decoration: centered exactly on the transition line between Page 1 and Page 2 -->
   <div class="page-transition-girland-wrap" aria-hidden="true">
-    <img class="page-transition-girland" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Image1.png" alt="" />
+    <img class="page-transition-girland" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Girland15.png" alt="" />
   </div>
 
 
