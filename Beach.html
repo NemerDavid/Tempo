@@ -17,6 +17,13 @@
       --cream: #fff3da;
       --dark: #100807;
 
+      /* Fixed Open Invitation button position inside the 9:16 stage.
+         These percentages are relative to the visible invitation screen,
+         not the full panoramic image, so the button stays in the same place
+         on desktop, mobile, and after viewport resize/address-bar changes. */
+      --open-invitation-x: 48.33%;
+      --open-invitation-y: 79.6%;
+
       /* 9:16 preview frame.
          On desktop it shows a true mobile-shaped screen.
          On mobile it keeps the same ratio instead of stretching/reflowing. */
@@ -517,10 +524,10 @@
 
     .open-invitation-btn {
       position: absolute;
-      left: 12.03%;
-      top: 79.6%;
+      left: var(--open-invitation-x);
+      top: var(--open-invitation-y);
       transform: translate(-50%, -50%);
-      z-index: 4;
+      z-index: 30;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -1702,7 +1709,6 @@ alt=""
           <p class="hero-wedding-date">14 august 2027</p>
         </div>
 
-        <button class="open-invitation-btn" id="openInvitationBtn" type="button">Open Invitation</button>
 
         <section class="hotspot invitation-card" data-point="1">
         
@@ -1796,6 +1802,9 @@ alt=""
         
       </div>
     </div>
+
+
+    <button class="open-invitation-btn" id="openInvitationBtn" type="button">Open Invitation</button>
 
     <div class="photo-album-modal" id="photoAlbumModal" aria-hidden="true">
       <button class="photo-album-close" id="photoAlbumClose" type="button" aria-label="Close photo album">×</button>
@@ -1943,15 +1952,20 @@ const points = [0.095, 0.165, 0.245, 0.47, 0.695, 0.9];
       wrap.scrollTo({ left: maxScroll * points[index], behavior });
     }
 
+    function positionLockedOpeningScene() {
+      const maxScroll = wrap.scrollWidth - wrap.clientWidth;
+      wrap.scrollLeft = maxScroll * points[0];
+    }
+
     window.addEventListener("load", () => {
-      requestAnimationFrame(() => {
-        const maxScroll = wrap.scrollWidth - wrap.clientWidth;
-        wrap.scrollLeft = maxScroll * points[0];
-      });
+      requestAnimationFrame(positionLockedOpeningScene);
     });
 
     window.addEventListener("resize", () => {
-      if (document.body.classList.contains("invitation-locked")) return;
+      if (document.body.classList.contains("invitation-locked")) {
+        requestAnimationFrame(positionLockedOpeningScene);
+        return;
+      }
 
       /* On mobile, opening/closing the keyboard fires resize events.
          If an RSVP field was focused, do NOT snap to another panorama point;
@@ -1963,6 +1977,19 @@ const points = [0.095, 0.165, 0.245, 0.47, 0.695, 0.9];
 
       requestAnimationFrame(() => scrollToPoint(currentPointIndex, "auto"));
     });
+
+    window.addEventListener("orientationchange", () => {
+      if (!document.body.classList.contains("invitation-locked")) return;
+      window.setTimeout(() => requestAnimationFrame(positionLockedOpeningScene), 250);
+    });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", () => {
+        if (document.body.classList.contains("invitation-locked")) {
+          requestAnimationFrame(positionLockedOpeningScene);
+        }
+      });
+    }
 
     openInvitationBtn.addEventListener("click", async (e) => {
       e.preventDefault();
