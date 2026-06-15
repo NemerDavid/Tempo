@@ -41,6 +41,21 @@
     pointer-events: none;
   }
 
+
+  /* Lock the invitation so guests cannot scroll past the cover before opening */
+  body.intro-locked {
+    overflow: hidden !important;
+    height: 100vh;
+    height: 100svh;
+    touch-action: none;
+  }
+
+  body.intro-locked .page {
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden !important;
+  }
+
   .invitation-loader {
     position: fixed;
     inset: 0;
@@ -2222,7 +2237,7 @@ color:rgba(255,224,130,.98);
 </style>
 </head>
 
-<body class="invitation-loading">
+<body class="invitation-loading intro-locked">
 <div class="invitation-loader" id="invitationLoader" role="status" aria-live="polite" aria-label="Loading invitation">
   <div class="loader-card">
     <div class="loader-script">Raymond &amp; Celia</div>
@@ -2634,7 +2649,12 @@ fill="none" stroke="#6f5945" stroke-width="2"/>
     updateMusicButton();
   }
 
+  function unlockInvitationScroll() {
+    document.body.classList.remove('intro-locked');
+  }
+
   function goToInvitationStart() {
+    unlockInvitationScroll();
     if (introVideo) { introVideo.pause(); introVideo.currentTime = 0; }
     if (introVideoScreen) introVideoScreen.classList.remove('show');
     const firstSection = document.getElementById('heroCover');
