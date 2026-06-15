@@ -1165,7 +1165,7 @@ html, body{
 /* Music play / stop button */
 #musicBtn{
   position:absolute;
-  right:16px;
+  right:14px;
   bottom:62px;
   z-index:450;
   width:48px;
@@ -2630,11 +2630,127 @@ html, body{
   }
 }
 
+
+/* ═════════ CARDIA FIX — ELEGANT ASSET LOADER FOR HEAVY PNG TEMPLATE ═════════
+   Keeps guests paused until the visual invitation assets are loaded. */
+#stage.assets-loading{
+  cursor:wait !important;
+}
+#stage.assets-loading #panorama,
+#stage.assets-loading #travelGondola,
+#stage.assets-loading #progress,
+#stage.assets-loading #hint,
+#stage.assets-loading #musicBtn{
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+#stage.assets-ready #panorama,
+#stage.assets-ready #travelGondola,
+#stage.assets-ready #progress,
+#stage.assets-ready #hint,
+#stage.assets-ready #musicBtn{
+  opacity:1;
+  transition:opacity .75s ease;
+}
+#loadingOverlay{
+  position:absolute;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:8cqw;
+  background:
+    radial-gradient(circle at 50% 34%, rgba(255,245,230,.95) 0%, rgba(244,222,190,.88) 38%, rgba(212,184,150,.96) 100%);
+  color:#373222;
+  text-align:center;
+  pointer-events:auto;
+  transition:opacity .75s ease, visibility .75s ease;
+}
+#loadingOverlay.is-hidden{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+.loading-card{
+  width:min(82%, 360px);
+  padding:8cqw 6.5cqw;
+  border-radius:7cqw;
+  background:rgba(255,245,230,.58);
+  border:1px solid rgba(196,149,106,.46);
+  box-shadow:0 24px 65px rgba(80,40,10,.20);
+  backdrop-filter:blur(10px);
+}
+.loading-title{
+  font-family:'Great Vibes', cursive;
+  font-size:min(12.5cqw, 58px);
+  line-height:.95;
+  color:#373222;
+  text-shadow:0 2px 12px rgba(255,255,255,.72);
+}
+.loading-subtitle{
+  margin-top:3cqw;
+  font-family:'Jost', sans-serif;
+  font-size:min(2.3cqw, 11px);
+  line-height:1.7;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:rgba(74,46,26,.64);
+}
+.loading-bar{
+  width:100%;
+  height:4px;
+  margin:5cqw auto 2.5cqw;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(74,46,26,.14);
+}
+.loading-bar span{
+  display:block;
+  width:0%;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg, var(--gold), var(--blush));
+  transition:width .25s ease;
+}
+.loading-percent{
+  font-family:'Jost', sans-serif;
+  font-size:min(2.4cqw, 11px);
+  letter-spacing:.26em;
+  text-transform:uppercase;
+  color:rgba(74,46,26,.58);
+}
+.loading-note{
+  margin-top:3cqw;
+  font-family:'Cormorant Garamond', serif;
+  font-size:min(3.5cqw, 17px);
+  line-height:1.35;
+  color:rgba(55,50,34,.70);
+}
+@media (max-width:600px), (pointer:coarse){
+  #loadingOverlay{padding:7vw;}
+  .loading-card{width:86%; padding:9vw 7vw; border-radius:28px;}
+  .loading-title{font-size:54px;}
+  .loading-subtitle{font-size:10px; margin-top:14px;}
+  .loading-bar{margin:24px auto 12px;}
+  .loading-percent{font-size:10px;}
+  .loading-note{font-size:16px; margin-top:14px;}
+}
+
 </style>
 </head>
 <body>
 
-<div id="stage" class="invitation-locked">
+<div id="stage" class="invitation-locked assets-loading">
+<div id="loadingOverlay" role="status" aria-live="polite" aria-label="Loading invitation">
+  <div class="loading-card">
+    <div class="loading-title">Preparing Venice</div>
+    <div class="loading-subtitle">Please wait a moment</div>
+    <div class="loading-bar"><span id="loadingBarFill"></span></div>
+    <div class="loading-percent" id="loadingPercent">0%</div>
+
+  </div>
+</div>
 <audio id="bgMusic" preload="auto" loop>
   <source src="https://raw.githubusercontent.com/NemerDavid/web-des/main/Music/paulyudin-romantic-wedding-piano-160698.mp3" type="audio/mpeg">
 </audio>
@@ -3173,6 +3289,75 @@ html, body{
 </div><!-- /stage -->
 
 <script>
+
+  /* ELEGANT PRELOADER FOR HEAVY PNG ASSETS
+     The overlay blocks the invitation until the artwork is ready.
+     A safety timeout prevents guests from being stuck if one remote image is slow or blocked. */
+  (function initCardiaAssetLoader(){
+    const loaderStage = document.getElementById('stage');
+    const loaderOverlay = document.getElementById('loadingOverlay');
+    const loaderBar = document.getElementById('loadingBarFill');
+    const loaderPercent = document.getElementById('loadingPercent');
+    if (!loaderStage || !loaderOverlay) return;
+
+    const imageUrls = [...new Set(
+      Array.from(document.querySelectorAll('img[src]'))
+        .map(img => img.currentSrc || img.getAttribute('src'))
+        .filter(Boolean)
+    )];
+
+    const minimumVisibleTime = 1200;
+    const safetyTimeout = 14000;
+    const startedAt = Date.now();
+    let done = 0;
+    let finished = false;
+
+    function setLoaderProgress(value){
+      const pct = Math.max(0, Math.min(100, Math.round(value)));
+      if (loaderBar) loaderBar.style.width = pct + '%';
+      if (loaderPercent) loaderPercent.textContent = pct + '%';
+    }
+
+    function finishLoader(){
+      if (finished) return;
+      finished = true;
+      setLoaderProgress(100);
+      const wait = Math.max(0, minimumVisibleTime - (Date.now() - startedAt));
+      setTimeout(() => {
+        loaderStage.classList.remove('assets-loading');
+        loaderStage.classList.add('assets-ready');
+        loaderOverlay.classList.add('is-hidden');
+        loaderOverlay.setAttribute('aria-hidden', 'true');
+        setTimeout(() => loaderOverlay.remove(), 900);
+      }, wait + 250);
+    }
+
+    if (!imageUrls.length) {
+      finishLoader();
+      return;
+    }
+
+    function markAssetReady(){
+      if (finished) return;
+      done += 1;
+      setLoaderProgress((done / imageUrls.length) * 100);
+      if (done >= imageUrls.length) finishLoader();
+    }
+
+    setLoaderProgress(3);
+
+    imageUrls.forEach(src => {
+      const img = new Image();
+      img.onload = markAssetReady;
+      img.onerror = markAssetReady;
+      img.src = src;
+      if (img.complete) markAssetReady();
+    });
+
+    window.addEventListener('load', () => setTimeout(finishLoader, 2500), { once:true });
+    setTimeout(finishLoader, safetyTimeout);
+  })();
+
   const panorama = document.getElementById('panorama');
   const progress = document.getElementById('progress');
   const hint     = document.getElementById('hint');
@@ -3492,6 +3677,22 @@ function updateGuestScrollUI(){
   if(bar) bar.style.display=needsScroll?'block':'none';
 }
 document.addEventListener('DOMContentLoaded',()=>setTimeout(updateGuestScrollUI,100));
+
+
+function forceGuestArrowVisibility(){
+  const guestInputs=document.querySelectorAll('input[type="text"], .guest-row');
+  const count=guestInputs.length;
+  const up=document.querySelector('.guest-scroll-up');
+  const down=document.querySelector('.guest-scroll-down');
+  const bar=document.querySelector('.guest-scrollbar-wrap');
+  if(count<=3){
+    if(up) up.style.display='none';
+    if(down) down.style.display='none';
+    if(bar) bar.style.display='none';
+  }
+}
+document.addEventListener('DOMContentLoaded',()=>setTimeout(forceGuestArrowVisibility,300));
+window.addEventListener('load',()=>setTimeout(forceGuestArrowVisibility,300));
 
 </script>
 </body>
