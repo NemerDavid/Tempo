@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Thomas & Sarah — Beach Wedding</title>
 
+  <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+  <link rel="preconnect" href="https://github.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -1441,11 +1444,142 @@
   scroll-margin: 0 !important;
 }
 
+
+/* CARDIA UPDATE — Beach asset loader until PNG/background images are ready */
+.beach-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--screen-h) * .035);
+  background:
+    radial-gradient(circle at 50% 34%, rgba(248,216,138,.18), transparent 38%),
+    linear-gradient(180deg, rgba(16,8,7,.97), rgba(8,4,3,.98));
+  color: var(--cream);
+  text-align: center;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity .55s ease, visibility .55s ease;
+}
+
+.beach-loader.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.beach-loader-card {
+  width: min(82%, calc(var(--screen-h) * .38));
+  padding: calc(var(--screen-h) * .035) calc(var(--screen-h) * .030);
+  border-radius: calc(var(--screen-h) * .030);
+  border: 1px solid rgba(248,216,138,.34);
+  background: rgba(12,5,4,.54);
+  box-shadow:
+    0 calc(var(--screen-h) * .022) calc(var(--screen-h) * .060) rgba(0,0,0,.42),
+    inset 0 0 0 1px rgba(255,245,214,.055);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+}
+
+.beach-loader-title {
+  margin: 0;
+  font-family: "Great Vibes", cursive;
+  font-weight: 400;
+  font-size: calc(var(--screen-h) * .052);
+  line-height: 1;
+  color: var(--gold);
+  text-shadow:
+    0 0 calc(var(--screen-h) * .008) rgba(255,238,174,.90),
+    0 0 calc(var(--screen-h) * .024) rgba(255,177,70,.60);
+}
+
+.beach-loader-text {
+  margin: calc(var(--screen-h) * .018) 0 0;
+  font-family: "Montserrat", sans-serif;
+  font-size: calc(var(--screen-h) * .0105);
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: .20em;
+  text-transform: uppercase;
+  color: rgba(255,243,218,.84);
+}
+
+.beach-loader-bar {
+  position: relative;
+  width: 100%;
+  height: calc(var(--screen-h) * .009);
+  margin: calc(var(--screen-h) * .026) auto calc(var(--screen-h) * .014);
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255,243,218,.16);
+  box-shadow: inset 0 0 calc(var(--screen-h) * .007) rgba(0,0,0,.32);
+}
+
+.beach-loader-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ffe8a4, #f8d88a, #d99d45);
+  box-shadow: 0 0 calc(var(--screen-h) * .014) rgba(248,216,138,.58);
+  transition: width .25s ease;
+}
+
+.beach-loader-percent {
+  font-family: "Montserrat", sans-serif;
+  font-size: calc(var(--screen-h) * .0105);
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(255,243,218,.74);
+}
+
+.beach-loader-dots::after {
+  content: "";
+  animation: beachLoaderDots 1.2s steps(4, end) infinite;
+}
+
+@keyframes beachLoaderDots {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75%, 100% { content: "..."; }
+}
+
+body.beach-assets-loading .pano-wrap,
+body.beach-assets-loading .music,
+body.beach-assets-loading .open-invitation-btn,
+body.beach-assets-loading .open-photo-album-btn,
+body.beach-assets-loading .photo-album-modal,
+body.beach-assets-loading .scroll-progress-wrap,
+body.beach-assets-loading .drag-hint {
+  pointer-events: none !important;
+}
+
+@media (max-width: 720px) {
+  .beach-loader-card {
+    width: min(86%, calc(var(--screen-h) * .39));
+  }
+}
+
   </style>
 </head>
 
-<body class="opened invitation-locked">
+<body class="opened invitation-locked beach-assets-loading">
   <main class="stage">
+
+    <div class="beach-loader" id="beachLoader" role="status" aria-live="polite" aria-label="Loading invitation images">
+      <div class="beach-loader-card">
+        <h2 class="beach-loader-title">Preparing your invitation</h2>
+        <p class="beach-loader-text">Loading wedding details<span class="beach-loader-dots"></span></p>
+        <div class="beach-loader-bar" aria-hidden="true">
+          <div class="beach-loader-fill" id="beachLoaderFill"></div>
+        </div>
+        <div class="beach-loader-percent" id="beachLoaderPercent">0%</div>
+      </div>
+    </div>
     <div class="drag-hint">Drag left / right to explore</div>
 
     <button class="music" id="musicBtn" aria-label="Toggle music">♫</button>
@@ -1681,6 +1815,119 @@ alt=""
   </main>
 
   <script>
+
+    (function initBeachAssetLoader() {
+      document.body.classList.add("beach-assets-loading");
+
+      const loader = document.getElementById("beachLoader");
+      const fill = document.getElementById("beachLoaderFill");
+      const percent = document.getElementById("beachLoaderPercent");
+      const minVisibleMs = 700;
+      const maxWaitMs = 12000;
+      const startedAt = Date.now();
+
+      function setProgress(value) {
+        const safeValue = Math.max(0, Math.min(100, Math.round(value)));
+        if (fill) fill.style.width = safeValue + "%";
+        if (percent) percent.textContent = safeValue + "%";
+      }
+
+      function normalizeAssetUrl(url) {
+        if (!url) return "";
+        const clean = String(url).trim().replace(/^['"]|['"]$/g, "");
+        try {
+          return new URL(clean, window.location.href).href;
+        } catch (error) {
+          return clean;
+        }
+      }
+
+      function collectImageAssets() {
+        const urls = new Set();
+
+        document.querySelectorAll("img[src]").forEach((img) => {
+          const src = img.getAttribute("src");
+          if (src) urls.add(normalizeAssetUrl(src));
+        });
+
+        document.querySelectorAll("source[srcset]").forEach((source) => {
+          const srcset = source.getAttribute("srcset") || "";
+          srcset.split(",").forEach((part) => {
+            const url = part.trim().split(/\s+/)[0];
+            if (url) urls.add(normalizeAssetUrl(url));
+          });
+        });
+
+        Array.from(document.styleSheets).forEach((sheet) => {
+          let rules = [];
+          try {
+            rules = Array.from(sheet.cssRules || []);
+          } catch (error) {
+            rules = [];
+          }
+
+          rules.forEach((rule) => {
+            const text = rule.cssText || "";
+            const matches = text.matchAll(/url\(([^)]+)\)/g);
+            for (const match of matches) {
+              const url = normalizeAssetUrl(match[1]);
+              if (url) urls.add(url);
+            }
+          });
+        });
+
+        const inlineStyleUrls = document.documentElement.innerHTML.matchAll(/url\(([^)]+)\)/g);
+        for (const match of inlineStyleUrls) {
+          const url = normalizeAssetUrl(match[1]);
+          if (url) urls.add(url);
+        }
+
+        return Array.from(urls).filter((url) => /\.(png|jpe?g|gif|webp|svg)(\?|#|$)/i.test(url));
+      }
+
+      function preloadImage(url) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.decoding = "async";
+          img.onload = () => resolve({ url, ok: true });
+          img.onerror = () => resolve({ url, ok: false });
+          img.src = url;
+          if (img.complete) resolve({ url, ok: true });
+        });
+      }
+
+      function finishLoader() {
+        const elapsed = Date.now() - startedAt;
+        const delay = Math.max(0, minVisibleMs - elapsed);
+        setProgress(100);
+        window.setTimeout(() => {
+          document.body.classList.remove("beach-assets-loading");
+          if (loader) {
+            loader.classList.add("hidden");
+            loader.setAttribute("aria-hidden", "true");
+          }
+        }, delay);
+      }
+
+      const assets = collectImageAssets();
+      if (!assets.length) {
+        finishLoader();
+        return;
+      }
+
+      let completed = 0;
+      setProgress(0);
+
+      const preloadAll = Promise.all(assets.map((url) => preloadImage(url).then((result) => {
+        completed += 1;
+        setProgress((completed / assets.length) * 100);
+        return result;
+      })));
+
+      const timeout = new Promise((resolve) => window.setTimeout(resolve, maxWaitMs));
+      Promise.race([preloadAll, timeout]).then(finishLoader);
+    })();
+
     const musicBtn = document.getElementById("musicBtn");
     const music = document.getElementById("music");
     const wrap = document.getElementById("panoWrap");
