@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>Thomas &amp; Sarah — Paper Cut Modern Wedding Invitation | Invitation de mariage papier découpé</title>
+<title>Maickel &amp; Vanessa — Wedding Invitation | Invitation de mariage</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&amp;family=Great+Vibes&amp;family=Montserrat:wght@200;300;400;500;600&amp;family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&amp;display=swap" rel="stylesheet"/>
 <style>
     :root{
@@ -196,6 +196,8 @@
     .paper-time-row:last-child{border-bottom:0;}
     .paper-time{font-family:'Cormorant Garamond',serif;font-weight:700;letter-spacing:.08em;color:var(--gold);}
     .paper-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-soft);font-weight:600;}
+    .simple-amp{font-family:'Montserrat',Arial,sans-serif!important;font-style:normal!important;font-weight:400!important;letter-spacing:0!important;}
+    .paper-location{display:block;margin-top:6px;font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.35;letter-spacing:.04em;text-transform:none;color:var(--text);font-weight:500;}
     .paper-gallery-frame{position:relative;border-radius:16px;overflow:hidden;background:#fff;padding:18px;box-shadow:0 18px 42px rgba(78,55,32,.12);}
     .paper-gallery-frame .paper-frame-bg{opacity:.42;}
     .paper-cut-invite .album{width:100%;margin-left:0;margin-right:0;border-radius:12px;}
@@ -1482,9 +1484,133 @@
     }
     #rsvp .rsvp-main-btn:disabled{opacity:.7;cursor:default;}
 
+
+    /* ═════════ INITIAL ASSET LOADER ═════════ */
+    body.invitation-loading{
+      overflow:hidden !important;
+      height:100vh;
+      height:100svh;
+      background:var(--bg-soft);
+    }
+    body.invitation-loading .invite,
+    body.invitation-loading .lang-toggle,
+    body.invitation-loading .music-btn{
+      opacity:0;
+      pointer-events:none;
+    }
+    .invitation-loader{
+      position:fixed;
+      inset:0;
+      z-index:99999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:30px;
+      background:
+        radial-gradient(circle at 50% 10%, rgba(255,255,255,.96), rgba(251,248,243,.92) 46%, rgba(246,241,234,.96) 100%);
+      color:var(--gold);
+      transition:opacity .55s ease, visibility .55s ease;
+    }
+    body:not(.invitation-loading) .invitation-loader{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+    .loader-card{
+      width:min(84vw, 350px);
+      padding:34px 30px 32px;
+      border-radius:26px;
+      background:rgba(255,255,255,.72);
+      border:1px solid color-mix(in srgb,var(--gold) 22%,transparent);
+      box-shadow:0 24px 60px rgba(84,64,35,.13);
+      backdrop-filter:blur(10px);
+      text-align:center;
+    }
+    .loader-monogram{
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(50px, 14vw, 72px);
+      line-height:1;
+      margin-bottom:10px;
+      color:var(--gold);
+    }
+    .loader-text{
+      font-family:'Montserrat',sans-serif;
+      font-size:10px;
+      font-weight:600;
+      letter-spacing:.28em;
+      text-transform:uppercase;
+      color:var(--text-soft);
+      line-height:1.8;
+      margin-bottom:20px;
+    }
+    .loader-bar{
+      width:100%;
+      height:6px;
+      border-radius:999px;
+      overflow:hidden;
+      background:color-mix(in srgb,var(--gold) 16%,transparent);
+    }
+    .loader-bar span{
+      display:block;
+      width:0%;
+      height:100%;
+      border-radius:inherit;
+      background:var(--gold);
+      transition:width .25s ease;
+    }
+    .loader-percent{
+      margin-top:12px;
+      font-family:'Cormorant Garamond',serif;
+      font-size:18px;
+      font-weight:600;
+      letter-spacing:.08em;
+      color:var(--gold);
+    }
+    @media(max-width:420px){
+      .loader-card{width:min(88vw, 330px);padding:30px 26px 28px;border-radius:24px;}
+      .loader-text{font-size:9px;letter-spacing:.23em;}
+    }
+
+
+    /* Envelope names: moved slightly lower and balanced the ampersand between the names */
+    .hero-top{
+      top:112px;
+    }
+    .hero-top .hero-name{
+      margin-top:0;
+    }
+    .hero-top .hero-and{
+      width:100%;
+      text-align:center;
+      align-self:center;
+      margin:16px 0 14px;
+      line-height:1;
+    }
+    @media(max-width:420px){
+      .hero-top{
+        top:88px;
+      }
+      .hero-top .hero-name{
+        margin-top:0;
+      }
+      .hero-top .hero-and{
+        margin:14px 0 12px;
+      }
+    }
+
 </style>
 </head>
-<body>
+<body class="invitation-loading">
+
+<div class="invitation-loader" id="invitationLoader" role="status" aria-live="polite">
+<div class="loader-card">
+<div class="loader-monogram">M&nbsp;&amp;&nbsp;V</div>
+<div class="loader-text"><span class="lang-en">Preparing your invitation</span><span class="lang-fr">Préparation de votre invitation</span></div>
+<div class="loader-bar" aria-hidden="true"><span id="loaderBar"></span></div>
+<div class="loader-percent" id="loaderPercent">0%</div>
+</div>
+</div>
+
 <div class="lang-toggle">
 <button class="active" id="btnEN" onclick="setLang('en')">EN</button>
 <button id="btnFR" onclick="setLang('fr')">FR</button>
@@ -1496,18 +1622,18 @@
 <main class="invite">
 <!-- FIRST SCREEN: ENVELOPE CLOSED / OPEN BUTTON -->
 <section class="hero-cover" id="heroCover" onclick="openInvitation()">
-<video id="envelopeVideo" muted="" playsinline="" poster="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Paper%20cut/Envelope2.png" preload="metadata">
+<video id="envelopeVideo" muted="" playsinline="" poster="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Paper%20cut/Envelope2.png" preload="auto">
 <source src="https://raw.githubusercontent.com/NemerDavid/web-des/main/Paper%20cut/Envelope4.mp4" type="video/mp4"/>
 </video>
 <div class="hero-content">
 <div class="hero-top">
-<h1 class="hero-name">Thomas</h1>
+<h1 class="hero-name">Maickel</h1>
 <div class="hero-and">&amp;</div>
-<h1 class="hero-name">Sarah</h1>
+<h1 class="hero-name">Vanessa</h1>
 </div>
 <div class="hero-spacer"></div>
 <div class="hero-bottom">
-<p class="hero-date"><span class="lang-en">14 August 2027 · Ehden, Lebanon</span><span class="lang-fr">14 août 2027 · Ehden, Liban</span></p>
+<p class="hero-date"><span class="lang-en">Friday, August 14, 2026 · Ehden, Lebanon</span><span class="lang-fr">vendredi 14 août 2026 · Ehden, Liban</span></p>
 <button class="open-btn" type="button"><span class="lang-en">Open invitation</span><span class="lang-fr">Ouvrir l'invitation</span></button>
 </div>
 </div>
@@ -1532,19 +1658,19 @@
 </div>
 </div>
 <p class="paper-kicker"><span class="lang-en">Wedding Invitation</span><span class="lang-fr">Invitation de mariage</span></p>
-<h2 class="paper-names">Thomas</h2>
+<h2 class="paper-names">Maickel</h2>
 <div class="paper-amp">&amp;</div>
-<h2 class="paper-names">Sarah</h2>
-<p class="paper-verse"><span class="lang-en">Together with their families, they invite you to share a day of love, joy, and celebration.</span><span class="lang-fr">Avec leurs familles, ils vous invitent à partager une journée d'amour, de joie et de célébration.</span></p>
-<p class="paper-date"><span class="lang-en">14 August 2027 · Ehden, Lebanon</span><span class="lang-fr">14 août 2027 · Ehden, Liban</span></p>
+<h2 class="paper-names">Vanessa</h2>
+<p class="paper-verse"><span class="lang-en">“I have found the one whom my soul loves.”<br/>Solomon 3:4</span><span class="lang-fr">« J’ai trouvé celui que mon âme aime. »<br/>Salomon 3:4</span></p>
+<p class="paper-date"><span class="lang-en">Friday, August 14, 2026 · Ehden, Lebanon</span><span class="lang-fr">vendredi 14 août 2026 · Ehden, Liban</span></p>
 </div>
 </section>
 <section class="section">
 <div class="reveal paper-sheet">
 <img alt="Paper-cut wedding rings" class="paper-asset" data-theme-filter-asset="Rings2.png" src="https://raw.githubusercontent.com/NemerDavid/web-des/main/Paper%20cut/Rings2.png"/>
-<p class="paper-kicker"><span class="lang-en">Together with their families</span><span class="lang-fr">Avec leurs familles</span></p>
+<p class="paper-kicker"><span class="lang-en">Together with their Families</span><span class="lang-fr">Avec leurs familles</span></p>
 <div class="paper-divider">✦</div>
-<p class="paper-body"><span class="lang-en">We warmly invite you to celebrate our wedding day with us in beautiful Ehden, Lebanon. We look forward to sharing this unforgettable moment with our most special people.</span><span class="lang-fr">Nous vous invitons chaleureusement à célébrer notre mariage avec nous dans la belle ville d'Ehden, au Liban. Nous avons hâte de partager ce moment inoubliable avec les personnes qui nous sont les plus chères.</span></p>
+<p class="paper-body"><span class="lang-en">Mr Tannous <span class="simple-amp">&amp;</span> Gania Fenianos<br/>Mr Youssef <span class="simple-amp">&amp;</span> Lisette Azizi<br/><br/>Request the honor of your presence at the wedding of their son and daughter<br/>Maickel <span class="simple-amp">&amp;</span> Vanessa</span><span class="lang-fr">M. Tannous <span class="simple-amp">&amp;</span> Gania Fenianos<br/>M. Youssef <span class="simple-amp">&amp;</span> Lisette Azizi<br/><br/>Ont l’honneur de vous convier au mariage de leurs enfants<br/>Maickel <span class="simple-amp">&amp;</span> Vanessa</span></p>
 </div>
 </section>
 
@@ -1553,12 +1679,11 @@
 <div class="reveal paper-sheet">
 <img alt="Paper-cut champagne bucket" class="paper-asset" data-theme-asset="Cake5.png" src="https://raw.githubusercontent.com/NemerDavid/web-des/main/Paper%20cut/1_%23b89254/Cake5.png"/>
 <h2 class="section-title"><span class="lang-en">Day Programme</span><span class="lang-fr">Programme de la journée</span></h2>
-<p class="subtitle"><span class="lang-en">14 August 2027</span><span class="lang-fr">14 août 2027</span></p>
+<p class="subtitle"><span class="lang-en">Friday, August 14, 2026</span><span class="lang-fr">vendredi 14 août 2026</span></p>
 <div class="paper-timeline">
-<div class="paper-time-row"><div class="paper-time"><span class="lang-en">6:00 PM</span><span class="lang-fr">18h00</span></div><div class="paper-label"><span class="lang-en">Ceremony</span><span class="lang-fr">Cérémonie</span></div></div>
-<div class="paper-time-row"><div class="paper-time"><span class="lang-en">7:30 PM</span><span class="lang-fr">19h30</span></div><div class="paper-label"><span class="lang-en">Cocktails</span><span class="lang-fr">Cocktail</span></div></div>
-<div class="paper-time-row"><div class="paper-time"><span class="lang-en">8:00 PM</span><span class="lang-fr">20h00</span></div><div class="paper-label"><span class="lang-en">Dinner</span><span class="lang-fr">Dîner</span></div></div>
-<div class="paper-time-row"><div class="paper-time"><span class="lang-en">9:00 PM</span><span class="lang-fr">21h00</span></div><div class="paper-label"><span class="lang-en">Dancing</span><span class="lang-fr">Soirée dansante</span></div></div>
+<div class="paper-time-row"><div class="paper-time"><span class="lang-en">4:30 PM</span><span class="lang-fr">16h30</span></div><div class="paper-label"><span class="lang-en">Wedding Ceremony<span class="paper-location">Saydet Al Hosn, Ehden</span></span><span class="lang-fr">Cérémonie de mariage<span class="paper-location">Saydet Al Hosn, Ehden</span></span></div></div>
+<div class="paper-time-row"><div class="paper-time"><span class="lang-en">6:30 PM</span><span class="lang-fr">18h30</span></div><div class="paper-label"><span class="lang-en">Welcome Drink<span class="paper-location">Splend'or Ehden</span></span><span class="lang-fr">Verre de bienvenue<span class="paper-location">Splend'or Ehden</span></span></div></div>
+<div class="paper-time-row"><div class="paper-time"><span class="lang-en">8:00 PM</span><span class="lang-fr">20h00</span></div><div class="paper-label"><span class="lang-en">Dinner<span class="paper-location">Splend'or Ehden</span></span><span class="lang-fr">Dîner<span class="paper-location">Splend'or Ehden</span></span></div></div>
 </div>
 </div>
 </section>
@@ -1566,14 +1691,14 @@
 <!-- ===================== REORDERED: 2. CEREMONY (CHURCH) ===================== -->
 <section class="section gold" id="church">
 <div class="reveal paper-sheet">
-<img alt="Paper-cut church illustration" class="paper-asset large" data-theme-asset="Church3.png" src="https://raw.githubusercontent.com/NemerDavid/web-des/main/Paper%20cut/1_%23b89254/Church3.png"/>
+<img alt="Paper-cut church illustration" class="paper-asset large" data-theme-asset="Church5.png" src="https://raw.githubusercontent.com/NemerDavid/web-des/main/Paper%20cut/1_%23b89254/Church5.png"/>
 <div class="paper-card">
 <h3 class="venue-name"><span class="lang-en">The Ceremony</span><span class="lang-fr">La cérémonie</span></h3>
-<h3 class="venue-name"><span class="lang-en">St. Mourra Church</span><span class="lang-fr">Église St. Mourra</span></h3>
+<h3 class="venue-name"><span class="lang-en">Saydet Al Hosn</span><span class="lang-fr">Saydet Al Hosn</span></h3>
 <div class="thin-line"></div>
-<div class="venue-meta"><span><span class="lang-en">14 August 2027</span><span class="lang-fr">14 août 2027</span></span><span><span class="lang-en">6:00 PM</span><span class="lang-fr">18h00</span></span></div>
-<p class="venue-address"><span class="lang-en">St. Mourra Church</span><span class="lang-fr">Église St. Mourra</span><br/><span class="lang-en">Ehden, Lebanon</span><span class="lang-fr">Ehden, Liban</span></p>
-<div class="map-wrap"><iframe allowfullscreen="" loading="lazy" src="https://www.google.com/maps?q=St%20Mourra%20Church%20Ehden%20Lebanon&amp;output=embed"></iframe></div>
+<div class="venue-meta"><span><span class="lang-en">Friday, August 14, 2026</span><span class="lang-fr">vendredi 14 août 2026</span></span><span><span class="lang-en">4:30 PM</span><span class="lang-fr">16h30</span></span></div>
+<p class="venue-address"><span class="lang-en">Saydet Al Hosn</span><span class="lang-fr">Saydet Al Hosn</span><br/><span class="lang-en">Ehden, Lebanon</span><span class="lang-fr">Ehden, Liban</span></p>
+<div class="map-wrap"><iframe allowfullscreen="" loading="lazy" src="https://www.google.com/maps?q=Saydet%20Al%20Hosn%20Ehden%20Lebanon&amp;output=embed"></iframe></div>
 </div>
 </div>
 </section>
@@ -1581,7 +1706,7 @@
 <!-- ===================== REORDERED: 3. RECEPTION (VENUE) ===================== -->
 <section class="section gold" id="venue">
 <div class="reveal paper-sheet">
-<img alt="Paper-cut vintage wedding car" class="paper-asset large" data-theme-asset="car3.png" src="https://raw.githubusercontent.com/NemerDavid/web-des/main/Paper%20cut/1_%23b89254/car3.png"/>
+<img alt="Paper-cut vintage wedding car" class="paper-asset large" data-theme-asset="Venue.png" src="https://raw.githubusercontent.com/NemerDavid/web-des/main/Paper%20cut/1_%23b89254/Venue.png"/>
 <div class="paper-card">
 <h3 class="venue-name">
 <span class="lang-en">The Reception</span>
@@ -1591,11 +1716,11 @@
 <span class="lang-en">Where we celebrate</span>
 <span class="lang-fr">Lieu de célébration</span>
 </h3>
-<h3 class="venue-name">Twinz Hotel</h3>
+<h3 class="venue-name">Splend&apos;or Ehden</h3>
 <div class="thin-line"></div>
-<div class="venue-meta"><span><span class="lang-en">14 August 2027</span><span class="lang-fr">14 août 2027</span></span><span><span class="lang-en">7:30 PM</span><span class="lang-fr">19h30</span></span></div>
-<p class="venue-address">Twinz Hotel<br/><span class="lang-en">Ehden, Lebanon</span><span class="lang-fr">Ehden, Liban</span></p>
-<div class="map-wrap"><iframe allowfullscreen="" loading="lazy" src="https://www.google.com/maps?q=Twinz%20Hotel%20Ehden%20Lebanon&amp;output=embed"></iframe></div>
+<div class="venue-meta"><span><span class="lang-en">Friday, August 14, 2026</span><span class="lang-fr">vendredi 14 août 2026</span></span><span><span class="lang-en">6:30 PM</span><span class="lang-fr">18h30</span></span></div>
+<p class="venue-address">Splend&apos;or Ehden<br/><span class="lang-en">Ehden, Lebanon</span><span class="lang-fr">Ehden, Liban</span></p>
+<div class="map-wrap"><iframe allowfullscreen="" loading="lazy" src="https://www.google.com/maps?q=Splend%27or%20Ehden%20Lebanon&amp;output=embed"></iframe></div>
 </div>
 </div>
 </section>
@@ -1633,7 +1758,7 @@
 <div class="reveal paper-sheet">
 <img alt="Paper-cut doves and wedding rings" class="paper-asset" data-theme-asset="Doves4.png" src="https://raw.githubusercontent.com/NemerDavid/web-des/main/Paper%20cut/1_%23b89254/Doves4.png"/>
 <h2 class="section-title"><span class="lang-en">RSVP</span><span class="lang-fr">Réponse</span></h2>
-<p class="subtitle"><span class="lang-en">Kindly reply before 1 August 2027</span><span class="lang-fr">Merci de répondre avant le 1er août 2027</span></p>
+<p class="subtitle"><span class="lang-en">Kindly reply before 1 August 2026</span><span class="lang-fr">Merci de répondre avant le 1er août 2026</span></p>
 <div class="card rsvp-box">
 <div class="step-dots single-step-dots" aria-hidden="true">
 <span class="step-dot on" id="dot-1"></span>
@@ -1658,11 +1783,11 @@
 </div>
 </div>
 </section>
-<footer class="footer ornament-bg"><div class="reveal"><img alt="Paper-cut wedding rings" class="icon small" data-theme-asset="Angel.png" src="https://raw.githubusercontent.com/NemerDavid/web-des/main/Paper%20cut/1_%23b89254/Angel.png"/><div class="names">Thomas<br/>&amp;<br/>Sarah</div><p class="subtitle"><span class="lang-en">14 August 2027 · Ehden, Lebanon</span><span class="lang-fr">14 août 2027 · Ehden, Liban</span></p><div class="thin-line"></div><p style="font-size:12px;letter-spacing:.16em;color:var(--text-soft);"><span class="lang-en">Powered by</span><span class="lang-fr">Créé par</span> <a href="https://www.cardiastudios.com/" style="color:var(--gold); text-decoration:underline; text-underline-offset:3px;" target="_blank">Cardia Studios</a></p></div></footer>
+<footer class="footer ornament-bg"><div class="reveal"><img alt="Paper-cut wedding rings" class="icon small" data-theme-asset="Angel.png" src="https://raw.githubusercontent.com/NemerDavid/web-des/main/Paper%20cut/1_%23b89254/Angel.png"/><div class="names">Maickel<br/>&amp;<br/>Vanessa</div><p class="subtitle"><span class="lang-en">Friday, August 14, 2026 · Ehden, Lebanon</span><span class="lang-fr">vendredi 14 août 2026 · Ehden, Liban</span></p><div class="thin-line"></div><p style="font-size:12px;letter-spacing:.16em;color:var(--text-soft);"><span class="lang-en">Powered by</span><span class="lang-fr">Créé par</span> <a href="https://www.instagram.com/cardiastudios/" style="color:var(--gold); text-decoration:underline; text-underline-offset:3px;" target="_blank">@cardiastudios</a></p></div></footer>
 </div>
 </main>
 <script>
-    const CONFIG = {coupleName:'Thomas & Sarah',weddingDate:'2027-08-14T18:00:00',rsvpDeadline:'2027-08-01',location:'Ehden, Lebanon',church:'St. Mourra Church, Ehden',reception:'Twinz Hotel, Ehden',rsvpEmail:'nemer.david9@gmail.com'};
+    const CONFIG = {coupleName:'Maickel & Vanessa',weddingDate:'2026-08-14T16:30:00',rsvpDeadline:'2026-08-01',location:'Ehden, Lebanon',church:'Saydet Al Hosn, Ehden',reception:"Splend'or Ehden",rsvpEmail:'david.nemer33@gmail.com'};
 
     const THEMES = ['classic','rose','navy','olive','terracotta'];
     const THEME_ASSET_BASE = 'https://raw.githubusercontent.com/NemerDavid/web-des/main/Paper%20cut';
@@ -1713,11 +1838,130 @@
       document.querySelectorAll('.theme-dot').forEach(btn=>btn.classList.toggle('active', btn.dataset.theme===theme));
       requestAnimationFrame(updateGuestListScrollbar);
     }
+
     setTheme(localStorage.getItem('paperCutInvitationTheme') || 'classic');
+
+    const PRELOAD_THEME_ASSETS = ['Angel.png','Church5.png','Doves4.png','Cake5.png','Champagne9.png','Venue.png'];
+    const PRELOAD_FIXED_ASSETS = ['Pages3.png','Rings2.png','Envelope2.png'];
+
+    function updateLoaderProgress(percent){
+      const bar=document.getElementById('loaderBar');
+      const label=document.getElementById('loaderPercent');
+      const safePercent=Math.max(0,Math.min(100,Math.round(percent)));
+      if(bar) bar.style.width=safePercent+'%';
+      if(label) label.textContent=safePercent+'%';
+    }
+
+    function markInvitationAssetsReady(){
+      updateLoaderProgress(100);
+      setTimeout(()=>{
+        document.body.classList.remove('invitation-loading');
+        const loader=document.getElementById('invitationLoader');
+        if(loader){
+          setTimeout(()=>loader.remove(),650);
+        }
+      },280);
+    }
+
+    function preloadImageAsset(url, timeoutMs=9000){
+      return new Promise(resolve=>{
+        if(!url){ resolve(); return; }
+        const img=new Image();
+        let settled=false;
+        const done=()=>{
+          if(settled) return;
+          settled=true;
+          resolve();
+        };
+        const timer=setTimeout(done,timeoutMs);
+        img.onload=()=>{ clearTimeout(timer); done(); };
+        img.onerror=()=>{ clearTimeout(timer); done(); };
+        img.src=url;
+        if(img.complete){ clearTimeout(timer); done(); }
+      });
+    }
+
+    function preloadVideoAsset(url, timeoutMs=12000){
+      return new Promise(resolve=>{
+        if(!url){ resolve(); return; }
+        const video=document.createElement('video');
+        let settled=false;
+        const done=()=>{
+          if(settled) return;
+          settled=true;
+          try{ video.pause(); video.removeAttribute('src'); video.load(); }catch(e){}
+          resolve();
+        };
+        const timer=setTimeout(done,timeoutMs);
+        video.muted=true;
+        video.playsInline=true;
+        video.preload='auto';
+        video.oncanplaythrough=()=>{ clearTimeout(timer); done(); };
+        video.onloadeddata=()=>{ clearTimeout(timer); done(); };
+        video.onerror=()=>{ clearTimeout(timer); done(); };
+        video.src=url;
+        try{ video.load(); }catch(e){ clearTimeout(timer); done(); }
+      });
+    }
+
+    function collectInvitationPreloadAssets(){
+      const imageUrls=new Set();
+      const videoUrls=new Set();
+
+      document.querySelectorAll('img[src]').forEach(img=>{
+        const src=img.getAttribute('src');
+        if(src && /\.png(?:[?#]|$)/i.test(src)) imageUrls.add(new URL(src, window.location.href).href);
+      });
+      document.querySelectorAll('video[poster]').forEach(video=>{
+        const poster=video.getAttribute('poster');
+        if(poster && /\.png(?:[?#]|$)/i.test(poster)) imageUrls.add(new URL(poster, window.location.href).href);
+      });
+      document.querySelectorAll('video source[src]').forEach(source=>{
+        videoUrls.add(new URL(source.getAttribute('src'), window.location.href).href);
+      });
+      document.querySelectorAll('video[src]').forEach(video=>videoUrls.add(video.src));
+
+      PRELOAD_FIXED_ASSETS.forEach(fileName=>imageUrls.add(fixedPaperCutAssetUrl(fileName)));
+      THEMES.forEach(theme=>{
+        PRELOAD_THEME_ASSETS.forEach(fileName=>imageUrls.add(themedAssetUrl(theme,fileName)));
+      });
+
+      return {imageUrls:[...imageUrls], videoUrls:[...videoUrls]};
+    }
+
+    function startInvitationPreloader(){
+      const loader=document.getElementById('invitationLoader');
+      if(!loader){ document.body.classList.remove('invitation-loading'); return; }
+      updateLoaderProgress(3);
+
+      const {imageUrls, videoUrls}=collectInvitationPreloadAssets();
+      const jobs=[
+        ...imageUrls.map(url=>({type:'image', promise:preloadImageAsset(url)})),
+        ...videoUrls.map(url=>({type:'video', promise:preloadVideoAsset(url)}))
+      ];
+
+      if(!jobs.length){ markInvitationAssetsReady(); return; }
+
+      let completed=0;
+      const total=jobs.length;
+      jobs.forEach(job=>{
+        job.promise.finally(()=>{
+          completed+=1;
+          updateLoaderProgress(5 + (completed/total)*95);
+        });
+      });
+
+      const allAssetsLoaded=Promise.allSettled(jobs.map(job=>job.promise));
+      const safetyTimeout=new Promise(resolve=>setTimeout(resolve,18000));
+      Promise.race([allAssetsLoaded,safetyTimeout]).then(markInvitationAssetsReady);
+    }
+
+    startInvitationPreloader();
 
     let invitationOpening = false;
 
     function openInvitation(){
+      if(document.body.classList.contains('invitation-loading')) return;
       if(invitationOpening) return;
       invitationOpening = true;
       const hero = document.getElementById('heroCover');
@@ -1766,9 +2010,9 @@
     updateCountdown();setInterval(updateCountdown,1000);
 
     
-  const COUPLE_NAME = CONFIG.coupleName || 'Thomas & Sarah';
-  const CUSTOMER_EMAIL = CONFIG.rsvpEmail || 'cardiastudios@gmail.com';
-  const RSVP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJmJqBu9U9t6lKlbBMCvHtkXNBo6026SirsYWAhVMo_H5l9gRhoBmXipvAvI47c5v4lw/exec';
+  const COUPLE_NAME = CONFIG.coupleName || 'Maickel & Vanessa';
+  const CUSTOMER_EMAIL = CONFIG.rsvpEmail || 'david.nemer33@gmail.com';
+  const RSVP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3DenKf-WzOd8A6jGeb5xNXSUe5bBvt85QKy6s0tQpBbNSKEZiq_RV8Ycl96f-0fQM/exec';
 
   /* RSVP link modes:
      ?limit=2 shows editable Guest 1 / Guest 2 fields.
