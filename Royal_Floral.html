@@ -1253,12 +1253,33 @@
 
   /* ── Raymond-style per-guest RSVP slots, fully theme-driven ── */
   .guest-welcome-step { text-align:left; }
+  .manual-guest-list-wrap{
+    width:100%;
+    position:relative;
+  }
+  .guest-scroll-hint{
+    display:none;
+    width:100%;
+    text-align:center;
+    color:var(--rsvp-accent);
+    font-size:13px;
+    line-height:1;
+    letter-spacing:.12em;
+    opacity:.85;
+    pointer-events:none;
+    user-select:none;
+    transition:color .35s ease, opacity .35s ease;
+  }
+  .guest-scroll-hint.top{margin:4px 0 7px;}
+  .guest-scroll-hint.bottom{margin:7px 0 4px;}
+  .manual-guest-list-wrap.has-scroll .guest-scroll-hint{display:block;}
   .guest-slot-name-list {
     display:grid;
     gap:14px;
     width:100%;
     margin:18px 0 8px;
   }
+  .manual-guest-list-wrap.has-scroll .guest-slot-name-list{margin-top:0;margin-bottom:0;}
   .guest-slot-name-list.scrollable-guest-list {
     max-height:250px;
     overflow-y:auto;
@@ -1270,9 +1291,24 @@
     scrollbar-color:var(--rsvp-accent) color-mix(in srgb,var(--rsvp-accent) 12%,transparent);
     -webkit-overflow-scrolling:touch;
   }
-  .guest-slot-name-list.scrollable-guest-list::-webkit-scrollbar { width:6px; }
-  .guest-slot-name-list.scrollable-guest-list::-webkit-scrollbar-track { background:color-mix(in srgb,var(--rsvp-accent) 10%,transparent); border-radius:999px; }
-  .guest-slot-name-list.scrollable-guest-list::-webkit-scrollbar-thumb { background:var(--rsvp-accent); border-radius:999px; }
+  .guest-slot-name-list.scrollable-guest-list::-webkit-scrollbar { width:8px; display:block; }
+  .guest-slot-name-list.scrollable-guest-list::-webkit-scrollbar-track { background:color-mix(in srgb,var(--rsvp-accent) 12%,transparent); border-radius:999px; }
+  .guest-slot-name-list.scrollable-guest-list::-webkit-scrollbar-thumb { background:var(--rsvp-accent); border-radius:999px; border:2px solid color-mix(in srgb,var(--rsvp-soft-bg) 92%,#fff); }
+  .manual-guest-list-wrap.has-scroll::after{
+    content:"";
+    position:absolute;
+    right:1px;
+    top:24px;
+    bottom:24px;
+    width:7px;
+    border-radius:999px;
+    background:linear-gradient(to bottom,
+      color-mix(in srgb,var(--rsvp-accent) 16%,transparent),
+      color-mix(in srgb,var(--rsvp-accent) 30%,transparent),
+      color-mix(in srgb,var(--rsvp-accent) 16%,transparent));
+    pointer-events:none;
+    opacity:.45;
+  }
   .guest-slot-name-box {
     width:100%;
     border:1.5px solid var(--rsvp-accent-border);
@@ -1343,7 +1379,36 @@
   .guest-total-line { margin:16px 0 4px; text-align:center; font-size:18px; color:var(--rsvp-accent); transition:color .35s ease; }
   .guest-welcome-note { margin:0 0 20px; font-size:16px; line-height:1.5; color:var(--text-soft); transition:color .35s ease; }
   @media(max-width:420px){
-    .guest-slot-name-list.scrollable-guest-list{max-height:240px;padding-right:6px;}
+    .guest-slot-name-list.scrollable-guest-list{
+      max-height:240px;
+      padding-right:14px;
+      margin-right:-2px;
+      scrollbar-width:auto;
+      scrollbar-gutter:stable;
+      scrollbar-color:var(--rsvp-accent) color-mix(in srgb,var(--rsvp-accent) 16%,transparent);
+    }
+    .guest-slot-name-list.scrollable-guest-list::-webkit-scrollbar{
+      width:11px !important;
+      display:block !important;
+      -webkit-appearance:none;
+    }
+    .guest-slot-name-list.scrollable-guest-list::-webkit-scrollbar-track{
+      background:color-mix(in srgb,var(--rsvp-accent) 16%,transparent) !important;
+      border-radius:999px !important;
+    }
+    .guest-slot-name-list.scrollable-guest-list::-webkit-scrollbar-thumb{
+      background:var(--rsvp-accent) !important;
+      border-radius:999px !important;
+      border:2px solid color-mix(in srgb,var(--rsvp-soft-bg) 92%,#fff) !important;
+    }
+    .manual-guest-list-wrap.has-scroll::after{
+      right:3px;
+      top:24px;
+      bottom:24px;
+      width:8px;
+      opacity:.55;
+    }
+    .guest-scroll-hint{font-size:14px;opacity:.95;}
     .guest-response-pill{width:100%;min-width:0;}
     .guest-slot-attendance{align-items:stretch;flex-direction:column;}
     .guest-response-options{width:100%;margin-left:0;}
@@ -1548,7 +1613,9 @@
 <h3 class="guest-welcome-title"><span class="lang-en">Dear</span><span class="lang-fr">Cher(e)</span> <span id="guestWelcomeName">Guest</span>,</h3>
 <p id="personalGuestNote" class="guest-welcome-note">Please confirm who can attend from this invitation.</p>
 <div id="manualGuestListWrap" class="manual-guest-list-wrap">
+<div class="guest-scroll-hint top" aria-hidden="true">▲</div>
 <div id="guestSlotNameList" class="guest-slot-name-list"></div>
+<div class="guest-scroll-hint bottom" aria-hidden="true">▼</div>
 </div>
 <p class="guest-total-line"><span class="lang-en">Total guests attending:</span><span class="lang-fr">Nombre d'invités présents :</span> <strong id="guestCount">0</strong></p>
 <p class="error-msg" id="errName">Please enter at least one guest name and choose Yes or No.</p>
@@ -1768,7 +1835,10 @@
   function renderGuestNameBoxes() {
     const boxList = document.getElementById('guestSlotNameList');
     if (!boxList) return;
-    boxList.classList.toggle('scrollable-guest-list', guestResponses.length >= 3);
+    const manualWrap = document.getElementById('manualGuestListWrap');
+    const shouldScrollGuestList = guestResponses.length >= 3;
+    boxList.classList.toggle('scrollable-guest-list', shouldScrollGuestList);
+    if (manualWrap) manualWrap.classList.toggle('has-scroll', shouldScrollGuestList);
 
     boxList.innerHTML = guestResponses.map((guest, index) => {
       const safeName = escapeHTML(guest.name || '');
