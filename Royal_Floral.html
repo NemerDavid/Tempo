@@ -1287,13 +1287,16 @@
     overflow-y:auto;
     overflow-x:hidden;
     overscroll-behavior:contain;
-    padding:0 18px 0 0;
+    overscroll-behavior-y:contain;
+    touch-action:pan-y;
+    pointer-events:auto;
+    padding:16px 18px 16px 0;
     margin-right:0;
     scrollbar-width:none;
     -ms-overflow-style:none;
     -webkit-overflow-scrolling:touch;
-    -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
-    mask-image:linear-gradient(to bottom, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
+    mask-image:linear-gradient(to bottom, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
   }
 
   .guest-slot-name-list.scrollable-guest-list::-webkit-scrollbar{
@@ -1412,12 +1415,12 @@
   @media(max-width:420px){
     .guest-slot-name-list.scrollable-guest-list{
       max-height:240px;
-      padding:0 18px 0 0;
+      padding:16px 18px 16px 0;
       margin-right:0;
       scrollbar-width:none;
       -ms-overflow-style:none;
-      -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
-      mask-image:linear-gradient(to bottom, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+      -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
+      mask-image:linear-gradient(to bottom, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
     }
     .guest-slot-name-list.scrollable-guest-list::-webkit-scrollbar{
       width:0!important;
@@ -1866,6 +1869,7 @@
     if (manualWrap) manualWrap.classList.toggle('has-scroll', shouldScrollGuestList);
 
     boxList.onscroll = updateGuestListScrollbar;
+    boxList.onwheel = shouldScrollGuestList ? handleGuestListWheel : null;
     boxList.innerHTML = guestResponses.map((guest, index) => {
       const safeName = escapeHTML(guest.name || '');
       const yesChecked = guest.attending === 'Yes' ? ' checked' : '';
@@ -1900,6 +1904,29 @@
         </div>`;
     }).join('');
     requestAnimationFrame(updateGuestListScrollbar);
+  }
+
+  function handleGuestListWheel(event) {
+    const list = event.currentTarget || document.getElementById('guestSlotNameList');
+    if (!list || !list.classList.contains('scrollable-guest-list')) return;
+
+    const maxScroll = list.scrollHeight - list.clientHeight;
+    if (maxScroll <= 1) return;
+
+    let deltaY = event.deltaY || 0;
+    if (event.deltaMode === 1) deltaY *= 16;
+    if (event.deltaMode === 2) deltaY *= list.clientHeight;
+    if (!deltaY) return;
+
+    const previousTop = list.scrollTop;
+    const nextTop = Math.max(0, Math.min(maxScroll, previousTop + deltaY));
+
+    if (nextTop !== previousTop) {
+      list.scrollTop = nextTop;
+      event.preventDefault();
+      event.stopPropagation();
+      updateGuestListScrollbar();
+    }
   }
 
   function updateGuestListScrollbar() {
