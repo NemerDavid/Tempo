@@ -132,6 +132,42 @@
       mix-blend-mode: screen;
     }
 
+
+
+    .hot-air {
+      position: absolute;
+      z-index: 6;
+      width: calc(var(--screen-h) * .115);
+      height: auto;
+      transform: translate(-50%, -50%);
+      transform-origin: center center;
+      pointer-events: none;
+      opacity: .94;
+      filter:
+        drop-shadow(0 calc(var(--screen-h) * .010) calc(var(--screen-h) * .020) rgba(48, 17, 5, .22))
+        drop-shadow(0 0 calc(var(--screen-h) * .010) rgba(255, 230, 170, .12));
+      will-change: transform;
+    }
+
+    .hot-air-1 { left: 16.2%; top: 13.5%; width: calc(var(--screen-h) * .105); animation: balloonFloatA 22s ease-in-out infinite; }
+    .hot-air-2 { left: 24.8%; top: 20.2%; width: calc(var(--screen-h) * .082); opacity: .86; animation: balloonFloatB 26s ease-in-out infinite; animation-delay: -7s; }
+    .hot-air-3 { left: 36.6%; top: 12.8%; width: calc(var(--screen-h) * .128); animation: balloonFloatA 28s ease-in-out infinite; animation-delay: -12s; }
+    .hot-air-4 { left: 46.4%; top: 18.5%; width: calc(var(--screen-h) * .092); opacity: .88; animation: balloonFloatB 24s ease-in-out infinite; animation-delay: -4s; }
+    .hot-air-5 { left: 59.8%; top: 12.5%; width: calc(var(--screen-h) * .118); animation: balloonFloatA 30s ease-in-out infinite; animation-delay: -16s; }
+    .hot-air-6 { left: 70.6%; top: 20.8%; width: calc(var(--screen-h) * .085); opacity: .86; animation: balloonFloatB 27s ease-in-out infinite; animation-delay: -10s; }
+    .hot-air-7 { left: 82.5%; top: 14.4%; width: calc(var(--screen-h) * .125); animation: balloonFloatA 31s ease-in-out infinite; animation-delay: -19s; }
+    .hot-air-8 { left: 92.6%; top: 21.8%; width: calc(var(--screen-h) * .088); opacity: .85; animation: balloonFloatB 25s ease-in-out infinite; animation-delay: -14s; }
+
+    @keyframes balloonFloatA {
+      0%, 100% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(-1.2deg); }
+      50% { transform: translate(-50%, -50%) translate3d(calc(var(--screen-h) * .018), calc(var(--screen-h) * -.020), 0) rotate(1.6deg); }
+    }
+
+    @keyframes balloonFloatB {
+      0%, 100% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(1.2deg); }
+      50% { transform: translate(-50%, -50%) translate3d(calc(var(--screen-h) * -.018), calc(var(--screen-h) * -.014), 0) rotate(-1.5deg); }
+    }
+
     .stage-vignette {
       position: absolute;
       inset: 0;
@@ -714,8 +750,23 @@
       </div>
     </div>
 
+
+
+    <audio id="weddingMusic" loop preload="auto">
+      <source src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Ray.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="pano-wrap" id="panoWrap" aria-label="Horizontal scrolling wedding panorama">
       <div class="pano" id="pano">
+
+        <img class="hot-air hot-air-1" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png" alt="" draggable="false">
+        <img class="hot-air hot-air-2" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png" alt="" draggable="false">
+        <img class="hot-air hot-air-3" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png" alt="" draggable="false">
+        <img class="hot-air hot-air-4" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png" alt="" draggable="false">
+        <img class="hot-air hot-air-5" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png" alt="" draggable="false">
+        <img class="hot-air hot-air-6" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png" alt="" draggable="false">
+        <img class="hot-air hot-air-7" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png" alt="" draggable="false">
+        <img class="hot-air hot-air-8" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png" alt="" draggable="false">
         <div class="hero-text gold-text" aria-label="Ralph and Roussana wedding date">
           <h1>Ralph<span class="amp">&amp;</span>Roussana</h1>
           <div class="date-line">28 · 07 · 2026</div>
@@ -820,6 +871,9 @@
   <script>
     const PANO_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi2.png";
     const CAR_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Car.png";
+    const MUSIC_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Ray.mp3";
+    const HOT_AIR_4B_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png";
+    const HOT_AIR_5_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png";
 
     /* Paste your deployed Google Apps Script Web App URL here when you want the RSVP form
        to send replies to Google Sheets. Keep empty for visual/demo mode. */
@@ -834,6 +888,7 @@
     const carWrap = document.getElementById("carWrap");
     const dust = document.getElementById("dust");
     const openBtn = document.getElementById("openBtn");
+    const weddingMusic = document.getElementById("weddingMusic");
     const rsvpForm = document.getElementById("rsvpForm");
     const thankYou = document.getElementById("thankYou");
     const sendBtn = document.getElementById("sendBtn");
@@ -946,6 +1001,16 @@
       body.classList.add("invitation-open");
       scrollToRatio(0.015, "smooth");
       requestUIUpdate();
+
+      if (weddingMusic) {
+        weddingMusic.volume = 0.85;
+        const playPromise = weddingMusic.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch(() => {
+            /* Some browsers block audio if the first tap is interrupted; the invitation still opens normally. */
+          });
+        }
+      }
     });
 
     document.querySelectorAll("input, select, textarea, label, button, a").forEach((el) => {
@@ -1023,7 +1088,7 @@
       const loader = document.getElementById("loader");
       const fill = document.getElementById("loaderFill");
       const percent = document.getElementById("loaderPercent");
-      const assets = [PANO_URL, CAR_URL];
+      const assets = [PANO_URL, CAR_URL, HOT_AIR_4B_URL, HOT_AIR_5_URL];
       const startedAt = Date.now();
       let done = 0;
 
