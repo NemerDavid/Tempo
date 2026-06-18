@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Ralph & Roussana — Ehden Wedding Invitation</title>
+
+  <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pano-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi2.png");
+      --car-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Car.png");
+
+      /* Rossi.png = 1568 × 171 */
+      --pano-ratio: 9.1695906433;
+
+      /* 9:16 invitation frame */
+      --screen-w: min(100vw, calc(100svh * 9 / 16));
+      --screen-h: min(100svh, calc(100vw * 16 / 9));
+
+      --gold: #f7d27c;
+      --gold-soft: #ffe7a6;
+      --warm-gold: #d99a43;
+      --sunset: #c96b2f;
+      --cream: #fff3da;
+      --ink: #261106;
+      --brown: #321606;
+      --panel: rgba(39, 16, 6, .54);
+      --panel-soft: rgba(39, 16, 6, .40);
+
+      --car-left: 18%;
+      --car-tilt: 0deg;
+      --car-scale-x: 1;
+      --dust-opacity: .14;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(217, 154, 67, .26), transparent 36%),
+        linear-gradient(180deg, #120704, #050201);
+      color: var(--cream);
+      font-family: "Cormorant Garamond", serif;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .stage {
+      position: relative;
+      width: var(--screen-w);
+      height: var(--screen-h);
+      overflow: hidden;
+      background: #080302;
+      isolation: isolate;
+      user-select: none;
+      box-shadow:
+        0 0 0 1px rgba(247, 210, 124, .18),
+        0 30px 80px rgba(0, 0, 0, .58);
+    }
+
+    @media (max-width: 720px) {
+      .stage { box-shadow: none; }
+    }
+
+    .pano-wrap {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      cursor: grab;
+      scrollbar-width: none;
+      touch-action: pan-x;
+      overscroll-behavior: contain;
+    }
+
+    .pano-wrap:active { cursor: grabbing; }
+    .pano-wrap::-webkit-scrollbar { display: none; }
+
+    body.invitation-locked .pano-wrap {
+      overflow: hidden;
+      touch-action: none;
+      cursor: default;
+    }
+
+    .pano {
+      position: relative;
+      height: 100%;
+      width: calc(var(--screen-h) * var(--pano-ratio));
+      background-image: var(--pano-url);
+      background-size: 100% 100%;
+      background-position: center center;
+      background-repeat: no-repeat;
+      overflow: hidden;
+    }
+
+    /* Soft golden atmosphere only. No duplicated/cut panorama layers. */
+    .pano::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 53% 14%, rgba(255, 220, 139, .18), transparent 30%),
+        linear-gradient(180deg, rgba(255, 176, 80, .08), transparent 48%, rgba(58, 22, 5, .11));
+      mix-blend-mode: screen;
+    }
+
+    .stage-vignette {
+      position: absolute;
+      inset: 0;
+      z-index: 22;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(9, 3, 1, .20), transparent 18%, transparent 82%, rgba(9, 3, 1, .22)),
+        linear-gradient(180deg, rgba(8, 2, 1, .03), transparent 58%, rgba(8, 2, 1, .18));
+    }
+
+    .gold-text {
+      color: var(--gold-soft);
+      text-shadow:
+        0 0 calc(var(--screen-h) * .006) rgba(255, 239, 185, .92),
+        0 0 calc(var(--screen-h) * .022) rgba(255, 164, 60, .68),
+        0 calc(var(--screen-h) * .003) calc(var(--screen-h) * .008) rgba(55, 16, 2, .56);
+    }
+
+    .hero-text {
+      position: absolute;
+      z-index: 10;
+      left: 8.15%;
+      top: 25.2%;
+      width: calc(var(--screen-h) * .36);
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .hero-text h1 {
+      margin: 0;
+      font-family: "Great Vibes", cursive;
+      font-weight: 400;
+      font-size: calc(var(--screen-h) * .066);
+      line-height: .84;
+    }
+
+    .hero-text .amp {
+      display: block;
+      margin: calc(var(--screen-h) * .004) 0 calc(var(--screen-h) * .002);
+      font-size: calc(var(--screen-h) * .047);
+      line-height: .72;
+    }
+
+    .date-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: calc(var(--screen-h) * .010);
+      margin-top: calc(var(--screen-h) * .015);
+      font: 800 calc(var(--screen-h) * .0158)/1 "Montserrat", sans-serif;
+      letter-spacing: .20em;
+      color: rgba(255, 241, 206, .94);
+      text-transform: uppercase;
+    }
+
+    .date-line::before,
+    .date-line::after {
+      content: "";
+      width: calc(var(--screen-h) * .052);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 224, 149, .90));
+      box-shadow: 0 0 calc(var(--screen-h) * .010) rgba(255, 190, 96, .65);
+    }
+
+    .date-line::after {
+      background: linear-gradient(90deg, rgba(255, 224, 149, .90), transparent);
+    }
+
+    .static-card {
+      position: absolute;
+      z-index: 10;
+      transform: translate(-50%, -50%);
+      width: calc(var(--screen-h) * .38);
+      padding: calc(var(--screen-h) * .020) calc(var(--screen-h) * .022);
+      border-radius: calc(var(--screen-h) * .026);
+      border: 1px solid rgba(255, 224, 149, .34);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255, 222, 142, .13), transparent 44%),
+        linear-gradient(180deg, rgba(53, 22, 7, .54), rgba(17, 6, 2, .42));
+      box-shadow:
+        0 calc(var(--screen-h) * .018) calc(var(--screen-h) * .050) rgba(0, 0, 0, .35),
+        inset 0 0 0 1px rgba(255, 247, 222, .045);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      text-align: center;
+      user-select: text;
+    }
+
+    .static-card::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: calc(var(--screen-h) * .012);
+      width: 68%;
+      height: 1px;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, transparent, rgba(255, 224, 149, .60), transparent);
+      pointer-events: none;
+    }
+
+    .static-card h2 {
+      margin: 0 0 calc(var(--screen-h) * .010);
+      font-family: "Great Vibes", cursive;
+      font-weight: 400;
+      font-size: calc(var(--screen-h) * .047);
+      line-height: .98;
+    }
+
+    .static-card .kicker {
+      margin: 0 0 calc(var(--screen-h) * .009);
+      color: rgba(255, 236, 196, .82);
+      font: 800 calc(var(--screen-h) * .0105)/1 "Montserrat", sans-serif;
+      letter-spacing: .20em;
+      text-transform: uppercase;
+    }
+
+    .static-card p {
+      margin: 0;
+      font-size: calc(var(--screen-h) * .0185);
+      line-height: 1.28;
+      color: rgba(255, 246, 226, .94);
+    }
+
+    .static-card strong {
+      display: block;
+      margin: calc(var(--screen-h) * .004) 0;
+      color: #ffe7a6;
+      font-size: calc(var(--screen-h) * .023);
+      line-height: 1.10;
+    }
+
+    .static-card .small {
+      display: block;
+      margin-top: calc(var(--screen-h) * .006);
+      color: rgba(255, 236, 196, .82);
+      font: 800 calc(var(--screen-h) * .0115)/1.25 "Montserrat", sans-serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .church-card {
+      left: 29.5%;
+      top: 27.5%;
+    }
+
+    .venue-card {
+      left: 52.6%;
+      top: 28%;
+      width: calc(var(--screen-h) * .40);
+    }
+
+    .gift-card {
+      left: 61.8%;
+      top: 34%;
+      width: calc(var(--screen-h) * .42);
+    }
+
+    .gift-card .gift-line {
+      display: grid;
+      gap: calc(var(--screen-h) * .006);
+      margin-top: calc(var(--screen-h) * .014);
+      text-align: left;
+    }
+
+    .gift-card .gift-line div {
+      padding: calc(var(--screen-h) * .010) calc(var(--screen-h) * .012);
+      border-radius: calc(var(--screen-h) * .014);
+      border: 1px solid rgba(255, 224, 149, .20);
+      background: rgba(255, 244, 221, .08);
+    }
+
+    .gift-card .gift-line span {
+      display: block;
+      margin-bottom: calc(var(--screen-h) * .004);
+      color: rgba(255, 236, 196, .72);
+      font: 800 calc(var(--screen-h) * .0095)/1 "Montserrat", sans-serif;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .gift-card .gift-line code,
+    .gift-card .gift-line b {
+      display: block;
+      color: #fff1c9;
+      font: 800 calc(var(--screen-h) * .0125)/1.28 "Montserrat", sans-serif;
+      letter-spacing: .03em;
+      word-break: break-word;
+    }
+
+    .rsvp-card {
+      left: 74.2%;
+      top: 42%;
+      width: calc(var(--screen-h) * .44);
+      max-height: calc(var(--screen-h) * .79);
+      padding: calc(var(--screen-h) * .020);
+      overflow: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(247, 210, 124, .68) rgba(255,255,255,.08);
+    }
+
+    .rsvp-card::-webkit-scrollbar { width: calc(var(--screen-h) * .007); }
+    .rsvp-card::-webkit-scrollbar-track { background: rgba(255,255,255,.08); border-radius: 999px; }
+    .rsvp-card::-webkit-scrollbar-thumb { background: rgba(247,210,124,.68); border-radius: 999px; }
+
+    .rsvp-form {
+      display: grid;
+      gap: calc(var(--screen-h) * .009);
+      margin-top: calc(var(--screen-h) * .014);
+      text-align: left;
+    }
+
+    .field-label {
+      display: grid;
+      gap: calc(var(--screen-h) * .005);
+      color: rgba(255, 235, 194, .84);
+      font: 800 calc(var(--screen-h) * .0102)/1 "Montserrat", sans-serif;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid rgba(255, 224, 149, .38);
+      border-radius: calc(var(--screen-h) * .013);
+      padding: calc(var(--screen-h) * .012) calc(var(--screen-h) * .013);
+      outline: none;
+      background: rgba(255, 247, 228, .93);
+      color: var(--brown);
+      font: 800 calc(var(--screen-h) * .013)/1.22 "Montserrat", sans-serif;
+      user-select: text;
+    }
+
+    textarea {
+      min-height: calc(var(--screen-h) * .064);
+      resize: vertical;
+    }
+
+    .attendance-pills {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: calc(var(--screen-h) * .008);
+    }
+
+    .attendance-pills label {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(var(--screen-h) * .043);
+      border: 1px solid rgba(255, 224, 149, .38);
+      border-radius: 999px;
+      background: rgba(255, 247, 228, .90);
+      color: var(--brown);
+      font: 900 calc(var(--screen-h) * .011)/1 "Montserrat", sans-serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .attendance-pills input {
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+      pointer-events: none;
+    }
+
+    .attendance-pills label:has(input:checked) {
+      background: linear-gradient(135deg, #ffe7a4, #d99a43, #bd6230);
+      color: #241006;
+      border-color: rgba(255, 231, 164, .78);
+      box-shadow: 0 0 calc(var(--screen-h) * .017) rgba(247, 210, 124, .28);
+    }
+
+    .submit-btn,
+    .open-invitation-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 224, 149, .66);
+      background: linear-gradient(135deg, #ffe7a4, #d99a43, #bd6230);
+      color: #261106;
+      font-family: "Montserrat", sans-serif;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform .22s ease, filter .22s ease, opacity .22s ease;
+      box-shadow: 0 calc(var(--screen-h) * .014) calc(var(--screen-h) * .034) rgba(0, 0, 0, .28);
+    }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: calc(var(--screen-h) * .004);
+      padding: calc(var(--screen-h) * .014) calc(var(--screen-h) * .018);
+      font-size: calc(var(--screen-h) * .0115);
+    }
+
+    .open-invitation-btn {
+      position: absolute;
+      z-index: 55;
+      left: 50%;
+      top: 80%;
+      transform: translate(-50%, -50%);
+      padding: calc(var(--screen-h) * .012) calc(var(--screen-h) * .034);
+      font-size: calc(var(--screen-h) * .0108);
+      white-space: nowrap;
+    }
+
+    .submit-btn:hover,
+    .open-invitation-btn:hover {
+      filter: brightness(1.06);
+    }
+
+    .open-invitation-btn:hover {
+      transform: translate(-50%, -52%);
+    }
+
+    body.invitation-open .open-invitation-btn {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .thank-you {
+      display: none;
+      margin: calc(var(--screen-h) * .014) 0 0;
+      color: #ffe7a6;
+      font-size: calc(var(--screen-h) * .018);
+      line-height: 1.32;
+      text-align: center;
+    }
+
+    .final-card {
+      left: 84.2%;
+      top: 30%;
+      width: calc(var(--screen-h) * .43);
+    }
+
+    .powered-by {
+      display: inline-block;
+      margin-top: calc(var(--screen-h) * .026);
+      color: rgba(255, 243, 218, .92);
+      font: 800 calc(var(--screen-h) * .0105)/1.2 "Montserrat", sans-serif;
+      letter-spacing: .05em;
+      text-decoration: underline;
+      text-underline-offset: calc(var(--screen-h) * .004);
+      pointer-events: auto;
+    }
+
+    .powered-by:hover {
+      color: var(--gold-soft);
+    }
+
+    .car-wrap {
+      position: absolute;
+      z-index: 28;
+      left: var(--car-left);
+      bottom: calc(var(--screen-h) * -0.170);
+      width: calc(var(--screen-h) * .685);
+      height: calc(var(--screen-h) * .485);
+      pointer-events: none;
+      transform: translate(-50%, 0) scaleX(var(--car-scale-x)) rotate(var(--car-tilt));
+      transform-origin: 50% 86%;
+      will-change: left, transform;
+      transition: transform .10s linear;
+      filter: none;
+    }
+
+    .car-wrap img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center bottom;
+      pointer-events: none;
+      -webkit-user-drag: none;
+      animation: carIdle 1.6s ease-in-out infinite;
+    }
+
+    .car-shadow {
+      display: none;
+    }
+
+    @keyframes carIdle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(calc(var(--screen-h) * -.002)); }
+    }
+
+    .dust {
+      display: none;
+    }
+
+    .drag-hint {
+      position: absolute;
+      z-index: 52;
+      left: 50%;
+      bottom: calc(var(--screen-h) * .052);
+      transform: translateX(-50%);
+      padding: calc(var(--screen-h) * .007) calc(var(--screen-h) * .015);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 222, 151, .23);
+      background: rgba(14, 5, 2, .42);
+      color: rgba(255, 245, 221, .86);
+      font: 800 calc(var(--screen-h) * .0094)/1 "Montserrat", sans-serif;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      backdrop-filter: blur(8px);
+      pointer-events: none;
+      transition: opacity .35s ease;
+    }
+
+    .scroll-ui {
+      position: absolute;
+      z-index: 51;
+      left: 50%;
+      bottom: calc(var(--screen-h) * .018);
+      width: calc(var(--screen-h) * .250);
+      transform: translateX(-50%);
+      pointer-events: none;
+      transition: opacity .35s ease;
+    }
+
+    .progress-shell {
+      padding: calc(var(--screen-h) * .006);
+      border: 1px solid rgba(255, 222, 151, .26);
+      border-radius: 999px;
+      background: rgba(14, 5, 2, .48);
+      backdrop-filter: blur(10px);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: calc(var(--screen-h) * .009);
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 244, 221, .18);
+      box-shadow: inset 0 0 calc(var(--screen-h) * .008) rgba(0, 0, 0, .26);
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #ffe9aa, #f7d27c, #d99a43, #c96b2f);
+      box-shadow: 0 0 calc(var(--screen-h) * .012) rgba(247, 210, 124, .62);
+      transition: width .10s linear;
+    }
+
+    body.invitation-locked .scroll-ui,
+    body.invitation-locked .drag-hint {
+      opacity: .55;
+    }
+
+    .loader {
+      position: absolute;
+      inset: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(var(--screen-h) * .035);
+      background:
+        radial-gradient(circle at 50% 34%, rgba(247, 210, 124, .20), transparent 38%),
+        linear-gradient(180deg, rgba(23, 9, 3, .98), rgba(8, 3, 1, .99));
+      text-align: center;
+      transition: opacity .55s ease, visibility .55s ease;
+      pointer-events: auto;
+    }
+
+    .loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loader-card {
+      width: min(84%, calc(var(--screen-h) * .40));
+      padding: calc(var(--screen-h) * .035) calc(var(--screen-h) * .030);
+      border-radius: calc(var(--screen-h) * .030);
+      border: 1px solid rgba(247, 210, 124, .35);
+      background: rgba(39, 16, 6, .54);
+      box-shadow: 0 calc(var(--screen-h) * .022) calc(var(--screen-h) * .060) rgba(0, 0, 0, .42);
+      backdrop-filter: blur(9px);
+    }
+
+    .loader-title {
+      margin: 0;
+      font-family: "Great Vibes", cursive;
+      font-weight: 400;
+      font-size: calc(var(--screen-h) * .052);
+      color: #ffe29c;
+      line-height: 1;
+      text-shadow: 0 0 calc(var(--screen-h) * .020) rgba(255, 170, 72, .62);
+    }
+
+    .loader-text {
+      margin: calc(var(--screen-h) * .018) 0 0;
+      font-family: "Montserrat", sans-serif;
+      font-size: calc(var(--screen-h) * .0105);
+      font-weight: 900;
+      letter-spacing: .20em;
+      text-transform: uppercase;
+      color: rgba(255, 245, 221, .82);
+    }
+
+    .loader-bar {
+      width: 100%;
+      height: calc(var(--screen-h) * .009);
+      margin: calc(var(--screen-h) * .026) auto calc(var(--screen-h) * .014);
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 245, 221, .14);
+      box-shadow: inset 0 0 calc(var(--screen-h) * .007) rgba(0, 0, 0, .30);
+    }
+
+    .loader-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #ffe9aa, #f7d27c, #d99a43, #bd6230);
+      transition: width .25s ease;
+    }
+
+    .loader-percent {
+      font: 900 calc(var(--screen-h) * .0105)/1 "Montserrat", sans-serif;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(255, 245, 221, .70);
+    }
+
+    body.assets-loading .pano-wrap,
+    body.assets-loading .open-invitation-btn,
+    body.assets-loading .rsvp-card,
+    body.assets-loading .drag-hint,
+    body.assets-loading .scroll-ui {
+      pointer-events: none !important;
+    }
+
+    @media (max-width: 720px) {
+      .hero-text {
+        top: 24%;
+      }
+
+      .static-card {
+        width: calc(var(--screen-h) * .39);
+      }
+
+      .rsvp-card {
+        width: calc(var(--screen-h) * .45);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="assets-loading invitation-locked">
+  <main class="stage" id="stage">
+    <div class="loader" id="loader" role="status" aria-live="polite">
+      <div class="loader-card">
+        <h2 class="loader-title">Preparing your invitation</h2>
+        <p class="loader-text">Loading Ehden sunset</p>
+        <div class="loader-bar" aria-hidden="true"><div class="loader-fill" id="loaderFill"></div></div>
+        <div class="loader-percent" id="loaderPercent">0%</div>
+      </div>
+    </div>
+
+    <div class="pano-wrap" id="panoWrap" aria-label="Horizontal scrolling wedding panorama">
+      <div class="pano" id="pano">
+        <div class="hero-text gold-text" aria-label="Ralph and Roussana wedding date">
+          <h1>Ralph<span class="amp">&amp;</span>Roussana</h1>
+          <div class="date-line">28 · 07 · 2026</div>
+        </div>
+
+        <section class="static-card church-card" aria-label="Church information">
+          <p class="kicker">Marriage Ceremony</p>
+          <h2 class="gold-text">St. Marina Church</h2>
+          <p><strong>Amyoun</strong><span class="small">5:30 PM</span></p>
+        </section>
+
+        <section class="static-card venue-card" aria-label="Venue information">
+          <p class="kicker">Celebration</p>
+          <h2 class="gold-text">Splendor Venue Ehden</h2>
+          <p><strong>Welcome Drink</strong><span class="small">7:00 PM</span></p>
+          <p style="margin-top: calc(var(--screen-h) * .010);"><strong>Dinner</strong><span class="small">8:00 PM</span></p>
+        </section>
+
+        <section class="static-card gift-card" aria-label="Wedding list and gift information">
+          <p class="kicker">Wedding List</p>
+          <h2 class="gold-text">With Love</h2>
+          <p>Your presence is the most beautiful gift. For those who wish, a wedding list or bank option can be added here.</p>
+          <div class="gift-line">
+            <div>
+              <span>Wedding list</span>
+              <b>Ralph &amp; Roussana</b>
+            </div>
+            <div>
+              <span>Bank account</span>
+              <code>IBAN: TO BE ADDED</code>
+            </div>
+          </div>
+        </section>
+
+        <section class="static-card rsvp-card" id="rsvp" aria-label="RSVP form">
+          <p class="kicker">Kindly Reply</p>
+          <h2 class="gold-text">RSVP</h2>
+          <p>Before 10 July 2026</p>
+
+          <form class="rsvp-form" id="rsvpForm" novalidate>
+            <label class="field-label">
+              Full name
+              <input id="guestName" name="name" type="text" placeholder="Your name" autocomplete="name" required>
+            </label>
+
+            <label class="field-label">
+              Number of guests
+              <select id="guestCount" name="guests" required>
+                <option value="1">1 guest</option>
+                <option value="2">2 guests</option>
+                <option value="3">3 guests</option>
+                <option value="4">4 guests</option>
+                <option value="5">5 guests</option>
+                <option value="6">6 guests</option>
+              </select>
+            </label>
+
+            <div class="field-label">
+              Attendance
+              <div class="attendance-pills">
+                <label><input type="radio" name="attendance" value="Joyfully attending" required><span>Yes</span></label>
+                <label><input type="radio" name="attendance" value="Sadly cannot attend" required><span>No</span></label>
+              </div>
+            </div>
+
+            <label class="field-label">
+              Message
+              <textarea name="message" placeholder="A note for Ralph & Roussana"></textarea>
+            </label>
+
+            <button class="submit-btn" type="submit" id="sendBtn">Send RSVP</button>
+          </form>
+
+          <p class="thank-you" id="thankYou"></p>
+        </section>
+
+        <section class="static-card final-card" aria-label="Final message">
+          <h2 class="gold-text">See You in Ehden</h2>
+          <p>We cannot wait to celebrate with you.</p>
+          <p style="margin-top: calc(var(--screen-h) * .010);"><strong>Ralph &amp; Roussana</strong><span class="small">28 · 07 · 2026</span></p>
+          <a class="powered-by" href="https://www.instagram.com/cardiastudios/" target="_blank" rel="noopener">Powered by Cardia Studios</a>
+        </section>
+      </div>
+    </div>
+
+    <div class="car-wrap" id="carWrap" aria-hidden="true">
+      <img src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Car.png" alt="">
+    </div>
+
+    <div class="stage-vignette"></div>
+
+    <button class="open-invitation-btn" id="openBtn" type="button">Open Invitation</button>
+    <div class="drag-hint" id="dragHint">Drag left / right to follow the car</div>
+
+    <div class="scroll-ui" aria-hidden="true">
+      <div class="progress-shell">
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const PANO_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi2.png";
+    const CAR_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Car.png";
+
+    /* Paste your deployed Google Apps Script Web App URL here when you want the RSVP form
+       to send replies to Google Sheets. Keep empty for visual/demo mode. */
+    const RSVP_SCRIPT_URL = "";
+    const CUSTOMER_EMAIL = "cardia.studios@gmail.com";
+    const COUPLE_NAME = "Ralph & Roussana";
+
+    const body = document.body;
+    const stage = document.getElementById("stage");
+    const wrap = document.getElementById("panoWrap");
+    const progressFill = document.getElementById("progressFill");
+    const carWrap = document.getElementById("carWrap");
+    const dust = document.getElementById("dust");
+    const openBtn = document.getElementById("openBtn");
+    const rsvpForm = document.getElementById("rsvpForm");
+    const thankYou = document.getElementById("thankYou");
+    const sendBtn = document.getElementById("sendBtn");
+
+    let isDragging = false;
+    let pointerStartX = 0;
+    let scrollStartLeft = 0;
+    let lastScrollLeft = 0;
+    let lastScrollTime = performance.now();
+    let velocity = 0;
+    let carDirection = 1;
+    let currentRatio = 0;
+    let rafPending = false;
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function maxScroll() {
+      return Math.max(0, wrap.scrollWidth - wrap.clientWidth);
+    }
+
+    function getRatio() {
+      const max = maxScroll();
+      return max ? clamp(wrap.scrollLeft / max, 0, 1) : 0;
+    }
+
+    function updateCar(ratio) {
+      const carLeft = 18 + (ratio * 66);
+
+      /* Flip the car when the user scrolls/drags back in the opposite direction.
+         Positive velocity = moving forward through the panorama, negative = going back. */
+      if (velocity > 8) carDirection = 1;
+      if (velocity < -8) carDirection = -1;
+
+      const tilt = clamp(velocity * .014, -3.5, 3.5);
+      const speedDust = clamp(Math.abs(velocity) / 1600, 0.10, .48);
+
+      stage.style.setProperty("--car-left", carLeft.toFixed(3) + "%");
+      stage.style.setProperty("--car-tilt", tilt.toFixed(3) + "deg");
+      stage.style.setProperty("--car-scale-x", String(carDirection));
+      stage.style.setProperty("--dust-opacity", speedDust.toFixed(2));
+
+      if (dust) dust.style.left = `calc(${carLeft.toFixed(3)}% - 9%)`;
+    }
+
+    function updateUI() {
+      rafPending = false;
+
+      const now = performance.now();
+      const dt = Math.max(16, now - lastScrollTime);
+      const dx = wrap.scrollLeft - lastScrollLeft;
+      velocity = dx / dt * 1000;
+      lastScrollLeft = wrap.scrollLeft;
+      lastScrollTime = now;
+
+      currentRatio = getRatio();
+      progressFill.style.width = `${(currentRatio * 100).toFixed(2)}%`;
+      updateCar(currentRatio);
+    }
+
+    function requestUIUpdate() {
+      if (rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(updateUI);
+    }
+
+    function scrollToRatio(ratio, behavior = "smooth") {
+      wrap.scrollTo({ left: maxScroll() * clamp(ratio, 0, 1), behavior });
+    }
+
+    function targetIsInteractive(target) {
+      return Boolean(target.closest("button, a, input, select, textarea, label, .rsvp-card"));
+    }
+
+    wrap.addEventListener("scroll", requestUIUpdate, { passive: true });
+
+    wrap.addEventListener("wheel", (event) => {
+      if (body.classList.contains("invitation-locked")) return;
+      if (targetIsInteractive(event.target)) return;
+      const delta = Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+      wrap.scrollLeft += delta;
+      event.preventDefault();
+    }, { passive: false });
+
+    wrap.addEventListener("pointerdown", (event) => {
+      if (body.classList.contains("invitation-locked")) return;
+      if (targetIsInteractive(event.target)) return;
+      isDragging = true;
+      pointerStartX = event.clientX;
+      scrollStartLeft = wrap.scrollLeft;
+      wrap.setPointerCapture(event.pointerId);
+    });
+
+    wrap.addEventListener("pointermove", (event) => {
+      if (!isDragging) return;
+      wrap.scrollLeft = scrollStartLeft - (event.clientX - pointerStartX);
+    });
+
+    function endDrag() {
+      isDragging = false;
+    }
+
+    wrap.addEventListener("pointerup", endDrag);
+    wrap.addEventListener("pointercancel", endDrag);
+    wrap.addEventListener("lostpointercapture", endDrag);
+
+    openBtn.addEventListener("click", () => {
+      body.classList.remove("invitation-locked");
+      body.classList.add("invitation-open");
+      scrollToRatio(0.015, "smooth");
+      requestUIUpdate();
+    });
+
+    document.querySelectorAll("input, select, textarea, label, button, a").forEach((el) => {
+      el.addEventListener("pointerdown", (event) => event.stopPropagation());
+    });
+
+    function applyGuestParams() {
+      const params = new URLSearchParams(window.location.search);
+      const name = params.get("name") || params.get("guest") || params.get("to") || "";
+      const guests = clamp(parseInt(params.get("guests") || params.get("limit") || "1", 10) || 1, 1, 6);
+      const guestNameInput = document.getElementById("guestName");
+      const guestCountSelect = document.getElementById("guestCount");
+
+      if (name && guestNameInput) guestNameInput.value = name.replace(/\+/g, " ");
+      if (guestCountSelect) guestCountSelect.value = String(guests);
+    }
+
+    function formToPayload(form) {
+      const data = new FormData(form);
+      return {
+        couple: COUPLE_NAME,
+        customerEmail: CUSTOMER_EMAIL,
+        name: String(data.get("name") || "").trim(),
+        guests: String(data.get("guests") || "").trim(),
+        attendance: String(data.get("attendance") || "").trim(),
+        message: String(data.get("message") || "").trim(),
+        pageUrl: window.location.href,
+        submittedAt: new Date().toISOString()
+      };
+    }
+
+    rsvpForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!rsvpForm.reportValidity()) return;
+
+      const payload = formToPayload(rsvpForm);
+      sendBtn.disabled = true;
+      sendBtn.textContent = "Sending...";
+
+      try {
+        if (RSVP_SCRIPT_URL) {
+          await fetch(RSVP_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        rsvpForm.style.display = "none";
+        thankYou.style.display = "block";
+        thankYou.textContent = payload.attendance === "Sadly cannot attend"
+          ? "Thank you for your reply. You will be missed."
+          : "Thank you! Your RSVP has been received.";
+      } catch (error) {
+        thankYou.style.display = "block";
+        thankYou.textContent = "Something went wrong. Please try again.";
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Send RSVP";
+      }
+    });
+
+    function preloadImage(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.decoding = "async";
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+        if (img.complete) resolve(true);
+      });
+    }
+
+    function initLoader() {
+      const loader = document.getElementById("loader");
+      const fill = document.getElementById("loaderFill");
+      const percent = document.getElementById("loaderPercent");
+      const assets = [PANO_URL, CAR_URL];
+      const startedAt = Date.now();
+      let done = 0;
+
+      function setProgress(value) {
+        const safe = Math.round(clamp(value, 0, 100));
+        fill.style.width = safe + "%";
+        percent.textContent = safe + "%";
+      }
+
+      Promise.all(assets.map((url) => preloadImage(url).then(() => {
+        done += 1;
+        setProgress(done / assets.length * 100);
+      }))).then(() => {
+        const delay = Math.max(0, 650 - (Date.now() - startedAt));
+        window.setTimeout(() => {
+          setProgress(100);
+          body.classList.remove("assets-loading");
+          loader.classList.add("hidden");
+          loader.setAttribute("aria-hidden", "true");
+        }, delay);
+      });
+
+      window.setTimeout(() => {
+        body.classList.remove("assets-loading");
+        loader.classList.add("hidden");
+      }, 10000);
+    }
+
+    window.addEventListener("load", () => {
+      scrollToRatio(0, "auto");
+      initLoader();
+      applyGuestParams();
+      requestUIUpdate();
+    });
+
+    window.addEventListener("resize", () => {
+      const keep = currentRatio;
+      requestAnimationFrame(() => {
+        scrollToRatio(keep, "auto");
+        requestUIUpdate();
+      });
+    });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", () => {
+        requestAnimationFrame(requestUIUpdate);
+      });
+    }
+  </script>
+</body>
+</html>
