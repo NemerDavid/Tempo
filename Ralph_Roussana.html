@@ -13,10 +13,10 @@
   <style>
     :root {
       --app-height: 100svh;
-      --pano-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi5.png");
+      --pano-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi5a.png");
       --car-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Car.png");
 
-      /* Rossi5.png = 7517 × 852 */
+      /* Rossi5a.png = 7517 × 852 */
       --pano-ratio: 8.8227699531;
 
       /* Desktop keeps the elegant 9:16 invitation frame. Mobile is full-screen below. */
@@ -162,6 +162,41 @@
 
 
 
+
+
+.Dabke {
+      position: absolute;
+      z-index: 6;
+      width: calc(var(--screen-h) * .135);
+      height: auto;
+      transform: translate(-50%, -50%);
+      transform-origin: center center;
+      pointer-events: none;
+      opacity: .94;
+      filter:
+        drop-shadow(0 calc(var(--screen-h) * .010) calc(var(--screen-h) * .020) rgba(48, 17, 5, .22))
+        drop-shadow(0 0 calc(var(--screen-h) * .010) rgba(255, 230, 170, .12));
+      will-change: transform;
+    }
+    .Dabke { left: 53.9%; top:  68%; width: calc(var(--screen-h) * .23) }
+
+.Dance {
+      position: absolute;
+      z-index: 6;
+      width: calc(var(--screen-h) * .135);
+      height: auto;
+      transform: translate(-50%, -50%);
+      transform-origin: center center;
+      pointer-events: none;
+      opacity: .94;
+      filter:
+        drop-shadow(0 calc(var(--screen-h) * .010) calc(var(--screen-h) * .020) rgba(48, 17, 5, .22))
+        drop-shadow(0 0 calc(var(--screen-h) * .010) rgba(255, 230, 170, .12));
+      will-change: transform;
+    }
+
+  .Dance { left: 54.1%; top:  70%;  width: calc(var(--screen-h) * .135)}
+
     .hot-air {
       position: absolute;
       z-index: 6;
@@ -176,6 +211,9 @@
         drop-shadow(0 0 calc(var(--screen-h) * .010) rgba(255, 230, 170, .12));
       will-change: transform;
     }
+
+
+
 
     .hot-air-1 { left: 16.2%; top: 13.5%; width: calc(var(--screen-h) * .105); animation: balloonFloatA 22s ease-in-out infinite; }
     .hot-air-2 { left: 24.8%; top: 20.2%; width: calc(var(--screen-h) * .082); opacity: .86; animation: balloonFloatB 26s ease-in-out infinite; animation-delay: -7s; }
@@ -216,26 +254,26 @@
 
     .hero-text {
       position: absolute;
-      z-index: 10;
-      left: 8.55%;
       top: 23.8%;
+      z-index: 10;
+      left: 9%;
       width: calc(var(--screen-h) * .455);
       transform: translate(-50%, -50%);
       text-align: center;
       pointer-events: none;
     }
-
     .story-title {
       margin: 0;
       font-family: "Great Vibes", cursive;
       font-weight: 400;
       font-size: calc(var(--screen-h) * .053);
+color: #1E1C11;
       line-height: .92;
     }
 
     .story-star {
       margin: calc(var(--screen-h) * .004) 0 calc(var(--screen-h) * .006);
-      color: rgba(255, 237, 185, .96);
+      color: #1E1C11;
       font-size: calc(var(--screen-h) * .020);
       line-height: 1;
       text-shadow:
@@ -246,9 +284,9 @@
     .story-copy {
       margin: 0 auto;
       max-width: calc(var(--screen-h) * .43);
-      color: rgba(255, 248, 229, .96);
+      color:#1E1C11;
       font-size: calc(var(--screen-h) * .0187);
-      font-weight: 600;
+      font-weight: 900;
       line-height: 1.24;
       text-shadow:
         0 0 calc(var(--screen-h) * .010) rgba(255, 229, 164, .52),
@@ -416,7 +454,7 @@
     }
 
     .venue-card {
-      left: 52.6%;
+      left: 53.6%;
       top: 28%;
       width: calc(var(--screen-h) * .40);
     }
@@ -869,7 +907,10 @@
 
     <div class="pano-wrap" id="panoWrap" aria-label="Horizontal scrolling wedding panorama">
       <div class="pano" id="pano">
-
+        
+        
+     <img class="Dabke" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Dabke.png" alt="" draggable="false">
+     <img class="Dance" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Dance.png" alt="" draggable="false">
         <img class="hot-air hot-air-1" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png" alt="" draggable="false">
         <img class="hot-air hot-air-2" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png" alt="" draggable="false">
         <img class="hot-air hot-air-3" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png" alt="" draggable="false">
@@ -1004,7 +1045,7 @@
     window.addEventListener("resize", setAppHeight, { passive: true });
     window.addEventListener("orientationchange", () => window.setTimeout(setAppHeight, 250), { passive: true });
 
-    const PANO_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi5.png";
+    const PANO_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi5a.png";
     const CAR_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Car.png";
     const MUSIC_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Ray.mp3";
     const HOT_AIR_4B_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png";
