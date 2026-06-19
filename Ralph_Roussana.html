@@ -845,6 +845,305 @@ color: #1E1C11;
       color: rgba(255, 245, 221, .70);
     }
 
+
+
+    /* ═════════ CARDIA UPDATE — VENICE-STYLE PER-GUEST RSVP ═════════
+       Generator-ready RSVP:
+       - ?limit=3 creates three guest slots
+       - ?guests=Name1|Name2 or ?guest=Name1&limit=3 pre-fills names
+       - 4+ guest slots become internally scrollable, like Venice.html */
+    .rsvp-card {
+      overflow: visible;
+    }
+
+    .rr-rsvp-box {
+      margin-top: calc(var(--screen-h) * .014);
+      text-align: left;
+    }
+
+    .step-dots {
+      display: flex;
+      justify-content: center;
+      gap: calc(var(--screen-h) * .007);
+      margin-bottom: calc(var(--screen-h) * .012);
+    }
+
+    .step-dot {
+      width: calc(var(--screen-h) * .0075);
+      height: calc(var(--screen-h) * .0075);
+      border-radius: 50%;
+      border: 1px solid rgba(255, 224, 149, .54);
+      background: rgba(255, 247, 228, .14);
+      box-shadow: 0 0 calc(var(--screen-h) * .010) rgba(247, 210, 124, .16);
+    }
+
+    .step-dot.on {
+      background: #ffe7a6;
+      box-shadow: 0 0 calc(var(--screen-h) * .016) rgba(247, 210, 124, .55);
+    }
+
+    .guest-welcome-title {
+      margin: 0 0 calc(var(--screen-h) * .007);
+      font-family: "Great Vibes", cursive;
+      font-weight: 400;
+      font-size: calc(var(--screen-h) * .040);
+      line-height: 1;
+      color: #ffe7a6;
+      text-align: center;
+      text-shadow:
+        0 0 calc(var(--screen-h) * .006) rgba(255, 239, 185, .92),
+        0 0 calc(var(--screen-h) * .018) rgba(255, 164, 60, .56);
+    }
+
+    .guest-welcome-note {
+      margin: 0 0 calc(var(--screen-h) * .012);
+      color: rgba(255, 241, 211, .88);
+      font-size: calc(var(--screen-h) * .0155);
+      line-height: 1.30;
+      text-align: center;
+    }
+
+    .guest-slot-name-list {
+      display: grid;
+      gap: calc(var(--screen-h) * .008);
+      width: 100%;
+      max-height: calc(var(--screen-h) * .285);
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-right: calc(var(--screen-h) * .010);
+      margin: calc(var(--screen-h) * .012) 0 calc(var(--screen-h) * .010);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(247, 210, 124, .78) rgba(255,255,255,.10);
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .guest-slot-name-list::-webkit-scrollbar { width: calc(var(--screen-h) * .006); }
+    .guest-slot-name-list::-webkit-scrollbar-track {
+      background: rgba(255,255,255,.10);
+      border-radius: 999px;
+      margin: calc(var(--screen-h) * .005) 0;
+    }
+    .guest-slot-name-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #ffe7a6, #d99a43, #bd6230);
+      border-radius: 999px;
+    }
+
+    .guest-slot-name-box {
+      width: 100%;
+      padding: calc(var(--screen-h) * .010) calc(var(--screen-h) * .011);
+      border-radius: calc(var(--screen-h) * .016);
+      border: 1px solid rgba(255, 224, 149, .28);
+      background: rgba(255, 244, 221, .10);
+      box-shadow: inset 0 0 0 1px rgba(255, 247, 222, .035);
+    }
+
+    .guest-slot-name-box.locked {
+      background: rgba(255, 244, 221, .15);
+      border-color: rgba(255, 224, 149, .40);
+    }
+
+    .guest-slot-name-label,
+    .form-label {
+      display: block;
+      margin: 0 0 calc(var(--screen-h) * .006);
+      color: rgba(255, 235, 194, .84);
+      font: 900 calc(var(--screen-h) * .0092)/1 "Montserrat", sans-serif;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .guest-slot-name-box > input,
+    .form-field {
+      width: 100%;
+      border: 1px solid rgba(255, 224, 149, .34) !important;
+      border-radius: calc(var(--screen-h) * .012) !important;
+      padding: calc(var(--screen-h) * .010) calc(var(--screen-h) * .011) !important;
+      margin: 0 !important;
+      background: rgba(255, 247, 228, .93) !important;
+      color: var(--brown) !important;
+      font: 900 calc(var(--screen-h) * .0122)/1.20 "Montserrat", sans-serif !important;
+      letter-spacing: .02em !important;
+      outline: none;
+    }
+
+    .guest-slot-name-box > input::placeholder,
+    .form-field::placeholder {
+      color: rgba(50, 22, 6, .44);
+    }
+
+    .guest-slot-name-box > input[readonly] {
+      cursor: default;
+      color: #241006 !important;
+      background: rgba(255, 231, 164, .90) !important;
+    }
+
+    .guest-slot-attendance {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: calc(var(--screen-h) * .010);
+      margin-top: calc(var(--screen-h) * .009);
+    }
+
+    .guest-slot-attendance > span {
+      color: rgba(255, 235, 194, .82);
+      font: 900 calc(var(--screen-h) * .0087)/1 "Montserrat", sans-serif;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .guest-response-options {
+      display: flex;
+      gap: calc(var(--screen-h) * .006);
+      margin-left: auto;
+    }
+
+    .guest-response-options input {
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+      pointer-events: none;
+    }
+
+    .guest-response-options label { cursor: pointer; }
+
+    .guest-response-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: calc(var(--screen-h) * .047);
+      padding: calc(var(--screen-h) * .008) calc(var(--screen-h) * .010);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 224, 149, .36);
+      background: rgba(255, 247, 228, .90);
+      color: var(--brown);
+      font: 900 calc(var(--screen-h) * .0095)/1 "Montserrat", sans-serif;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      transition: background .18s ease, color .18s ease, border-color .18s ease;
+    }
+
+    .guest-response-options input:checked + .guest-response-pill {
+      background: linear-gradient(135deg, #ffe7a4, #d99a43, #bd6230);
+      color: #241006;
+      border-color: rgba(255, 231, 164, .78);
+      box-shadow: 0 0 calc(var(--screen-h) * .014) rgba(247, 210, 124, .25);
+    }
+
+    .guest-total-line {
+      margin: calc(var(--screen-h) * .011) 0 calc(var(--screen-h) * .006);
+      color: #ffe7a6;
+      font-size: calc(var(--screen-h) * .017);
+      line-height: 1.20;
+      text-align: center;
+    }
+
+    .error-msg {
+      margin: calc(var(--screen-h) * .007) 0 0;
+      color: #ffe7a6;
+      font: 900 calc(var(--screen-h) * .0105)/1.35 "Montserrat", sans-serif;
+      letter-spacing: .04em;
+      text-align: center;
+    }
+
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: calc(var(--screen-h) * .008);
+      margin-top: calc(var(--screen-h) * .012);
+    }
+
+    .btn-soft,
+    .btn-solid {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      border-radius: 999px;
+      font-family: "Montserrat", sans-serif;
+      font-size: calc(var(--screen-h) * .0102);
+      font-weight: 900;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform .18s ease, filter .18s ease, opacity .18s ease;
+    }
+
+    .btn-solid {
+      border: 1px solid rgba(255, 224, 149, .66);
+      background: linear-gradient(135deg, #ffe7a4, #d99a43, #bd6230);
+      color: #261106;
+      box-shadow: 0 calc(var(--screen-h) * .012) calc(var(--screen-h) * .026) rgba(0, 0, 0, .24);
+      padding: calc(var(--screen-h) * .012) calc(var(--screen-h) * .014);
+    }
+
+    .btn-soft {
+      border: 1px solid rgba(255, 224, 149, .38);
+      background: rgba(255, 247, 228, .13);
+      color: rgba(255, 241, 206, .96);
+      padding: calc(var(--screen-h) * .012) calc(var(--screen-h) * .014);
+    }
+
+    .btn-solid:hover,
+    .btn-soft:hover { filter: brightness(1.06); }
+
+    .rsvp-main-btn {
+      margin-top: calc(var(--screen-h) * .010);
+    }
+
+    #stepOk {
+      text-align: center;
+      padding: calc(var(--screen-h) * .012) 0 calc(var(--screen-h) * .004);
+    }
+
+    #stepOk h3 {
+      margin: 0 0 calc(var(--screen-h) * .010);
+      font-family: "Great Vibes", cursive;
+      font-size: calc(var(--screen-h) * .044);
+      font-weight: 400;
+      color: #ffe7a6;
+    }
+
+    #stepOk p {
+      margin: 0;
+      color: rgba(255, 241, 211, .92);
+      font-size: calc(var(--screen-h) * .017);
+      line-height: 1.38;
+    }
+
+    @media (max-width: 720px) {
+      .rsvp-card {
+        width: calc(var(--screen-h) * .47);
+        max-height: calc(var(--screen-h) * .82);
+      }
+
+      .guest-slot-name-list {
+        max-height: calc(var(--screen-h) * .270);
+      }
+
+      .guest-slot-attendance {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .guest-response-options {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      .guest-response-options label {
+        flex: 1;
+      }
+
+      .guest-response-pill {
+        width: 100%;
+        min-width: 0;
+      }
+    }
+
     body.assets-loading .pano-wrap,
     body.assets-loading .open-invitation-btn,
     body.assets-loading .rsvp-card,
@@ -974,41 +1273,42 @@ color: #1E1C11;
           <h2 class="gold-text">RSVP</h2>
           <p>Before 10 July 2026</p>
 
-          <form class="rsvp-form" id="rsvpForm" novalidate>
-            <label class="field-label">
-              Full name
-              <input id="guestName" name="name" type="text" placeholder="Your name" autocomplete="name" required>
-            </label>
+          <div class="rr-rsvp-box">
+            <div class="step-dots" aria-hidden="true">
+              <span class="step-dot on" id="dot-1"></span>
+              <span class="step-dot" id="dot-2"></span>
+            </div>
 
-            <label class="field-label">
-              Number of guests
-              <select id="guestCount" name="guests" required>
-                <option value="1">1 guest</option>
-                <option value="2">2 guests</option>
-                <option value="3">3 guests</option>
-                <option value="4">4 guests</option>
-                <option value="5">5 guests</option>
-                <option value="6">6 guests</option>
-              </select>
-            </label>
+            <div id="step1" class="rsvp-step guest-welcome-step">
+              <h3 class="guest-welcome-title">Dear <span id="guestWelcomeName">Guest</span>,</h3>
+              <p id="personalGuestNote" class="guest-welcome-note">Please enter the guest names to confirm the RSVP.</p>
 
-            <div class="field-label">
-              Attendance
-              <div class="attendance-pills">
-                <label><input type="radio" name="attendance" value="Joyfully attending" required><span>Yes</span></label>
-                <label><input type="radio" name="attendance" value="Sadly cannot attend" required><span>No</span></label>
+              <div id="manualGuestListWrap">
+                <div id="guestSlotNameList" class="guest-slot-name-list" aria-label="Guest RSVP list"></div>
+              </div>
+
+              <p class="guest-total-line">Total guests attending: <strong id="attendingGuestCount">0</strong></p>
+              <p class="error-msg" id="errName" style="display:none;">Please enter at least one guest name.</p>
+
+              <button class="btn-solid rsvp-main-btn" id="continueToMessageBtn" type="button">Continue →</button>
+            </div>
+
+            <div id="step2" class="rsvp-step" style="display:none;">
+              <label class="form-label" for="guestMsg">Leave a wish <span style="font-weight:400;letter-spacing:.04em;text-transform:none;">(optional)</span></label>
+              <textarea id="guestMsg" class="form-field" rows="4" placeholder="Share a wish for Ralph &amp; Roussana…"></textarea>
+
+              <div class="btn-grid">
+                <button class="btn-soft" id="backToGuestsBtn" type="button">← Back</button>
+                <button class="btn-solid" id="sendBtn" type="button">Send ✦</button>
               </div>
             </div>
 
-            <label class="field-label">
-              Message
-              <textarea name="message" placeholder="A note for Ralph & Roussana"></textarea>
-            </label>
-
-            <button class="submit-btn" type="submit" id="sendBtn">Send RSVP</button>
-          </form>
-
-          <p class="thank-you" id="thankYou"></p>
+            <div id="stepOk" style="display:none;">
+              <div style="font-size:calc(var(--screen-h) * .032); margin-bottom:calc(var(--screen-h) * .006);">✨</div>
+              <h3>Thank you!</h3>
+              <p id="okMsg"></p>
+            </div>
+          </div>
         </section>
 
         <section class="static-card final-card" aria-label="Final message">
@@ -1053,7 +1353,7 @@ color: #1E1C11;
 
     /* Paste your deployed Google Apps Script Web App URL here when you want the RSVP form
        to send replies to Google Sheets. Keep empty for visual/demo mode. */
-    const RSVP_SCRIPT_URL = "";
+    const RSVP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJmJqBu9U9t6lKlbBMCvHtkXNBo6026SirsYWAhVMo_H5l9gRhoBmXipvAvI47c5v4lw/exec";
     const CUSTOMER_EMAIL = "cardia.studios@gmail.com";
     const COUPLE_NAME = "Ralph & Roussana";
 
@@ -1065,8 +1365,6 @@ color: #1E1C11;
     const dust = document.getElementById("dust");
     const openBtn = document.getElementById("openBtn");
     const weddingMusic = document.getElementById("weddingMusic");
-    const rsvpForm = document.getElementById("rsvpForm");
-    const thankYou = document.getElementById("thankYou");
     const sendBtn = document.getElementById("sendBtn");
 
     let isDragging = false;
@@ -1193,61 +1491,285 @@ color: #1E1C11;
       el.addEventListener("pointerdown", (event) => event.stopPropagation());
     });
 
-    function applyGuestParams() {
-      const params = new URLSearchParams(window.location.search);
-      const name = params.get("name") || params.get("guest") || params.get("to") || "";
-      const guests = clamp(parseInt(params.get("guests") || params.get("limit") || "1", 10) || 1, 1, 6);
-      const guestNameInput = document.getElementById("guestName");
-      const guestCountSelect = document.getElementById("guestCount");
+    function postRSVPToGoogleSheet(payload) {
+      if (!RSVP_SCRIPT_URL) return;
 
-      if (name && guestNameInput) guestNameInput.value = name.replace(/\+/g, " ");
-      if (guestCountSelect) guestCountSelect.value = String(guests);
+      const iframeName = "rsvpGoogleSheetFrame";
+      let iframe = document.getElementById(iframeName);
+      if (!iframe) {
+        iframe = document.createElement("iframe");
+        iframe.name = iframe.id = iframeName;
+        iframe.style.display = "none";
+        document.body.appendChild(iframe);
+      }
+
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = RSVP_SCRIPT_URL;
+      form.target = iframeName;
+      form.style.display = "none";
+
+      Object.entries(payload).forEach(([key, value]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = value == null ? "" : String(value);
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+      window.setTimeout(() => form.remove(), 1500);
     }
 
-    function formToPayload(form) {
-      const data = new FormData(form);
+    function decodeGuestList(raw) {
+      if (!raw) return [];
+      return String(raw)
+        .replace(/\+/g, " ")
+        .split(/\||,|\n|;/)
+        .map((name) => name.trim())
+        .filter((name) => name && !/^\d+$/.test(name));
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function uniqueNames(names) {
+      const seen = new Set();
+      return names.filter((name) => {
+        const key = name.trim().toLowerCase();
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    function formatGuestNames(names) {
+      const clean = names.map((name) => String(name || "").trim()).filter(Boolean);
+      if (!clean.length) return "Guest";
+      if (clean.length === 1) return clean[0];
+      if (clean.length === 2) return `${clean[0]} & ${clean[1]}`;
+      return `${clean.slice(0, -1).join(", ")} & ${clean[clean.length - 1]}`;
+    }
+
+    const inviteParams = new URLSearchParams(window.location.search);
+    const rawGuestParam = inviteParams.get("guests") || "";
+    const numericGuestParam = /^\d+$/.test(rawGuestParam.trim()) ? rawGuestParam.trim() : "";
+    const namedGuests = uniqueNames([
+      ...decodeGuestList(rawGuestParam),
+      ...decodeGuestList(inviteParams.get("guest") || ""),
+      ...decodeGuestList(inviteParams.get("invite") || ""),
+      ...decodeGuestList(inviteParams.get("group") || ""),
+      ...decodeGuestList(inviteParams.get("name") || ""),
+      ...decodeGuestList(inviteParams.get("to") || "")
+    ]);
+
+    const requestedLimit = parseInt(
+      inviteParams.get("limit") ||
+      numericGuestParam ||
+      inviteParams.get("guestCount") ||
+      inviteParams.get("count") ||
+      String(namedGuests.length || 1),
+      10
+    );
+    const guestLimit = clamp(Number.isFinite(requestedLimit) && requestedLimit > 0 ? requestedLimit : Math.max(namedGuests.length, 1), 1, 20);
+    const hasLockedGuestNames = namedGuests.length > 0;
+    const lockedGuestNames = namedGuests.slice(0, guestLimit);
+    const invitedGroupForClient = formatGuestNames(lockedGuestNames);
+
+    let guestResponses = Array.from({ length: guestLimit }, (_, index) => {
+      const name = lockedGuestNames[index] || "";
       return {
-        couple: COUPLE_NAME,
-        customerEmail: CUSTOMER_EMAIL,
-        name: String(data.get("name") || "").trim(),
-        guests: String(data.get("guests") || "").trim(),
-        attendance: String(data.get("attendance") || "").trim(),
-        message: String(data.get("message") || "").trim(),
-        pageUrl: window.location.href,
-        submittedAt: new Date().toISOString()
+        slot: `Guest ${index + 1}`,
+        name,
+        attending: "Yes",
+        manualAttendance: false,
+        locked: Boolean(name)
       };
+    });
+
+    function applyGuestParams() {
+      const welcomeEl = document.getElementById("guestWelcomeName");
+      const noteEl = document.getElementById("personalGuestNote");
+
+      if (welcomeEl) welcomeEl.textContent = hasLockedGuestNames ? invitedGroupForClient : "Guest";
+      if (noteEl) {
+        noteEl.textContent = hasLockedGuestNames
+          ? "Please confirm who can attend from this invitation."
+          : (guestLimit === 1 ? "Please enter your name to confirm the RSVP." : "Please enter the guest names to confirm the RSVP.");
+      }
+
+      renderGuestNameBoxes();
+      updateGuestTotal();
     }
 
-    rsvpForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      if (!rsvpForm.reportValidity()) return;
+    function renderGuestNameBoxes() {
+      const boxList = document.getElementById("guestSlotNameList");
+      if (!boxList) return;
 
-      const payload = formToPayload(rsvpForm);
-      sendBtn.disabled = true;
-      sendBtn.textContent = "Sending...";
+      boxList.innerHTML = guestResponses.map((guest, index) => {
+        const safeName = escapeHTML(guest.name || "");
+        const yesChecked = guest.attending === "Yes" ? " checked" : "";
+        const noChecked = guest.attending === "No" ? " checked" : "";
+        const lockedClass = guest.locked ? " locked" : "";
+        const readonlyAttr = guest.locked ? " readonly aria-readonly=\"true\"" : "";
+        const inputHandler = guest.locked ? "" : ` oninput="setGuestName(${index}, this.value)"`;
+        const labelText = guest.locked ? escapeHTML(guest.name) : `Guest ${index + 1}`;
 
-      try {
-        if (RSVP_SCRIPT_URL) {
-          await fetch(RSVP_SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
+        return `
+          <div class="guest-slot-name-box${lockedClass}">
+            <label class="guest-slot-name-label" for="guestSlotInput${index}">${labelText}</label>
+            <input id="guestSlotInput${index}" type="text" value="${safeName}" placeholder="Write name"${readonlyAttr}${inputHandler}>
+            <div class="guest-slot-attendance" aria-label="Guest ${index + 1} attendance">
+              <span>Attending?</span>
+              <div class="guest-response-options">
+                <label><input type="radio" name="guestAttend${index}" value="Yes"${yesChecked} onchange="setGuestResponse(${index}, 'Yes')"><span class="guest-response-pill">Yes</span></label>
+                <label><input type="radio" name="guestAttend${index}" value="No"${noChecked} onchange="setGuestResponse(${index}, 'No')"><span class="guest-response-pill">No</span></label>
+              </div>
+            </div>
+          </div>`;
+      }).join("");
+    }
+
+    function setGuestName(index, value) {
+      if (!guestResponses[index] || guestResponses[index].locked) return;
+
+      const hadName = Boolean(guestResponses[index].name && guestResponses[index].name.trim());
+      guestResponses[index].name = value.trim();
+
+      if (!hadName && guestResponses[index].name && !guestResponses[index].manualAttendance) {
+        guestResponses[index].attending = "Yes";
+        renderGuestNameBoxes();
+        const input = document.getElementById(`guestSlotInput${index}`);
+        if (input) {
+          input.focus();
+          input.setSelectionRange(input.value.length, input.value.length);
+        }
+      }
+
+      const errName = document.getElementById("errName");
+      if (errName) errName.style.display = "none";
+      updateGuestTotal();
+    }
+
+    function setGuestResponse(index, value) {
+      if (!guestResponses[index]) return;
+      guestResponses[index].attending = value;
+      guestResponses[index].manualAttendance = true;
+      updateGuestTotal();
+    }
+
+    function updateGuestTotal() {
+      const total = guestResponses.filter((guest) => guest.name && guest.name.trim() && guest.attending === "Yes").length;
+      const countEl = document.getElementById("attendingGuestCount");
+      if (countEl) countEl.textContent = total;
+    }
+
+    function goRSVPStep(toStep) {
+      const step1 = document.getElementById("step1");
+      const step2 = document.getElementById("step2");
+      const dot1 = document.getElementById("dot-1");
+      const dot2 = document.getElementById("dot-2");
+
+      if (toStep === 2) {
+        const named = guestResponses.filter((guest) => guest.name && guest.name.trim());
+        if (!named.length) {
+          const errName = document.getElementById("errName");
+          if (errName) errName.style.display = "block";
+          return;
         }
 
-        rsvpForm.style.display = "none";
-        thankYou.style.display = "block";
-        thankYou.textContent = payload.attendance === "Sadly cannot attend"
-          ? "Thank you for your reply. You will be missed."
-          : "Thank you! Your RSVP has been received.";
-      } catch (error) {
-        thankYou.style.display = "block";
-        thankYou.textContent = "Something went wrong. Please try again.";
-        sendBtn.disabled = false;
-        sendBtn.textContent = "Send RSVP";
+        guestResponses.forEach((guest) => {
+          if (!guest.name || !guest.name.trim()) guest.attending = "No";
+          if (guest.name && guest.name.trim() && !guest.attending) guest.attending = "Yes";
+        });
+
+        const errName = document.getElementById("errName");
+        if (errName) errName.style.display = "none";
       }
-    });
+
+      if (step1) step1.style.display = toStep === 1 ? "block" : "none";
+      if (step2) step2.style.display = toStep === 2 ? "block" : "none";
+      if (dot1) dot1.classList.toggle("on", toStep >= 1);
+      if (dot2) dot2.classList.toggle("on", toStep >= 2);
+    }
+
+    function showRSVPThankYou(groupName, attendingCount) {
+      ["step1", "step2"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = "none";
+      });
+
+      const dots = document.querySelector(".step-dots");
+      if (dots) dots.style.display = "none";
+
+      const ok = document.getElementById("stepOk");
+      if (ok) ok.style.display = "block";
+
+      const okMsg = document.getElementById("okMsg");
+      if (okMsg) {
+        okMsg.innerHTML = `Thank you, <strong>${escapeHTML(groupName)}</strong>!<br>We received your RSVP for ${attendingCount} guest${attendingCount === 1 ? "" : "s"}.`;
+      }
+    }
+
+    function submitRSVP() {
+      guestResponses.forEach((guest) => {
+        if (!guest.name || !guest.name.trim()) guest.attending = "No";
+      });
+
+      const attendingCount = guestResponses.filter((guest) => guest.name && guest.name.trim() && guest.attending === "Yes").length;
+      const submittedNames = guestResponses.map((guest) => guest.name.trim()).filter(Boolean);
+      const groupName = formatGuestNames(submittedNames);
+      const responseLines = guestResponses
+        .filter((guest) => guest.name && guest.name.trim())
+        .map((guest) => `${guest.slot} - ${guest.name}: ${guest.attending}`)
+        .join("\n");
+      const messageEl = document.getElementById("guestMsg");
+      const message = messageEl ? messageEl.value.trim() : "";
+      const sendButton = document.getElementById("sendBtn");
+
+      if (sendButton) {
+        sendButton.textContent = "Sending...";
+        sendButton.disabled = true;
+      }
+
+      postRSVPToGoogleSheet({
+        event: COUPLE_NAME,
+        customer_email: CUSTOMER_EMAIL,
+        guest_name: groupName,
+        invited_guest_from_link: invitedGroupForClient,
+        attending: attendingCount > 0 ? "Yes" : "No",
+        attending_summary: responseLines,
+        guest_count: attendingCount,
+        guest_limit: guestLimit,
+        guests_json: JSON.stringify(guestResponses),
+        message,
+        page_url: window.location.href,
+        link_signature: inviteParams.get("sig") || "",
+        submitted_at: new Date().toISOString()
+      });
+
+      window.setTimeout(() => {
+        if (sendButton) {
+          sendButton.textContent = "Sent ✓";
+          sendButton.disabled = true;
+        }
+        showRSVPThankYou(groupName, attendingCount);
+      }, 700);
+    }
+
+    const continueToMessageBtn = document.getElementById("continueToMessageBtn");
+    const backToGuestsBtn = document.getElementById("backToGuestsBtn");
+    if (continueToMessageBtn) continueToMessageBtn.addEventListener("click", () => goRSVPStep(2));
+    if (backToGuestsBtn) backToGuestsBtn.addEventListener("click", () => goRSVPStep(1));
+    if (sendBtn) sendBtn.addEventListener("click", submitRSVP);
 
     function preloadImage(url) {
       return new Promise((resolve) => {
