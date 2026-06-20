@@ -13,10 +13,10 @@
   <style>
     :root {
       --app-height: 100svh;
-      --pano-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi5b.png");
+      --pano-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi9.png");
       --car-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Car.png");
 
-      /* Rossi5b.png = 7517 × 852 */
+      /* Rossi9.png = 7517 × 852 */
       --pano-ratio: 8.8227699531;
 
       /* Desktop keeps the elegant 9:16 invitation frame. Mobile is full-screen below. */
@@ -178,7 +178,13 @@
         drop-shadow(0 0 calc(var(--screen-h) * .010) rgba(255, 230, 170, .12));
       will-change: transform;
     }
-    .Dabke { left: 53.9%; top:  68%; width: calc(var(--screen-h) * .23) }
+    .Dabke {
+      left: 51.6%;
+      top: 68%;
+      width: calc(var(--screen-h) * .23);
+      transform-origin: 50% 90%;
+      animation: dabkeStep 5.18s ease-in-out infinite;
+    }
 
 .Dance {
       position: absolute;
@@ -195,7 +201,46 @@
       will-change: transform;
     }
 
-  .Dance { left: 54.1%; top:  70%;  width: calc(var(--screen-h) * .135)}
+  .Dance {
+    left: 51.6%;
+    top: 70%;
+    width: calc(var(--screen-h) * .135);
+    transform-origin: 50% 88%;
+    animation: coupleSwayDance 3.15s ease-in-out infinite;
+  }
+
+    @keyframes dabkeStep {
+      0%, 100% {
+        transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(-1.4deg) scale(1);
+      }
+      18% {
+        transform: translate(-50%, -50%) translate3d(calc(var(--screen-h) * -.010), calc(var(--screen-h) * -.010), 0) rotate(2.0deg) scale(1.012);
+      }
+      36% {
+        transform: translate(-50%, -50%) translate3d(calc(var(--screen-h) * .009), calc(var(--screen-h) * .002), 0) rotate(-1.8deg) scale(.995);
+      }
+      54% {
+        transform: translate(-50%, -50%) translate3d(calc(var(--screen-h) * .014), calc(var(--screen-h) * -.012), 0) rotate(2.2deg) scale(1.015);
+      }
+      72% {
+        transform: translate(-50%, -50%) translate3d(calc(var(--screen-h) * -.006), calc(var(--screen-h) * .003), 0) rotate(-1.0deg) scale(.998);
+      }
+    }
+
+    @keyframes coupleSwayDance {
+      0%, 100% {
+        transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(-1.0deg) scale(1);
+      }
+      25% {
+        transform: translate(-50%, -50%) translate3d(calc(var(--screen-h) * -.006), calc(var(--screen-h) * -.006), 0) rotate(1.6deg) scale(1.006);
+      }
+      50% {
+        transform: translate(-50%, -50%) translate3d(calc(var(--screen-h) * .006), calc(var(--screen-h) * -.002), 0) rotate(-.4deg) scale(1.012);
+      }
+      75% {
+        transform: translate(-50%, -50%) translate3d(calc(var(--screen-h) * .010), calc(var(--screen-h) * -.007), 0) rotate(1.4deg) scale(1.004);
+      }
+    }
 
     .hot-air {
       position: absolute;
@@ -214,7 +259,7 @@
 
 
 
-
+    .hot-air-1a { left: 19.2%; top: 55.5%; width: calc(var(--screen-h) * .105) }
     .hot-air-1 { left: 16.2%; top: 13.5%; width: calc(var(--screen-h) * .105); animation: balloonFloatA 22s ease-in-out infinite; }
     .hot-air-2 { left: 24.8%; top: 20.2%; width: calc(var(--screen-h) * .082); opacity: .86; animation: balloonFloatB 26s ease-in-out infinite; animation-delay: -7s; }
     .hot-air-3 { left: 36.6%; top: 12.8%; width: calc(var(--screen-h) * .128); animation: balloonFloatA 28s ease-in-out infinite; animation-delay: -12s; }
@@ -222,7 +267,42 @@
     .hot-air-5 { left: 59.8%; top: 12.5%; width: calc(var(--screen-h) * .118); animation: balloonFloatA 30s ease-in-out infinite; animation-delay: -16s; }
     .hot-air-6 { left: 70.6%; top: 20.8%; width: calc(var(--screen-h) * .085); opacity: .86; animation: balloonFloatB 27s ease-in-out infinite; animation-delay: -10s; }
     .hot-air-7 { left: 82.5%; top: 14.4%; width: calc(var(--screen-h) * .125); animation: balloonFloatA 31s ease-in-out infinite; animation-delay: -19s; }
-    .hot-air-8 { left: 92.6%; top: 21.8%; width: calc(var(--screen-h) * .788); animation: balloonFloatA 22s ease-in-out infinite; }
+    .hot-air-8 { left: 92.6%; top: 28.8%; width: calc(var(--screen-h) * .788); animation: balloonFloatA 22s ease-in-out infinite; }
+
+    /* Clickable hotspots placed over the "Open location" areas already designed inside Rossi9.png.
+       They are transparent so the background board stays exactly as it is. */
+    .board-location-link {
+      position: absolute;
+      z-index: 24;
+      display: block;
+      transform: translate(-50%, -50%);
+      width: calc(var(--screen-h) * .130);
+      height: calc(var(--screen-h) * .043);
+      border-radius: calc(var(--screen-h) * .010);
+      background: transparent;
+      text-indent: -9999px;
+      overflow: hidden;
+      pointer-events: auto;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .board-location-link:focus-visible {
+      outline: 2px solid rgba(67, 44, 22, .70);
+      outline-offset: 2px;
+      background: rgba(255, 245, 220, .16);
+    }
+
+    .board-location-link.bride-house-location {
+      left: 18.42%;
+      top: 52.75%;
+    }
+
+    .board-location-link.groom-house-location {
+      left: 18.42%;
+      top: 58.28%;
+    }
+
 
     @keyframes balloonFloatA {
       0%, 100% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(-1.2deg); }
@@ -245,18 +325,42 @@
     }
 
     .gold-text {
-      color: var(--gold-soft);
+      color: #f0d9a0;
       text-shadow:
-        0 0 calc(var(--screen-h) * .006) rgba(255, 239, 185, .92),
-        0 0 calc(var(--screen-h) * .022) rgba(255, 164, 60, .68),
-        0 calc(var(--screen-h) * .003) calc(var(--screen-h) * .008) rgba(55, 16, 2, .56);
+        0 calc(var(--screen-h) * .0015) calc(var(--screen-h) * .0025) rgba(49, 21, 7, .66),
+        0 0 calc(var(--screen-h) * .0045) rgba(255, 238, 190, .34),
+        0 calc(var(--screen-h) * .010) calc(var(--screen-h) * .020) rgba(45, 16, 4, .42);
+    }
+
+    .static-card h2.gold-text,
+    .parents-card .couple-line,
+    .guest-welcome-title,
+    #stepOk h3 {
+      color: #ecd18c;
+      background: linear-gradient(180deg, #fff6d4 0%, #f0d58f 40%, #c58a42 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: none;
+      filter:
+        drop-shadow(0 calc(var(--screen-h) * .0018) calc(var(--screen-h) * .0022) rgba(54, 23, 8, .68))
+        drop-shadow(0 0 calc(var(--screen-h) * .0045) rgba(255, 234, 177, .28));
+    }
+
+    .static-card h2.gold-text {
+      letter-spacing: .012em;
+    }
+
+    .final-card h2.gold-text {
+      line-height: 1.06;
+      letter-spacing: .006em;
     }
 
     .hero-text {
       position: absolute;
       top: 23.8%;
       z-index: 10;
-      left: 9%;
+      left: 10.5%;
       width: calc(var(--screen-h) * .455);
       transform: translate(-50%, -50%);
       text-align: center;
@@ -376,9 +480,12 @@ color: #1E1C11;
     .static-card strong {
       display: block;
       margin: calc(var(--screen-h) * .004) 0;
-      color: #ffe7a6;
+      color: #f1d99b;
       font-size: calc(var(--screen-h) * .023);
       line-height: 1.10;
+      text-shadow:
+        0 calc(var(--screen-h) * .0015) calc(var(--screen-h) * .0025) rgba(45, 18, 5, .55),
+        0 0 calc(var(--screen-h) * .004) rgba(255, 235, 185, .25);
     }
 
     .static-card .small {
@@ -414,7 +521,7 @@ color: #1E1C11;
     }
 
     .parents-card {
-      left: 9.1%;
+      left: 10.5%;
       top: 55.5%;
       width: calc(var(--screen-h) * .43);
       padding: calc(var(--screen-h) * .018) calc(var(--screen-h) * .020);
@@ -442,19 +549,15 @@ color: #1E1C11;
       font-weight: 400;
       font-size: calc(var(--screen-h) * .040);
       line-height: .98;
-      color: #ffe7a6;
-      text-shadow:
-        0 0 calc(var(--screen-h) * .006) rgba(255, 239, 185, .92),
-        0 0 calc(var(--screen-h) * .018) rgba(255, 164, 60, .62);
     }
 
     .church-card {
-      left: 29.5%;
+      left: 26.8%;
       top: 27.5%;
     }
 
     .venue-card {
-      left: 53.6%;
+      left: 50.6%;
       top: 28%;
       width: calc(var(--screen-h) * .40);
     }
@@ -653,18 +756,104 @@ color: #1E1C11;
     }
 
     .powered-by {
-      display: inline-block;
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: calc(var(--screen-h) * .004);
       margin-top: calc(var(--screen-h) * .026);
-      color: rgba(255, 243, 218, .92);
-      font: 800 calc(var(--screen-h) * .0105)/1.2 "Montserrat", sans-serif;
-      letter-spacing: .05em;
-      text-decoration: underline;
-      text-underline-offset: calc(var(--screen-h) * .004);
+      padding: calc(var(--screen-h) * .012) calc(var(--screen-h) * .030) calc(var(--screen-h) * .011);
+      color: rgba(255, 242, 213, .92);
+      text-decoration: none;
       pointer-events: auto;
+      cursor: pointer;
+      border-radius: calc(var(--screen-h) * .020);
+      border: 1px solid rgba(255, 229, 169, .20);
+      background: rgba(255, 244, 218, .045);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, .035),
+        0 calc(var(--screen-h) * .006) calc(var(--screen-h) * .018) rgba(0, 0, 0, .16);
+      transition: transform .22s ease, opacity .22s ease, background .22s ease, border-color .22s ease, box-shadow .22s ease;
     }
 
-    .powered-by:hover {
-      color: var(--gold-soft);
+    .powered-by::before,
+    .powered-by::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      width: 82%;
+      height: 1px;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, transparent, rgba(255, 229, 169, .62), transparent);
+      pointer-events: none;
+    }
+
+    .powered-by::before { top: 0; }
+    .powered-by::after { bottom: 0; }
+
+    .powered-by-label {
+      font: 700 calc(var(--screen-h) * .0092)/1 "Montserrat", sans-serif;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(255, 239, 203, .72);
+    }
+
+    .powered-by-brand {
+      font-family: "Great Vibes", cursive;
+      font-size: calc(var(--screen-h) * .033);
+      font-weight: 400;
+      line-height: .95;
+      color: #efd698;
+      background: linear-gradient(180deg, #fff5d0 0%, #eacb82 48%, #b87934 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter:
+        drop-shadow(0 calc(var(--screen-h) * .0018) calc(var(--screen-h) * .0022) rgba(52, 22, 7, .62))
+        drop-shadow(0 0 calc(var(--screen-h) * .004) rgba(255, 232, 176, .24));
+    }
+
+    .powered-by-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: calc(var(--screen-h) * .003);
+      padding: calc(var(--screen-h) * .0045) calc(var(--screen-h) * .012);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 229, 169, .34);
+      background: rgba(255, 241, 209, .12);
+      color: rgba(255, 244, 222, .90);
+      font: 800 calc(var(--screen-h) * .0082)/1 "Montserrat", sans-serif;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      line-height: 1;
+      -webkit-text-fill-color: currentColor;
+    }
+
+    .powered-by:hover,
+    .powered-by:focus-visible {
+      transform: translateY(calc(var(--screen-h) * -.002));
+      background: rgba(255, 244, 218, .085);
+      border-color: rgba(255, 229, 169, .38);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, .055),
+        0 calc(var(--screen-h) * .008) calc(var(--screen-h) * .022) rgba(0, 0, 0, .20),
+        0 0 calc(var(--screen-h) * .014) rgba(255, 229, 169, .16);
+      outline: none;
+    }
+
+    .powered-by:hover .powered-by-brand,
+    .powered-by:focus-visible .powered-by-brand {
+      filter:
+        drop-shadow(0 calc(var(--screen-h) * .0018) calc(var(--screen-h) * .0022) rgba(52, 22, 7, .62))
+        drop-shadow(0 0 calc(var(--screen-h) * .006) rgba(255, 232, 176, .36));
+    }
+
+    .powered-by:hover .powered-by-cta,
+    .powered-by:focus-visible .powered-by-cta {
+      background: rgba(255, 241, 209, .20);
+      border-color: rgba(255, 229, 169, .52);
     }
 
     .car-wrap {
@@ -724,6 +913,53 @@ color: #1E1C11;
       backdrop-filter: blur(8px);
       pointer-events: none;
       transition: opacity .35s ease;
+    }
+
+
+
+    .music-toggle-btn {
+      position: absolute;
+      z-index: 54;
+      right: calc(var(--screen-h) * .018);
+      top: calc(var(--screen-h) * .018);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: calc(var(--screen-h) * .006);
+      min-width: calc(var(--screen-h) * .105);
+      min-height: calc(var(--screen-h) * .034);
+      padding: calc(var(--screen-h) * .008) calc(var(--screen-h) * .012);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 222, 151, .34);
+      background: rgba(14, 5, 2, .48);
+      color: rgba(255, 245, 221, .92);
+      font: 900 calc(var(--screen-h) * .0098)/1 "Montserrat", sans-serif;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      cursor: pointer;
+      box-shadow: 0 calc(var(--screen-h) * .010) calc(var(--screen-h) * .022) rgba(0, 0, 0, .24);
+      transition: opacity .25s ease, visibility .25s ease, transform .18s ease, background .18s ease;
+    }
+
+    .music-toggle-btn:hover {
+      background: rgba(14, 5, 2, .62);
+      transform: translateY(calc(var(--screen-h) * -.0015));
+    }
+
+    .music-toggle-icon {
+      font-size: calc(var(--screen-h) * .0135);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    body.invitation-locked .music-toggle-btn,
+    body.assets-loading .music-toggle-btn {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
     }
 
     .scroll-ui {
@@ -888,11 +1124,7 @@ color: #1E1C11;
       font-weight: 400;
       font-size: calc(var(--screen-h) * .040);
       line-height: 1;
-      color: #ffe7a6;
       text-align: center;
-      text-shadow:
-        0 0 calc(var(--screen-h) * .006) rgba(255, 239, 185, .92),
-        0 0 calc(var(--screen-h) * .018) rgba(255, 164, 60, .56);
     }
 
     .guest-welcome-note {
@@ -1152,6 +1384,18 @@ color: #1E1C11;
       pointer-events: none !important;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
     @media (max-width: 720px) {
       .hero-text {
         top: 23.6%;
@@ -1174,6 +1418,63 @@ color: #1E1C11;
       .rsvp-card {
         width: calc(var(--screen-h) * .45);
       }
+    }
+
+
+
+    /* CARDIA FIX — prevent the elegant script letters from being clipped.
+       Great Vibes has tall ascenders; the previous tight line-height made the top of
+       letters like S, R and W look cut. These overrides keep the same champagne style
+       but give the text its full vertical breathing room. */
+    .static-card,
+    .final-card,
+    .rsvp-card {
+      overflow: visible;
+    }
+
+    .static-card h2 {
+      line-height: 1.26;
+      padding-top: calc(var(--screen-h) * .010);
+      padding-bottom: calc(var(--screen-h) * .004);
+      margin-top: calc(var(--screen-h) * -.008);
+      margin-bottom: calc(var(--screen-h) * .004);
+    }
+
+    .static-card h2.gold-text,
+    .parents-card .couple-line,
+    .guest-welcome-title,
+    #stepOk h3 {
+      display: block;
+      overflow: visible;
+      line-height: 1.26;
+      padding-top: calc(var(--screen-h) * .010);
+      padding-bottom: calc(var(--screen-h) * .005);
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+
+    .parents-card .couple-line,
+    .guest-welcome-title,
+    #stepOk h3 {
+      margin-top: calc(var(--screen-h) * -.002);
+    }
+
+    .final-card h2.gold-text {
+      line-height: 1.24;
+      padding-top: calc(var(--screen-h) * .012);
+      padding-bottom: calc(var(--screen-h) * .006);
+      margin-bottom: calc(var(--screen-h) * .006);
+    }
+
+    .powered-by-brand {
+      display: block;
+      overflow: visible;
+      line-height: 1.28;
+      padding-top: calc(var(--screen-h) * .008);
+      padding-bottom: calc(var(--screen-h) * .004);
+      margin-top: calc(var(--screen-h) * -.004);
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1207,6 +1508,7 @@ color: #1E1C11;
     <div class="pano-wrap" id="panoWrap" aria-label="Horizontal scrolling wedding panorama">
       <div class="pano" id="pano">
         
+
         
      <img class="Dabke" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Dabke.png" alt="" draggable="false">
      <img class="Dance" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Dance.png" alt="" draggable="false">
@@ -1218,6 +1520,10 @@ color: #1E1C11;
         <img class="hot-air hot-air-6" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png" alt="" draggable="false">
         <img class="hot-air hot-air-7" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Birds1.png" alt="" draggable="false">
         <img class="hot-air hot-air-8" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Plane3.png" alt="" draggable="false">
+
+        <a class="board-location-link bride-house-location" href="https://maps.app.goo.gl/CRbTDSKK7z4QRi1u9" target="_blank" rel="noopener" aria-label="Open bride's house location">Open bride's house location</a>
+        <a class="board-location-link groom-house-location" href="https://maps.app.goo.gl/R8bofdnytJ1Xd75p8" target="_blank" rel="noopener" aria-label="Open groom's house location">Open groom's house location</a>
+
         <div class="hero-text gold-text" aria-label="Our Story">
           <h1 class="story-title">Our Story</h1>
           <div class="story-star" aria-hidden="true">✦</div>
@@ -1269,8 +1575,9 @@ color: #1E1C11;
         </section>
 
         <section class="static-card rsvp-card" id="rsvp" aria-label="RSVP form">
-          <p class="kicker">Kindly Reply</p>
+      
           <h2 class="gold-text">RSVP</h2>
+          <p class="kicker">Kindly Reply</p>
           <p>Before 10 July 2026</p>
 
           <div class="rr-rsvp-box">
@@ -1312,10 +1619,10 @@ color: #1E1C11;
         </section>
 
         <section class="static-card final-card" aria-label="Final message">
-          <h2 class="gold-text">See You in Ehden</h2>
-          <p>We cannot wait to celebrate with you.</p>
+          <h2 class="gold-text">We cannot wait to celebrate with you</h2>
+        
           <p style="margin-top: calc(var(--screen-h) * .010);"><strong>Ralph &amp; Roussana</strong><span class="small">28 · 07 · 2026</span></p>
-          <a class="powered-by" href="https://www.instagram.com/cardiastudios/" target="_blank" rel="noopener">Powered by Cardia Studios</a>
+          <a class="powered-by" href="https://www.instagram.com/cardiastudios/" target="_blank" rel="noopener" aria-label="Visit Cardia Studios on Instagram"><span class="powered-by-label">Powered by</span><span class="powered-by-brand">Cardia Studios</span><span class="powered-by-cta">Tap to visit ↗</span></a>
         </section>
       </div>
     </div>
@@ -1327,6 +1634,7 @@ color: #1E1C11;
     <div class="stage-vignette"></div>
 
     <button class="open-invitation-btn" id="openBtn" type="button">Open Invitation</button>
+    <button class="music-toggle-btn" id="musicToggleBtn" type="button" aria-label="Stop music" aria-pressed="false"><span class="music-toggle-icon" aria-hidden="true">♪</span><span id="musicToggleText">Stop music</span></button>
     <div class="drag-hint" id="dragHint">Drag left / right to follow the car</div>
 
     <div class="scroll-ui" aria-hidden="true">
@@ -1345,7 +1653,7 @@ color: #1E1C11;
     window.addEventListener("resize", setAppHeight, { passive: true });
     window.addEventListener("orientationchange", () => window.setTimeout(setAppHeight, 250), { passive: true });
 
-    const PANO_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi5b.png";
+    const PANO_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi9.png";
     const CAR_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Car.png";
     const MUSIC_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Ray.mp3";
     const HOT_AIR_4B_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png";
@@ -1365,17 +1673,27 @@ color: #1E1C11;
     const dust = document.getElementById("dust");
     const openBtn = document.getElementById("openBtn");
     const weddingMusic = document.getElementById("weddingMusic");
+    const musicToggleBtn = document.getElementById("musicToggleBtn");
+    const musicToggleText = document.getElementById("musicToggleText");
     const sendBtn = document.getElementById("sendBtn");
 
     let isDragging = false;
     let pointerStartX = 0;
     let scrollStartLeft = 0;
     let lastScrollLeft = 0;
+    let lastScrollDelta = 0;
     let lastScrollTime = performance.now();
     let velocity = 0;
     let carDirection = 1;
+    let pendingCarDirection = 1;
+    let pendingDirectionDistance = 0;
     let currentRatio = 0;
     let rafPending = false;
+
+    /* Prevents the car from flipping from tiny accidental finger movements.
+       It will only turn around after a clear, intentional drag in the opposite direction. */
+    const CAR_FLIP_SPEED_THRESHOLD = 220;
+    const CAR_FLIP_DISTANCE_THRESHOLD = 30;
 
     function clamp(value, min, max) {
       return Math.max(min, Math.min(max, value));
@@ -1393,12 +1711,29 @@ color: #1E1C11;
     function updateCar(ratio) {
       const carLeft = 18 + (ratio * 66);
 
-      /* Flip the car when the user scrolls/drags back in the opposite direction.
+      /* Flip the car only after a deliberate opposite drag.
          Positive velocity = moving forward through the panorama, negative = going back. */
-      if (velocity > 8) carDirection = 1;
-      if (velocity < -8) carDirection = -1;
+      const intendedDirection = velocity > CAR_FLIP_SPEED_THRESHOLD ? 1 : (velocity < -CAR_FLIP_SPEED_THRESHOLD ? -1 : 0);
+      const scrollDelta = Math.abs(lastScrollDelta);
 
-      const tilt = clamp(velocity * .014, -3.5, 3.5);
+      if (intendedDirection && intendedDirection !== carDirection) {
+        if (pendingCarDirection !== intendedDirection) {
+          pendingCarDirection = intendedDirection;
+          pendingDirectionDistance = scrollDelta;
+        } else {
+          pendingDirectionDistance += scrollDelta;
+        }
+
+        if (pendingDirectionDistance >= CAR_FLIP_DISTANCE_THRESHOLD) {
+          carDirection = intendedDirection;
+          pendingDirectionDistance = 0;
+        }
+      } else if (intendedDirection === carDirection || Math.abs(velocity) < 80) {
+        pendingCarDirection = carDirection;
+        pendingDirectionDistance = 0;
+      }
+
+      const tilt = clamp(velocity * .010, -2.5, 2.5);
       const speedDust = clamp(Math.abs(velocity) / 1600, 0.10, .48);
 
       stage.style.setProperty("--car-left", carLeft.toFixed(3) + "%");
@@ -1415,6 +1750,7 @@ color: #1E1C11;
       const now = performance.now();
       const dt = Math.max(16, now - lastScrollTime);
       const dx = wrap.scrollLeft - lastScrollLeft;
+      lastScrollDelta = dx;
       velocity = dx / dt * 1000;
       lastScrollLeft = wrap.scrollLeft;
       lastScrollTime = now;
@@ -1470,21 +1806,57 @@ color: #1E1C11;
     wrap.addEventListener("pointercancel", endDrag);
     wrap.addEventListener("lostpointercapture", endDrag);
 
+
+    function setMusicToggleState(isPlaying) {
+      if (!musicToggleBtn || !musicToggleText) return;
+      musicToggleText.textContent = isPlaying ? "Stop music" : "Play music";
+      musicToggleBtn.setAttribute("aria-label", isPlaying ? "Stop music" : "Play music");
+      musicToggleBtn.setAttribute("aria-pressed", isPlaying ? "false" : "true");
+    }
+
+    function playWeddingMusic() {
+      if (!weddingMusic) return;
+      weddingMusic.volume = 0.85;
+      const playPromise = weddingMusic.play();
+      if (playPromise && typeof playPromise.then === "function") {
+        playPromise
+          .then(() => setMusicToggleState(true))
+          .catch(() => setMusicToggleState(false));
+      } else {
+        setMusicToggleState(true);
+      }
+    }
+
+    function stopWeddingMusic() {
+      if (!weddingMusic) return;
+      weddingMusic.pause();
+      setMusicToggleState(false);
+    }
+
+    if (musicToggleBtn) {
+      musicToggleBtn.addEventListener("click", () => {
+        if (!weddingMusic) return;
+        if (weddingMusic.paused) {
+          playWeddingMusic();
+        } else {
+          stopWeddingMusic();
+        }
+      });
+    }
+
+    if (weddingMusic) {
+      weddingMusic.addEventListener("play", () => setMusicToggleState(true));
+      weddingMusic.addEventListener("pause", () => setMusicToggleState(false));
+      weddingMusic.addEventListener("ended", () => setMusicToggleState(false));
+    }
+
     openBtn.addEventListener("click", () => {
       body.classList.remove("invitation-locked");
       body.classList.add("invitation-open");
       scrollToRatio(0.015, "smooth");
       requestUIUpdate();
 
-      if (weddingMusic) {
-        weddingMusic.volume = 0.85;
-        const playPromise = weddingMusic.play();
-        if (playPromise && typeof playPromise.catch === "function") {
-          playPromise.catch(() => {
-            /* Some browsers block audio if the first tap is interrupted; the invitation still opens normally. */
-          });
-        }
-      }
+      playWeddingMusic();
     });
 
     document.querySelectorAll("input, select, textarea, label, button, a").forEach((el) => {
