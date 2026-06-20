@@ -13,10 +13,10 @@
   <style>
     :root {
       --app-height: 100svh;
-      --pano-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi9.png");
+      --pano-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi9a.png");
       --car-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Car.png");
 
-      /* Rossi9.png = 7517 × 852 */
+      /* Rossi9a.png = 7517 × 852 */
       --pano-ratio: 8.8227699531;
 
       /* Desktop keeps the elegant 9:16 invitation frame. Mobile is full-screen below. */
@@ -259,7 +259,7 @@
 
 
 
-    .hot-air-1a { left: 19.2%; top: 55.5%; width: calc(var(--screen-h) * .105) }
+    .hot-air-1a { left: 17.2%; top: 63.5%; width: calc(var(--screen-h) * .495) }
     .hot-air-1 { left: 16.2%; top: 13.5%; width: calc(var(--screen-h) * .105); animation: balloonFloatA 22s ease-in-out infinite; }
     .hot-air-2 { left: 24.8%; top: 20.2%; width: calc(var(--screen-h) * .082); opacity: .86; animation: balloonFloatB 26s ease-in-out infinite; animation-delay: -7s; }
     .hot-air-3 { left: 36.6%; top: 12.8%; width: calc(var(--screen-h) * .128); animation: balloonFloatA 28s ease-in-out infinite; animation-delay: -12s; }
@@ -269,7 +269,7 @@
     .hot-air-7 { left: 82.5%; top: 14.4%; width: calc(var(--screen-h) * .125); animation: balloonFloatA 31s ease-in-out infinite; animation-delay: -19s; }
     .hot-air-8 { left: 92.6%; top: 28.8%; width: calc(var(--screen-h) * .788); animation: balloonFloatA 22s ease-in-out infinite; }
 
-    /* Clickable hotspots placed over the "Open location" areas already designed inside Rossi9.png.
+    /* Clickable hotspots placed over the "Open location" areas already designed inside Rossi9a.png.
        They are transparent so the background board stays exactly as it is. */
     .board-location-link {
       position: absolute;
@@ -1477,6 +1477,58 @@ color: #1E1C11;
       box-decoration-break: clone;
     }
 
+
+
+    /* CARDIA UPDATE — make the story and parents sections slightly larger on phones.
+       This keeps the same placement and theme, but improves readability on mobile. */
+    @media (max-width: 720px) {
+      .hero-text {
+        top: 23.3%;
+        width: calc(var(--screen-h) * .475);
+      }
+
+      .story-title {
+        font-size: calc(var(--screen-h) * .060);
+        line-height: 1.02;
+      }
+
+      .story-star {
+        font-size: calc(var(--screen-h) * .022);
+        margin: calc(var(--screen-h) * .004) 0 calc(var(--screen-h) * .007);
+      }
+
+      .story-copy {
+        max-width: calc(var(--screen-h) * .455);
+        font-size: calc(var(--screen-h) * .0197);
+        line-height: 1.27;
+      }
+
+      .parents-card {
+        width: calc(var(--screen-h) * .445);
+        padding: calc(var(--screen-h) * .022) calc(var(--screen-h) * .024);
+      }
+
+      .parents-card .kicker {
+        font-size: calc(var(--screen-h) * .0114);
+        letter-spacing: .22em;
+      }
+
+      .parents-card .parents-names {
+        font-size: calc(var(--screen-h) * .0226);
+        line-height: 1.22;
+      }
+
+      .parents-card .request-line {
+        font-size: calc(var(--screen-h) * .0180);
+        line-height: 1.28;
+      }
+
+      .parents-card .couple-line {
+        font-size: calc(var(--screen-h) * .046);
+        line-height: 1.20;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: .01ms !important;
@@ -1512,6 +1564,8 @@ color: #1E1C11;
         
      <img class="Dabke" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Dabke.png" alt="" draggable="false">
      <img class="Dance" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Dance.png" alt="" draggable="false">
+     
+     <img class="hot-air hot-air-1a" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Post.png" alt="" draggable="false">
         <img class="hot-air hot-air-1" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png" alt="" draggable="false">
         <img class="hot-air hot-air-2" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png" alt="" draggable="false">
         <img class="hot-air hot-air-3" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png" alt="" draggable="false">
@@ -1653,7 +1707,7 @@ color: #1E1C11;
     window.addEventListener("resize", setAppHeight, { passive: true });
     window.addEventListener("orientationchange", () => window.setTimeout(setAppHeight, 250), { passive: true });
 
-    const PANO_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi9.png";
+    const PANO_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi9a.png";
     const CAR_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Car.png";
     const MUSIC_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Ray.mp3";
     const HOT_AIR_4B_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png";
