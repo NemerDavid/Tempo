@@ -13,10 +13,10 @@
   <style>
     :root {
       --app-height: 100svh;
-      --pano-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi5a.png");
+      --pano-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi5b.png");
       --car-url: url("https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Car.png");
 
-      /* Rossi5a.png = 7517 × 852 */
+      /* Rossi5b.png = 7517 × 852 */
       --pano-ratio: 8.8227699531;
 
       /* Desktop keeps the elegant 9:16 invitation frame. Mobile is full-screen below. */
@@ -218,11 +218,11 @@
     .hot-air-1 { left: 16.2%; top: 13.5%; width: calc(var(--screen-h) * .105); animation: balloonFloatA 22s ease-in-out infinite; }
     .hot-air-2 { left: 24.8%; top: 20.2%; width: calc(var(--screen-h) * .082); opacity: .86; animation: balloonFloatB 26s ease-in-out infinite; animation-delay: -7s; }
     .hot-air-3 { left: 36.6%; top: 12.8%; width: calc(var(--screen-h) * .128); animation: balloonFloatA 28s ease-in-out infinite; animation-delay: -12s; }
-    .hot-air-4 { left: 46.4%; top: 18.5%; width: calc(var(--screen-h) * .092); opacity: .88; animation: balloonFloatB 24s ease-in-out infinite; animation-delay: -4s; }
+    .hot-air-4 { left: 25.4%; top: 48.5%; width: calc(var(--screen-h) * .092); opacity: .88; animation: balloonFloatB 24s ease-in-out infinite; animation-delay: -4s; }
     .hot-air-5 { left: 59.8%; top: 12.5%; width: calc(var(--screen-h) * .118); animation: balloonFloatA 30s ease-in-out infinite; animation-delay: -16s; }
     .hot-air-6 { left: 70.6%; top: 20.8%; width: calc(var(--screen-h) * .085); opacity: .86; animation: balloonFloatB 27s ease-in-out infinite; animation-delay: -10s; }
     .hot-air-7 { left: 82.5%; top: 14.4%; width: calc(var(--screen-h) * .125); animation: balloonFloatA 31s ease-in-out infinite; animation-delay: -19s; }
-    .hot-air-8 { left: 92.6%; top: 21.8%; width: calc(var(--screen-h) * .088); opacity: .85; animation: balloonFloatB 25s ease-in-out infinite; animation-delay: -14s; }
+    .hot-air-8 { left: 92.6%; top: 21.8%; width: calc(var(--screen-h) * .788); animation: balloonFloatA 22s ease-in-out infinite; }
 
     @keyframes balloonFloatA {
       0%, 100% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(-1.2deg); }
@@ -1212,12 +1212,12 @@ color: #1E1C11;
      <img class="Dance" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Dance.png" alt="" draggable="false">
         <img class="hot-air hot-air-1" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png" alt="" draggable="false">
         <img class="hot-air hot-air-2" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png" alt="" draggable="false">
-        <img class="hot-air hot-air-3" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png" alt="" draggable="false">
-        <img class="hot-air hot-air-4" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png" alt="" draggable="false">
+        <img class="hot-air hot-air-3" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png" alt="" draggable="false">
+        <img class="hot-air hot-air-4" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Birds1.png" alt="" draggable="false">
         <img class="hot-air hot-air-5" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png" alt="" draggable="false">
         <img class="hot-air hot-air-6" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png" alt="" draggable="false">
-        <img class="hot-air hot-air-7" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png" alt="" draggable="false">
-        <img class="hot-air hot-air-8" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png" alt="" draggable="false">
+        <img class="hot-air hot-air-7" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Birds1.png" alt="" draggable="false">
+        <img class="hot-air hot-air-8" src="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Plane3.png" alt="" draggable="false">
         <div class="hero-text gold-text" aria-label="Our Story">
           <h1 class="story-title">Our Story</h1>
           <div class="story-star" aria-hidden="true">✦</div>
@@ -1345,7 +1345,7 @@ color: #1E1C11;
     window.addEventListener("resize", setAppHeight, { passive: true });
     window.addEventListener("orientationchange", () => window.setTimeout(setAppHeight, 250), { passive: true });
 
-    const PANO_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi5a.png";
+    const PANO_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi5b.png";
     const CAR_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Car.png";
     const MUSIC_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Ray.mp3";
     const HOT_AIR_4B_URL = "https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png";
