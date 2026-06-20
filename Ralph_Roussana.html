@@ -1716,7 +1716,6 @@ color: #1E1C11;
     /* Paste your deployed Google Apps Script Web App URL here when you want the RSVP form
        to send replies to Google Sheets. Keep empty for visual/demo mode. */
     const RSVP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyq7Qs0ht1I_kHHJs1vR3vHp7QS4pzpkiNP8WUn-n-Zu6_AAT6sZFtDnouj_z4yZW7Mxw/exec";
-    const CUSTOMER_EMAIL = "cardia.studios@gmail.com";
     const COUPLE_NAME = "Ralph & Roussana";
 
     const body = document.body;
@@ -2166,19 +2165,21 @@ color: #1E1C11;
         sendButton.disabled = true;
       }
 
+      const attendingGuests = guestResponses
+        .filter((guest) => guest.name && guest.name.trim() && guest.attending === "Yes")
+        .map((guest) => guest.name.trim());
+      const notAttendingGuests = guestResponses
+        .filter((guest) => guest.name && guest.name.trim() && guest.attending === "No")
+        .map((guest) => guest.name.trim());
+
+      /* Sheet-only RSVP submission. No notification fields are sent from the invitation. */
       postRSVPToGoogleSheet({
-        event: COUPLE_NAME,
-        customer_email: CUSTOMER_EMAIL,
         guest_name: groupName,
-        invited_guest_from_link: invitedGroupForClient,
-        attending: attendingCount > 0 ? "Yes" : "No",
-        attending_summary: responseLines,
         guest_count: attendingCount,
-        guest_limit: guestLimit,
-        guests_json: JSON.stringify(guestResponses),
+        attending_guests: attendingGuests.join(", "),
+        not_attending_guests: notAttendingGuests.join(", "),
+        individual_responses: responseLines,
         message,
-        page_url: window.location.href,
-        link_signature: inviteParams.get("sig") || "",
         submitted_at: new Date().toISOString()
       });
 
