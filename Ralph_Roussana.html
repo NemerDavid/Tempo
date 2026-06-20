@@ -10,6 +10,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- CARDIA UPDATE — preload every visual/audio asset before the loader opens the invitation -->
+  <link rel="preload" as="image" href="https://raw.githubusercontent.com/NemerDavid/web-des/main/Rossi/Rossi9a.png" fetchpriority="high">
+  <link rel="preload" as="image" href="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Car.png" fetchpriority="high">
+  <link rel="preload" as="image" href="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Dabke.png">
+  <link rel="preload" as="image" href="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Dance.png">
+  <link rel="preload" as="image" href="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Post.png">
+  <link rel="preload" as="image" href="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Birds1.png">
+  <link rel="preload" as="image" href="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Birds1.png">
+  <link rel="preload" as="image" href="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air4b.png">
+  <link rel="preload" as="image" href="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Hobbit/Hot_air5.png">
+  <link rel="preload" as="image" href="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Rossi/Plane3.png">
+  <link rel="preload" as="audio" href="https://raw.githubusercontent.com/NemerDavid/web-des/refs/heads/main/Raymond/Ray.mp3" type="audio/mpeg">
+
   <style>
     :root {
       --app-height: 100svh;
@@ -2351,23 +2364,119 @@ color: #1E1C11;
       guestSlotNameListEl.addEventListener("touchstart", updateGuestListScrollUI, { passive: true });
     }
 
+    function uniqueValues(values) {
+      return Array.from(new Set(values.filter(Boolean)));
+    }
+
     function preloadImage(url) {
       return new Promise((resolve) => {
+        if (!url) {
+          resolve(false);
+          return;
+        }
+
         const img = new Image();
+        let settled = false;
+
+        function finish(ok) {
+          if (settled) return;
+          settled = true;
+          resolve(ok);
+        }
+
+        function decodeThenFinish() {
+          if (img.decode) {
+            img.decode().then(() => finish(true)).catch(() => finish(true));
+          } else {
+            finish(true);
+          }
+        }
+
         img.decoding = "async";
-        img.onload = () => resolve(true);
-        img.onerror = () => resolve(false);
+        img.onload = decodeThenFinish;
+        img.onerror = () => finish(false);
         img.src = url;
-        if (img.complete) resolve(true);
+
+        if (img.complete && img.naturalWidth > 0) decodeThenFinish();
       });
+    }
+
+    function waitForFonts() {
+      if (document.fonts && document.fonts.ready) {
+        return document.fonts.ready.then(() => true).catch(() => false);
+      }
+      return Promise.resolve(true);
+    }
+
+    function waitForAudio(audioEl) {
+      return new Promise((resolve) => {
+        if (!audioEl) {
+          resolve(true);
+          return;
+        }
+
+        if (audioEl.readyState >= 3) {
+          resolve(true);
+          return;
+        }
+
+        let settled = false;
+        const maxAudioWait = 8000;
+
+        function cleanup() {
+          audioEl.removeEventListener("canplaythrough", finish);
+          audioEl.removeEventListener("canplay", finish);
+          audioEl.removeEventListener("loadeddata", finish);
+          audioEl.removeEventListener("loadedmetadata", finish);
+          audioEl.removeEventListener("error", finish);
+        }
+
+        function finish() {
+          if (settled) return;
+          settled = true;
+          cleanup();
+          resolve(true);
+        }
+
+        audioEl.addEventListener("canplaythrough", finish, { once: true });
+        audioEl.addEventListener("canplay", finish, { once: true });
+        audioEl.addEventListener("loadeddata", finish, { once: true });
+        audioEl.addEventListener("loadedmetadata", finish, { once: true });
+        audioEl.addEventListener("error", finish, { once: true });
+
+        try { audioEl.load(); } catch (error) {}
+        window.setTimeout(finish, maxAudioWait);
+      });
+    }
+
+    function collectInvitationImageUrls() {
+      const domImageUrls = Array.from(document.querySelectorAll("img[src]"))
+        .map((img) => img.currentSrc || img.src);
+
+      return uniqueValues([
+        PANO_URL,
+        CAR_URL,
+        HOT_AIR_4B_URL,
+        HOT_AIR_5_URL,
+        ...domImageUrls
+      ]);
     }
 
     function initLoader() {
       const loader = document.getElementById("loader");
       const fill = document.getElementById("loaderFill");
       const percent = document.getElementById("loaderPercent");
-      const assets = [PANO_URL, CAR_URL, HOT_AIR_4B_URL, HOT_AIR_5_URL];
+      const loaderText = document.querySelector(".loader-text");
+
+      if (!loader || !fill || !percent) return;
+
       const startedAt = Date.now();
+      const imageUrls = collectInvitationImageUrls();
+      const jobs = [
+        ...imageUrls.map((url) => ({ label: "image", promise: preloadImage(url) })),
+        { label: "fonts", promise: waitForFonts() },
+        { label: "music", promise: waitForAudio(weddingMusic) }
+      ];
       let done = 0;
 
       function setProgress(value) {
@@ -2376,10 +2485,21 @@ color: #1E1C11;
         percent.textContent = safe + "%";
       }
 
-      Promise.all(assets.map((url) => preloadImage(url).then(() => {
+      function finishOne() {
         done += 1;
-        setProgress(done / assets.length * 100);
-      }))).then(() => {
+        setProgress(done / jobs.length * 100);
+      }
+
+      setProgress(0);
+      if (loaderText) loaderText.textContent = "Loading every image, font, and song";
+
+      window.setTimeout(() => {
+        if (!loader.classList.contains("hidden") && loaderText) {
+          loaderText.textContent = "Still loading all invitation details";
+        }
+      }, 7000);
+
+      Promise.all(jobs.map((job) => job.promise.then(finishOne).catch(finishOne))).then(() => {
         const delay = Math.max(0, 650 - (Date.now() - startedAt));
         window.setTimeout(() => {
           setProgress(100);
@@ -2388,18 +2508,24 @@ color: #1E1C11;
           loader.setAttribute("aria-hidden", "true");
         }, delay);
       });
+    }
 
-      window.setTimeout(() => {
-        body.classList.remove("assets-loading");
-        loader.classList.add("hidden");
-      }, 10000);
+    function startInvitationPage() {
+      scrollToRatio(0, "auto");
+      applyGuestParams();
+      requestUIUpdate();
+      initLoader();
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", startInvitationPage, { once: true });
+    } else {
+      startInvitationPage();
     }
 
     window.addEventListener("load", () => {
-      scrollToRatio(0, "auto");
-      initLoader();
-      applyGuestParams();
       requestUIUpdate();
+      updateGuestListScrollUI();
     });
 
     window.addEventListener("resize", () => {
