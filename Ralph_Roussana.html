@@ -1161,6 +1161,111 @@ color: #1E1C11;
       border-radius: 999px;
     }
 
+    /* CARDIA UPDATE — always-visible RSVP guest scroll indicator.
+       Mobile browsers often hide native scrollbars until the guest touches the list,
+       so this custom golden rail + cue makes it obvious that more guests are below. */
+    #manualGuestListWrap {
+      position: relative;
+    }
+
+    #manualGuestListWrap.is-scrollable .guest-slot-name-list {
+      overflow-y: scroll;
+      padding-right: calc(var(--screen-h) * .034);
+      scrollbar-gutter: stable;
+    }
+
+    .guest-list-scroll-rail {
+      position: absolute;
+      z-index: 5;
+      right: calc(var(--screen-h) * .007);
+      top: calc(var(--screen-h) * .018);
+      bottom: calc(var(--screen-h) * .018);
+      width: calc(var(--screen-h) * .010);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 231, 164, .34);
+      background: rgba(255, 247, 228, .16);
+      box-shadow:
+        inset 0 0 calc(var(--screen-h) * .006) rgba(49, 21, 7, .34),
+        0 0 calc(var(--screen-h) * .012) rgba(247, 210, 124, .22);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .20s ease, visibility .20s ease;
+    }
+
+    #manualGuestListWrap.is-scrollable .guest-list-scroll-rail {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .guest-list-scroll-thumb {
+      position: absolute;
+      left: 50%;
+      top: 0%;
+      width: calc(var(--screen-h) * .0068);
+      min-height: calc(var(--screen-h) * .042);
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: linear-gradient(180deg, #fff1b8, #d99a43, #bd6230);
+      box-shadow:
+        0 0 calc(var(--screen-h) * .014) rgba(247, 210, 124, .50),
+        inset 0 0 calc(var(--screen-h) * .004) rgba(255, 255, 255, .28);
+    }
+
+    .guest-list-bottom-fade {
+      position: absolute;
+      z-index: 3;
+      left: 0;
+      right: calc(var(--screen-h) * .026);
+      bottom: calc(var(--screen-h) * .006);
+      height: calc(var(--screen-h) * .056);
+      border-radius: 0 0 calc(var(--screen-h) * .018) calc(var(--screen-h) * .018);
+      background: linear-gradient(180deg, rgba(48, 23, 8, 0), rgba(48, 23, 8, .74));
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .20s ease;
+    }
+
+    #manualGuestListWrap.is-scrollable:not(.at-bottom) .guest-list-bottom-fade {
+      opacity: 1;
+    }
+
+    .guest-list-scroll-cue {
+      position: absolute;
+      z-index: 6;
+      left: 50%;
+      bottom: calc(var(--screen-h) * .013);
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(var(--screen-h) * .0055) calc(var(--screen-h) * .012);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 231, 164, .42);
+      background: rgba(39, 16, 6, .70);
+      color: rgba(255, 245, 221, .96);
+      font: 900 calc(var(--screen-h) * .0082)/1 "Montserrat", sans-serif;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      box-shadow: 0 0 calc(var(--screen-h) * .014) rgba(247, 210, 124, .22);
+      animation: guestScrollNudge 1.25s ease-in-out infinite;
+      transition: opacity .20s ease, visibility .20s ease;
+    }
+
+    #manualGuestListWrap.is-scrollable:not(.at-bottom) .guest-list-scroll-cue {
+      opacity: .98;
+      visibility: visible;
+    }
+
+    @keyframes guestScrollNudge {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(calc(var(--screen-h) * .004)); }
+    }
+
     .guest-slot-name-box {
       width: 100%;
       padding: calc(var(--screen-h) * .010) calc(var(--screen-h) * .011);
@@ -1646,6 +1751,9 @@ color: #1E1C11;
 
               <div id="manualGuestListWrap">
                 <div id="guestSlotNameList" class="guest-slot-name-list" aria-label="Guest RSVP list"></div>
+                <div class="guest-list-scroll-rail" aria-hidden="true"><span id="guestListScrollThumb" class="guest-list-scroll-thumb"></span></div>
+                <div class="guest-list-bottom-fade" aria-hidden="true"></div>
+                <div class="guest-list-scroll-cue" aria-hidden="true">Scroll guests ↓</div>
               </div>
 
               <p class="guest-total-line">Total guests attending: <strong id="attendingGuestCount">0</strong></p>
@@ -2061,6 +2169,42 @@ color: #1E1C11;
             </div>
           </div>`;
       }).join("");
+
+      requestAnimationFrame(updateGuestListScrollUI);
+    }
+
+    function updateGuestListScrollUI() {
+      const list = document.getElementById("guestSlotNameList");
+      const listWrap = document.getElementById("manualGuestListWrap");
+      const thumb = document.getElementById("guestListScrollThumb");
+
+      if (!list || !listWrap) return;
+
+      const scrollable = list.scrollHeight > list.clientHeight + 2;
+      listWrap.classList.toggle("is-scrollable", scrollable);
+      listWrap.classList.toggle("not-scrollable", !scrollable);
+
+      if (!scrollable) {
+        listWrap.classList.remove("at-top", "at-bottom");
+        if (thumb) {
+          thumb.style.height = "100%";
+          thumb.style.top = "0%";
+        }
+        return;
+      }
+
+      const max = Math.max(1, list.scrollHeight - list.clientHeight);
+      const progress = clamp(list.scrollTop / max, 0, 1);
+      const thumbHeight = clamp((list.clientHeight / list.scrollHeight) * 100, 20, 72);
+      const thumbTop = (100 - thumbHeight) * progress;
+
+      listWrap.classList.toggle("at-top", list.scrollTop <= 2);
+      listWrap.classList.toggle("at-bottom", list.scrollTop >= max - 2);
+
+      if (thumb) {
+        thumb.style.height = `${thumbHeight.toFixed(2)}%`;
+        thumb.style.top = `${thumbTop.toFixed(2)}%`;
+      }
     }
 
     function setGuestName(index, value) {
@@ -2124,6 +2268,8 @@ color: #1E1C11;
       if (step2) step2.style.display = toStep === 2 ? "block" : "none";
       if (dot1) dot1.classList.toggle("on", toStep >= 1);
       if (dot2) dot2.classList.toggle("on", toStep >= 2);
+
+      requestAnimationFrame(updateGuestListScrollUI);
     }
 
     function showRSVPThankYou(groupName, attendingCount) {
@@ -2172,7 +2318,8 @@ color: #1E1C11;
         .filter((guest) => guest.name && guest.name.trim() && guest.attending === "No")
         .map((guest) => guest.name.trim());
 
-      /* Sheet-only RSVP submission. No notification fields are sent from the invitation. */
+      /* Sheet-only RSVP submission.
+         No customer email, guest email, mailto, or notification field is sent from the invitation. */
       postRSVPToGoogleSheet({
         guest_name: groupName,
         guest_count: attendingCount,
@@ -2197,6 +2344,12 @@ color: #1E1C11;
     if (continueToMessageBtn) continueToMessageBtn.addEventListener("click", () => goRSVPStep(2));
     if (backToGuestsBtn) backToGuestsBtn.addEventListener("click", () => goRSVPStep(1));
     if (sendBtn) sendBtn.addEventListener("click", submitRSVP);
+
+    const guestSlotNameListEl = document.getElementById("guestSlotNameList");
+    if (guestSlotNameListEl) {
+      guestSlotNameListEl.addEventListener("scroll", updateGuestListScrollUI, { passive: true });
+      guestSlotNameListEl.addEventListener("touchstart", updateGuestListScrollUI, { passive: true });
+    }
 
     function preloadImage(url) {
       return new Promise((resolve) => {
@@ -2254,12 +2407,16 @@ color: #1E1C11;
       requestAnimationFrame(() => {
         scrollToRatio(keep, "auto");
         requestUIUpdate();
+        updateGuestListScrollUI();
       });
     });
 
     if (window.visualViewport) {
       window.visualViewport.addEventListener("resize", () => {
-        requestAnimationFrame(requestUIUpdate);
+        requestAnimationFrame(() => {
+          requestUIUpdate();
+          updateGuestListScrollUI();
+        });
       });
     }
   </script>
