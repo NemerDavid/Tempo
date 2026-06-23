@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>3D Wedding Invitation</title>
 
   <style>
@@ -18,12 +19,13 @@
     #canvas-wrap {
       position: fixed;
       inset: 0;
+      z-index: 1;
     }
 
     #loader {
       position: fixed;
       inset: 0;
-      z-index: 10;
+      z-index: 50;
       background: linear-gradient(180deg, #8ecfd6, #f7e5d0);
       display: flex;
       align-items: center;
@@ -34,14 +36,14 @@
 
     #title-card {
       position: fixed;
-      z-index: 5;
+      z-index: 10;
       left: 50%;
-      bottom: 32px;
+      bottom: 28px;
       transform: translateX(-50%);
-      width: min(90vw, 420px);
+      width: min(90vw, 430px);
       padding: 22px;
       text-align: center;
-      background: rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.84);
       backdrop-filter: blur(10px);
       border-radius: 22px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.18);
@@ -61,25 +63,27 @@
 
     .hotspot {
       position: fixed;
-      z-index: 6;
+      z-index: 15;
       transform: translate(-50%, -50%);
       padding: 8px 14px;
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.92);
       border-radius: 999px;
       font-size: 14px;
       cursor: pointer;
       box-shadow: 0 8px 25px rgba(0,0,0,0.2);
       display: none;
+      white-space: nowrap;
     }
 
     #popup {
       position: fixed;
-      z-index: 20;
+      z-index: 100;
       inset: 0;
       display: none;
       align-items: center;
       justify-content: center;
       background: rgba(0,0,0,0.35);
+      padding: 20px;
     }
 
     #popup-card {
@@ -91,6 +95,11 @@
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     }
 
+    #popup-card h2 {
+      margin-top: 0;
+      font-weight: normal;
+    }
+
     #popup-card button {
       margin-top: 18px;
       padding: 10px 18px;
@@ -100,11 +109,28 @@
       color: white;
       cursor: pointer;
     }
+
+    #error {
+      position: fixed;
+      z-index: 200;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      display: none;
+      padding: 14px 16px;
+      background: rgba(120, 0, 0, 0.88);
+      color: white;
+      border-radius: 14px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+    }
   </style>
 </head>
 
 <body>
   <div id="canvas-wrap"></div>
+
   <div id="loader">Loading the village...</div>
 
   <div id="title-card">
@@ -124,14 +150,19 @@
     </div>
   </div>
 
+  <div id="error"></div>
+
   <script type="module">
     import * as THREE from "https://unpkg.com/three@0.165.0/build/three.module.js";
     import { OrbitControls } from "https://unpkg.com/three@0.165.0/examples/jsm/controls/OrbitControls.js";
     import { MTLLoader } from "https://unpkg.com/three@0.165.0/examples/jsm/loaders/MTLLoader.js";
     import { OBJLoader } from "https://unpkg.com/three@0.165.0/examples/jsm/loaders/OBJLoader.js";
 
+    const ASSET_PATH = "https://raw.githubusercontent.com/NemerDavid/Tempo/main/Townscraper/assets/";
+
     const container = document.getElementById("canvas-wrap");
     const loader = document.getElementById("loader");
+    const errorBox = document.getElementById("error");
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color("#8ecfd6");
@@ -157,57 +188,83 @@
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.target.set(0, 5, 0);
-    controls.maxPolarAngle = Math.PI * 0.48;
     controls.minDistance = 15;
     controls.maxDistance = 90;
+    controls.maxPolarAngle = Math.PI * 0.48;
 
-    const ambient = new THREE.AmbientLight(0xffffff, 2.5);
+    const ambient = new THREE.AmbientLight(0xffffff, 2.8);
     scene.add(ambient);
 
-    const sun = new THREE.DirectionalLight(0xffffff, 2);
-    sun.position.set(20, 40, 30);
+    const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+    sun.position.set(30, 45, 35);
     scene.add(sun);
 
-    let town;
+    const fillLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    fillLight.position.set(-30, 30, -20);
+    scene.add(fillLight);
 
-    const mtlLoader = new MTLLoader();
-    mtlLoader.setPath("./assets/");
+    function showError(message) {
+      loader.style.display = "none";
+      errorBox.style.display = "block";
+      errorBox.textContent = message;
+      console.error(message);
+    }
 
-    const materials = await mtlLoader.loadAsync("Town.mtl");
-    materials.preload();
+    async function loadTown() {
+      try {
+        const mtlLoader = new MTLLoader();
+        mtlLoader.setPath(ASSET_PATH);
+        mtlLoader.setResourcePath(ASSET_PATH);
 
-    const objLoader = new OBJLoader();
-    objLoader.setMaterials(materials);
-    objLoader.setPath("./assets/");
+        const materials = await mtlLoader.loadAsync("Town.mtl");
+        materials.preload();
 
-    town = await objLoader.loadAsync("Townacuj7r8YSSdYS3wl.obj");
+        const objLoader = new OBJLoader();
+        objLoader.setMaterials(materials);
+        objLoader.setPath(ASSET_PATH);
 
-    town.traverse((child) => {
-      if (child.isMesh) {
-        child.geometry.computeVertexNormals();
+        const town = await objLoader.loadAsync("Townacuj7r8YSSdYS3wl.obj");
 
-        const oldMaterial = child.material;
-        const texture = oldMaterial && oldMaterial.map ? oldMaterial.map : null;
+        town.traverse((child) => {
+          if (!child.isMesh) return;
 
-        if (texture) {
-          texture.colorSpace = THREE.SRGBColorSpace;
-          texture.magFilter = THREE.NearestFilter;
-          texture.minFilter = THREE.NearestFilter;
-          texture.needsUpdate = true;
+          const oldMaterial = Array.isArray(child.material)
+            ? child.material[0]
+            : child.material;
 
-          child.material = new THREE.MeshBasicMaterial({
-            map: texture,
-            side: THREE.DoubleSide
-          });
-        }
+          const texture = oldMaterial && oldMaterial.map ? oldMaterial.map : null;
+
+          if (texture) {
+            texture.colorSpace = THREE.SRGBColorSpace;
+            texture.magFilter = THREE.NearestFilter;
+            texture.minFilter = THREE.NearestFilter;
+            texture.needsUpdate = true;
+
+            child.material = new THREE.MeshBasicMaterial({
+              map: texture,
+              side: THREE.DoubleSide
+            });
+          } else {
+            child.material = new THREE.MeshBasicMaterial({
+              color: 0xffffff,
+              side: THREE.DoubleSide
+            });
+          }
+        });
+
+        town.position.set(0, 0, 0);
+        town.scale.set(1, 1, 1);
+
+        scene.add(town);
+
+        loader.style.display = "none";
+      } catch (err) {
+        showError(
+          "The 3D town could not load. Check that Town.mtl, TownColor.png, and Townacuj7r8YSSdYS3wl.obj are uploaded in Townscraper/assets on GitHub."
+        );
+        console.error(err);
       }
-    });
-
-    town.scale.set(1, 1, 1);
-    town.position.set(0, 0, 0);
-    scene.add(town);
-
-    loader.style.display = "none";
+    }
 
     const hotspots = [
       {
@@ -244,9 +301,16 @@
         const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
         const y = (-vector.y * 0.5 + 0.5) * window.innerHeight;
 
+        const isVisible =
+          vector.z < 1 &&
+          x > -100 &&
+          x < window.innerWidth + 100 &&
+          y > -100 &&
+          y < window.innerHeight + 100;
+
         hotspot.element.style.left = `${x}px`;
         hotspot.element.style.top = `${y}px`;
-        hotspot.element.style.display = vector.z < 1 ? "block" : "none";
+        hotspot.element.style.display = isVisible ? "block" : "none";
       });
     }
 
@@ -267,8 +331,6 @@
       renderer.render(scene, camera);
     }
 
-    animate();
-
     window.addEventListener("resize", () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -276,6 +338,9 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     });
+
+    loadTown();
+    animate();
   </script>
 </body>
 </html>
