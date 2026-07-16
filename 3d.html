@@ -1,0 +1,4139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1,
+             user-scalable=no, viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#155f82">
+
+  <title>Ralph & Roussana — A Walk Through Our Town</title>
+
+  <style>
+    :root {
+      --sky-top: #1f759b;
+      --sky-bottom: #0c4d70;
+
+      --paper: rgba(255, 255, 255, 0.93);
+      --paper-solid: #fffdfa;
+
+      --text: #211c18;
+      --muted: #655d56;
+
+      --accent: #8b653f;
+      --dark: #29231f;
+
+      --sans: Arial, Helvetica, sans-serif;
+      --serif: Georgia, "Times New Roman", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    body {
+      color: var(--text);
+      font-family: var(--serif);
+
+      background:
+        radial-gradient(
+          circle at 50% 24%,
+          rgba(255, 255, 255, 0.08),
+          transparent 40%
+        ),
+        linear-gradient(
+          180deg,
+          var(--sky-top) 0%,
+          var(--sky-bottom) 100%
+        );
+
+      overscroll-behavior: none;
+      touch-action: none;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    a {
+      font: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    /* =========================================================
+       THREE.JS CANVAS
+       No CSS filters are applied to the rendered city.
+       ========================================================= */
+
+    #canvas-wrap,
+    #game-canvas {
+      position: fixed;
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+    }
+
+    #canvas-wrap {
+      z-index: 1;
+    }
+
+    #game-canvas {
+      display: block;
+      outline: none;
+
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    #game-canvas.ready {
+      opacity: 1;
+    }
+
+    /* =========================================================
+       LOADER
+       ========================================================= */
+
+    #loader {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+
+      display: grid;
+      place-items: center;
+
+      padding: 24px;
+
+      color: white;
+      text-align: center;
+
+      background:
+        radial-gradient(
+          circle at 50% 30%,
+          rgba(255, 255, 255, 0.1),
+          transparent 42%
+        ),
+        linear-gradient(
+          180deg,
+          var(--sky-top) 0%,
+          var(--sky-bottom) 100%
+        );
+
+      transition:
+        opacity 0.55s ease,
+        visibility 0.55s ease;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader-card {
+      width: min(390px, 84vw);
+    }
+
+    .loader-monogram {
+      position: relative;
+
+      width: 86px;
+      height: 86px;
+
+      display: grid;
+      place-items: center;
+
+      margin: 0 auto 23px;
+
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      border-radius: 50%;
+
+      font-size: 31px;
+      font-style: italic;
+    }
+
+    .loader-monogram::after {
+      content: "";
+
+      position: absolute;
+      inset: 8px;
+
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 50%;
+    }
+
+    .loader-title {
+      margin: 0;
+
+      font-size: 22px;
+      font-weight: normal;
+    }
+
+    .loader-subtitle {
+      margin: 8px 0 22px;
+
+      font: 12px/1.5 var(--sans);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+
+      opacity: 0.76;
+    }
+
+    .loader-track {
+      height: 3px;
+
+      overflow: hidden;
+
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    #loader-bar {
+      width: 0;
+      height: 100%;
+
+      background: white;
+
+      transition: width 0.2s ease;
+    }
+
+    #loader-note {
+      min-height: 20px;
+      margin-top: 10px;
+
+      font: 12px/1.5 var(--sans);
+
+      opacity: 0.76;
+    }
+
+    /* =========================================================
+       INTRODUCTION CARD
+       ========================================================= */
+
+    #intro-card {
+      position: fixed;
+      z-index: 30;
+
+      left: 50%;
+      bottom: max(22px, env(safe-area-inset-bottom));
+
+      width: min(92vw, 455px);
+
+      padding: 24px 23px 21px;
+
+      text-align: center;
+
+      background: var(--paper);
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      border-radius: 25px;
+
+      box-shadow: 0 18px 48px rgba(0, 25, 38, 0.35);
+
+      backdrop-filter: blur(13px);
+      -webkit-backdrop-filter: blur(13px);
+
+      opacity: 0;
+      visibility: hidden;
+
+      transform:
+        translateX(-50%)
+        translateY(18px);
+
+      transition:
+        opacity 0.45s ease,
+        transform 0.45s ease,
+        visibility 0.45s ease;
+    }
+
+    #intro-card.visible {
+      opacity: 1;
+      visibility: visible;
+
+      transform:
+        translateX(-50%)
+        translateY(0);
+    }
+
+    #intro-card.closed {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+
+      transform:
+        translateX(-50%)
+        translateY(18px);
+    }
+
+    .intro-kicker {
+      margin: 0 0 6px;
+
+      color: var(--accent);
+
+      font: 10px/1.3 var(--sans);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    #intro-card h1 {
+      margin: 0;
+
+      font-size: clamp(31px, 8vw, 41px);
+      font-weight: normal;
+      letter-spacing: -0.025em;
+    }
+
+    #intro-card p {
+      max-width: 360px;
+
+      margin: 9px auto 17px;
+
+      color: #38312c;
+
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .enter-button {
+      min-height: 45px;
+
+      padding: 10px 23px;
+
+      border: 0;
+      border-radius: 999px;
+
+      color: white;
+      background: var(--dark);
+
+      box-shadow: 0 9px 24px rgba(43, 37, 32, 0.2);
+
+      cursor: pointer;
+
+      font-size: 14px;
+
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .enter-button:hover {
+      background: #15120f;
+      transform: translateY(-1px);
+    }
+
+    .intro-controls {
+      margin-top: 12px;
+
+      color: var(--muted);
+
+      font: 10px/1.45 var(--sans);
+    }
+
+    /* =========================================================
+       TOP HUD
+       ========================================================= */
+
+    #hud {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+
+      pointer-events: none;
+
+      opacity: 0;
+
+      transition: opacity 0.35s ease;
+    }
+
+    #hud.visible {
+      opacity: 1;
+    }
+
+    .hud-panel {
+      position: absolute;
+
+      top: max(14px, env(safe-area-inset-top));
+      left: 50%;
+
+      width: min(92vw, 520px);
+      min-height: 58px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+
+      padding: 10px 12px 10px 17px;
+
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 19px;
+
+      box-shadow: 0 11px 31px rgba(0, 30, 45, 0.27);
+
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      transform: translateX(-50%);
+
+      pointer-events: auto;
+    }
+
+    .objective {
+      min-width: 0;
+    }
+
+    .objective-label {
+      display: block;
+
+      color: var(--accent);
+
+      font: 9px/1.25 var(--sans);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    #objective-text {
+      display: block;
+
+      margin-top: 3px;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      font-size: 15px;
+    }
+
+    .hud-actions {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 7px;
+    }
+
+    .round-button {
+      width: 38px;
+      height: 38px;
+
+      display: grid;
+      place-items: center;
+
+      padding: 0;
+
+      border: 1px solid rgba(54, 43, 34, 0.12);
+      border-radius: 50%;
+
+      color: var(--dark);
+      background: rgba(255, 255, 255, 0.76);
+
+      cursor: pointer;
+
+      font: 16px/1 var(--sans);
+    }
+
+    .round-button:hover {
+      background: white;
+    }
+
+    #distance-chip {
+      position: absolute;
+
+      top: calc(max(14px, env(safe-area-inset-top)) + 69px);
+      left: 50%;
+
+      padding: 7px 12px;
+
+      color: white;
+      background: rgba(11, 48, 68, 0.72);
+
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 999px;
+
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+
+      transform: translateX(-50%);
+
+      font: 10px/1 var(--sans);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* =========================================================
+       FLOATING WEDDING LOCATIONS
+       ========================================================= */
+
+    .hotspot-label {
+      position: fixed;
+      z-index: 22;
+
+      display: none;
+
+      padding: 8px 13px;
+
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.95);
+
+      border: 1px solid rgba(255, 255, 255, 0.86);
+      border-radius: 999px;
+
+      box-shadow: 0 8px 25px rgba(0, 30, 45, 0.28);
+
+      transform: translate(-50%, -50%);
+
+      cursor: pointer;
+
+      white-space: nowrap;
+
+      font-size: 13px;
+
+      transition:
+        transform 0.18s ease,
+        background 0.18s ease;
+    }
+
+    .hotspot-label:hover {
+      background: #fff8ee;
+
+      transform:
+        translate(-50%, -50%)
+        scale(1.045);
+    }
+
+    .hotspot-label.active {
+      box-shadow:
+        0 0 0 5px rgba(255, 255, 255, 0.2),
+        0 8px 25px rgba(0, 30, 45, 0.3);
+    }
+
+    #nearby-prompt {
+      position: fixed;
+      z-index: 23;
+
+      left: 50%;
+      bottom: max(25px, env(safe-area-inset-bottom));
+
+      display: none;
+
+      padding: 11px 17px;
+
+      color: white;
+      background: rgba(33, 28, 24, 0.86);
+
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.23);
+
+      transform:
+        translate(-50%, 12px);
+
+      opacity: 0;
+
+      font: 12px/1 var(--sans);
+      letter-spacing: 0.03em;
+
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    #nearby-prompt.visible {
+      display: block;
+
+      opacity: 1;
+
+      transform:
+        translate(-50%, 0);
+    }
+
+    /* =========================================================
+       HELP
+       ========================================================= */
+
+    #help-card {
+      position: fixed;
+      z-index: 31;
+
+      top: calc(max(14px, env(safe-area-inset-top)) + 66px);
+      right: 14px;
+
+      width: min(280px, calc(100vw - 28px));
+
+      display: none;
+
+      padding: 17px 18px;
+
+      background: rgba(255, 255, 255, 0.96);
+
+      border: 1px solid rgba(255, 255, 255, 0.84);
+      border-radius: 18px;
+
+      box-shadow: 0 15px 42px rgba(0, 25, 40, 0.3);
+
+      font: 12px/1.58 var(--sans);
+    }
+
+    #help-card.visible {
+      display: block;
+    }
+
+    #help-card strong {
+      display: block;
+
+      margin-bottom: 5px;
+
+      font: normal 19px/1.2 var(--serif);
+    }
+
+    /* =========================================================
+       POPUP
+       ========================================================= */
+
+    #popup {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+
+      background: rgba(22, 20, 18, 0.4);
+
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+
+    #popup.visible {
+      display: flex;
+    }
+
+    #popup-card {
+      position: relative;
+
+      width: min(92vw, 445px);
+      max-height: min(84vh, 720px);
+
+      overflow-y: auto;
+
+      padding: 31px 27px 27px;
+
+      text-align: center;
+
+      background: rgba(255, 255, 255, 0.98);
+
+      border: 1px solid rgba(255, 255, 255, 0.84);
+      border-radius: 27px;
+
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+    }
+
+    .popup-kicker {
+      margin: 0 0 8px;
+
+      color: var(--accent);
+
+      font: 9px/1.3 var(--sans);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    #popup-title {
+      margin: 0;
+
+      font-size: 30px;
+      font-weight: normal;
+    }
+
+    #popup-text {
+      margin: 13px 0 0;
+
+      color: #3c342e;
+
+      font-size: 16px;
+      line-height: 1.55;
+
+      white-space: pre-line;
+    }
+
+    .popup-date {
+      margin: 17px 0 0;
+      padding: 14px 10px;
+
+      border-top: 1px solid rgba(43, 37, 32, 0.1);
+      border-bottom: 1px solid rgba(43, 37, 32, 0.1);
+
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .popup-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 9px;
+
+      margin-top: 21px;
+    }
+
+    .popup-button {
+      min-height: 43px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 10px 18px;
+
+      border: 0;
+      border-radius: 999px;
+
+      color: white;
+      background: var(--dark);
+
+      text-decoration: none;
+
+      cursor: pointer;
+
+      font-size: 14px;
+    }
+
+    .popup-button.secondary {
+      color: var(--dark);
+      background: #eee9e2;
+    }
+
+    .popup-close {
+      position: absolute;
+
+      top: 13px;
+      right: 13px;
+
+      width: 36px;
+      height: 36px;
+
+      border: 0;
+      border-radius: 50%;
+
+      color: var(--dark);
+      background: rgba(43, 37, 32, 0.07);
+
+      cursor: pointer;
+
+      font: 20px/1 var(--sans);
+    }
+
+    /* =========================================================
+       MOBILE CONTROLS
+       ========================================================= */
+
+    #mobile-controls {
+      position: fixed;
+      inset: 0;
+      z-index: 24;
+
+      display: none;
+
+      pointer-events: none;
+    }
+
+    #mobile-controls.active {
+      display: block;
+    }
+
+    #move-zone {
+      position: absolute;
+
+      left: 0;
+      bottom: 0;
+
+      width: 50%;
+      height: 48%;
+
+      pointer-events: auto;
+      touch-action: none;
+    }
+
+    #look-zone {
+      position: absolute;
+
+      right: 0;
+      bottom: 0;
+
+      width: 50%;
+      height: 64%;
+
+      pointer-events: auto;
+      touch-action: none;
+    }
+
+    #joystick-base {
+      position: absolute;
+
+      left: max(25px, env(safe-area-inset-left));
+      bottom: max(28px, env(safe-area-inset-bottom));
+
+      width: 104px;
+      height: 104px;
+
+      display: grid;
+      place-items: center;
+
+      border: 1px solid rgba(255, 255, 255, 0.52);
+      border-radius: 50%;
+
+      background: rgba(7, 48, 70, 0.3);
+
+      box-shadow:
+        inset 0 0 24px rgba(255, 255, 255, 0.08),
+        0 8px 30px rgba(0, 0, 0, 0.08);
+
+      pointer-events: none;
+    }
+
+    #joystick-knob {
+      width: 45px;
+      height: 45px;
+
+      border-radius: 50%;
+
+      background: rgba(255, 255, 255, 0.84);
+
+      box-shadow: 0 6px 18px rgba(0, 30, 45, 0.28);
+
+      transform: translate(0, 0);
+
+      pointer-events: none;
+    }
+
+    .look-hint {
+      position: absolute;
+
+      right: max(25px, env(safe-area-inset-right));
+      bottom: max(64px, env(safe-area-inset-bottom));
+
+      color: rgba(255, 255, 255, 0.84);
+
+      font: 10px/1.3 var(--sans);
+      text-align: right;
+
+      text-shadow: 0 2px 8px rgba(0, 25, 40, 0.5);
+
+      pointer-events: none;
+    }
+
+    /* =========================================================
+       ERROR
+       ========================================================= */
+
+    #error {
+      position: fixed;
+      z-index: 200;
+
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+
+      display: none;
+
+      padding: 14px 16px;
+
+      color: white;
+      background: rgba(120, 0, 0, 0.92);
+
+      border-radius: 14px;
+
+      font: 13px/1.45 var(--sans);
+    }
+
+    @media (max-width: 650px) {
+      .hud-panel {
+        width: calc(100% - 24px);
+      }
+
+      #distance-chip {
+        top: calc(max(14px, env(safe-area-inset-top)) + 66px);
+      }
+
+      #intro-card {
+        bottom: max(14px, env(safe-area-inset-bottom));
+
+        padding: 21px 18px 18px;
+      }
+
+      #intro-card p {
+        font-size: 14px;
+      }
+
+      .hotspot-label {
+        padding: 7px 11px;
+
+        font-size: 12px;
+      }
+
+      #popup-card {
+        padding: 29px 20px 23px;
+      }
+    }
+  </style>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+
+<body>
+
+  <div id="canvas-wrap">
+    <canvas
+      id="game-canvas"
+      aria-label="Interactive 3D wedding town"
+    ></canvas>
+  </div>
+
+  <section id="loader" aria-live="polite">
+    <div class="loader-card">
+
+      <div class="loader-monogram">
+        R&amp;R
+      </div>
+
+      <h1 class="loader-title">
+        Loading our town…
+      </h1>
+
+      <p class="loader-subtitle">
+        Preparing your journey
+      </p>
+
+      <div class="loader-track">
+        <div id="loader-bar"></div>
+      </div>
+
+      <div id="loader-note">
+        Loading the original Blender model…
+      </div>
+
+    </div>
+  </section>
+
+  <section
+    id="intro-card"
+    aria-label="Wedding invitation introduction"
+  >
+    <p class="intro-kicker">
+      A 3D wedding invitation
+    </p>
+
+    <h1>
+      <span id="intro-name-1">Ralph</span>
+      &amp;
+      <span id="intro-name-2">Roussana</span>
+    </h1>
+
+    <p>
+      Walk through our town and discover the ceremony,
+      the reception, and your invitation.
+    </p>
+
+    <button
+      id="enter-button"
+      class="enter-button"
+      type="button"
+    >
+      Walk through the town
+    </button>
+
+    <div
+      id="intro-controls"
+      class="intro-controls"
+    >
+      WASD to walk · drag to turn the camera · mouse wheel to zoom
+    </div>
+  </section>
+
+  <div id="hud">
+
+    <div class="hud-panel">
+
+      <div class="objective">
+        <span class="objective-label">
+          Next stop
+        </span>
+
+        <span id="objective-text">
+          Ceremony
+        </span>
+      </div>
+
+      <div class="hud-actions">
+
+        <button
+          id="overview-button"
+          class="round-button"
+          type="button"
+          aria-label="Town overview"
+          title="Town overview"
+        >
+          ⌂
+        </button>
+
+        <button
+          id="help-button"
+          class="round-button"
+          type="button"
+          aria-label="Controls help"
+          title="Controls"
+        >
+          ?
+        </button>
+
+      </div>
+
+    </div>
+
+    <div id="distance-chip">
+      <span id="distance-value">0</span>
+      m away
+    </div>
+
+  </div>
+
+  <button
+    class="hotspot-label"
+    id="label-ceremony"
+    type="button"
+  >
+    Ceremony
+  </button>
+
+  <button
+    class="hotspot-label"
+    id="label-reception"
+    type="button"
+  >
+    Reception
+  </button>
+
+  <button
+    class="hotspot-label"
+    id="label-rsvp"
+    type="button"
+  >
+    Invitation &amp; RSVP
+  </button>
+
+  <div id="nearby-prompt">
+    Press E to open
+  </div>
+
+  <aside id="help-card">
+    <strong>How to explore</strong>
+
+    <span id="help-copy">
+      Use WASD or the arrow keys to walk.
+      Drag the mouse to rotate the camera and use the wheel to zoom.
+      Approach a location and press E.
+    </span>
+  </aside>
+
+  <section
+    id="popup"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="popup-title"
+  >
+    <article id="popup-card">
+
+      <button
+        id="popup-close"
+        class="popup-close"
+        type="button"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+      <p
+        id="popup-kicker"
+        class="popup-kicker"
+      >
+        Wedding details
+      </p>
+
+      <h2 id="popup-title">
+        Ceremony
+      </h2>
+
+      <p id="popup-text"></p>
+
+      <div
+        id="popup-date"
+        class="popup-date"
+      ></div>
+
+      <div class="popup-actions">
+
+        <a
+          id="popup-link"
+          class="popup-button"
+          href="#"
+          target="_blank"
+          rel="noopener"
+        >
+          Open location
+        </a>
+
+        <button
+          id="popup-next"
+          class="popup-button secondary"
+          type="button"
+        >
+          Continue walking
+        </button>
+
+      </div>
+
+    </article>
+  </section>
+
+  <div id="mobile-controls">
+
+    <div id="move-zone">
+      <div id="joystick-base">
+        <div id="joystick-knob"></div>
+      </div>
+    </div>
+
+    <div id="look-zone">
+      <div class="look-hint">
+        Drag here<br>
+        to turn the camera
+      </div>
+    </div>
+
+  </div>
+
+  <div id="error"></div>
+
+  <script type="module">
+
+    import * as THREE from "three";
+
+    import {
+      GLTFLoader
+    } from "three/addons/loaders/GLTFLoader.js";
+
+    import {
+      DRACOLoader
+    } from "three/addons/loaders/DRACOLoader.js";
+
+
+    /* =========================================================
+       WEDDING CONFIGURATION
+
+       Change the names, dates, locations and links here.
+
+       The city GLB itself is never recolored or assigned
+       replacement materials.
+
+       Manual positions may be entered as:
+       { x: 5, z: -8 }
+
+       Leave them as null for automatic placement.
+       ========================================================= */
+
+    const CONFIG = {
+
+      partner1: "Ralph",
+      partner2: "Roussana",
+
+      weddingDate: "2026-09-19T16:30:00",
+      weddingDateLong: "Saturday, 19 September 2026",
+
+      modelUrl:
+        "https://raw.githubusercontent.com/NemerDavid/Tempo/main/First_att.glb",
+
+      /* Visual background behind the GLB. */
+      backgroundTop: "#1f759b",
+      backgroundBottom: "#0c4d70",
+
+      /*
+       * The GLB is scaled to approximately this horizontal size.
+       * Scaling does not alter material colors or textures.
+       */
+      worldSize: 78,
+
+      walkSpeed: 4.2,
+      runSpeed: 6.6,
+
+      interactionRadius: 4.4,
+
+      /*
+       * Exposure for Blender-like AgX tone mapping.
+       * Use 1.0 initially.
+       *
+       * If the scene is slightly too dark, try 1.1.
+       * If it is too bright, try 0.9.
+       */
+      exposure: 1.0,
+
+      /*
+       * Used only if the GLB contains no Blender-exported lights.
+       * These fallback lights are neutral white and do not recolor
+       * the city materials.
+       */
+      fallbackHemisphereIntensity: 0.7,
+      fallbackSunIntensity: 2.6,
+
+      shadowMapSizeDesktop: 2048,
+      shadowMapSizeMobile: 1024,
+
+      spawn: null,
+
+      ceremonyPosition: null,
+      receptionPosition: null,
+      rsvpPosition: null,
+
+      ceremony: {
+        title: "Ceremony",
+        place: "St. Marina Church",
+        details:
+          "4:30 PM\nYour ceremony address goes here.",
+        link: "https://maps.google.com"
+      },
+
+      reception: {
+        title: "Reception",
+        place: "Splend’Or Venue",
+        details:
+          "6:30 PM\nDinner, music, and dancing.",
+        link: "https://maps.google.com"
+      },
+
+      rsvp: {
+        title: "Ralph & Roussana",
+        place: "We would love to celebrate with you",
+        details:
+          "Kindly confirm your attendance using the RSVP button.",
+        link: "#"
+      }
+    };
+
+
+    /* =========================================================
+       DOM
+       ========================================================= */
+
+    const $ = (selector) =>
+      document.querySelector(selector);
+
+    const canvas =
+      $("#game-canvas");
+
+    const loader =
+      $("#loader");
+
+    const loaderBar =
+      $("#loader-bar");
+
+    const loaderNote =
+      $("#loader-note");
+
+    const introCard =
+      $("#intro-card");
+
+    const enterButton =
+      $("#enter-button");
+
+    const hud =
+      $("#hud");
+
+    const objectiveText =
+      $("#objective-text");
+
+    const distanceValue =
+      $("#distance-value");
+
+    const nearbyPrompt =
+      $("#nearby-prompt");
+
+    const helpCard =
+      $("#help-card");
+
+    const popup =
+      $("#popup");
+
+    const popupKicker =
+      $("#popup-kicker");
+
+    const popupTitle =
+      $("#popup-title");
+
+    const popupText =
+      $("#popup-text");
+
+    const popupDate =
+      $("#popup-date");
+
+    const popupLink =
+      $("#popup-link");
+
+    const popupNext =
+      $("#popup-next");
+
+    const errorBox =
+      $("#error");
+
+    const mobileControls =
+      $("#mobile-controls");
+
+
+    /* =========================================================
+       DEVICE
+       ========================================================= */
+
+    const isTouch =
+      matchMedia("(pointer: coarse)").matches ||
+      navigator.maxTouchPoints > 0;
+
+    $("#intro-name-1").textContent =
+      CONFIG.partner1;
+
+    $("#intro-name-2").textContent =
+      CONFIG.partner2;
+
+    document.title =
+      `${CONFIG.partner1} & ${CONFIG.partner2} — A Walk Through Our Town`;
+
+    document.documentElement.style.setProperty(
+      "--sky-top",
+      CONFIG.backgroundTop
+    );
+
+    document.documentElement.style.setProperty(
+      "--sky-bottom",
+      CONFIG.backgroundBottom
+    );
+
+    if (isTouch) {
+
+      $("#intro-controls").textContent =
+        "Left thumb to walk · drag on the right to turn the camera";
+
+      $("#help-copy").textContent =
+        "Use the left joystick to walk. Drag on the right side " +
+        "to rotate the camera. Tap a floating label to open it.";
+    }
+
+
+    /* =========================================================
+       RENDERER
+
+       AgX is the closest built-in Three.js tone mapper to
+       Blender's modern AgX view transform.
+
+       No CSS filters are used.
+       No color correction is applied to the city meshes.
+       ========================================================= */
+
+    const renderer =
+      new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance"
+      });
+
+    renderer.setClearColor(
+      0x000000,
+      0
+    );
+
+    renderer.setSize(
+      innerWidth,
+      innerHeight,
+      false
+    );
+
+    renderer.setPixelRatio(
+      Math.min(
+        devicePixelRatio,
+        isTouch ? 1.45 : 1.85
+      )
+    );
+
+    renderer.outputColorSpace =
+      THREE.SRGBColorSpace;
+
+    renderer.toneMapping =
+      THREE.AgXToneMapping;
+
+    renderer.toneMappingExposure =
+      CONFIG.exposure;
+
+    renderer.shadowMap.enabled =
+      true;
+
+    renderer.shadowMap.type =
+      THREE.PCFSoftShadowMap;
+
+    renderer.shadowMap.autoUpdate =
+      true;
+
+
+    /* =========================================================
+       SCENE
+       ========================================================= */
+
+    const scene =
+      new THREE.Scene();
+
+    /*
+     * Transparent scene background allows the CSS background
+     * to appear behind the Blender model.
+     */
+    scene.background = null;
+    scene.fog = null;
+
+    const camera =
+      new THREE.PerspectiveCamera(
+        48,
+        innerWidth / innerHeight,
+        0.08,
+        900
+      );
+
+    const world =
+      new THREE.Group();
+
+    scene.add(world);
+
+
+    /* =========================================================
+       RAYCASTING AND REUSABLE OBJECTS
+       ========================================================= */
+
+    const clock =
+      new THREE.Clock();
+
+    const wallRay =
+      new THREE.Raycaster();
+
+    const groundRay =
+      new THREE.Raycaster();
+
+    const cameraRay =
+      new THREE.Raycaster();
+
+    const down =
+      new THREE.Vector3(0, -1, 0);
+
+    const up =
+      new THREE.Vector3(0, 1, 0);
+
+    const normalMatrix =
+      new THREE.Matrix3();
+
+    const tempA =
+      new THREE.Vector3();
+
+    const tempB =
+      new THREE.Vector3();
+
+    const tempC =
+      new THREE.Vector3();
+
+    const tempD =
+      new THREE.Vector3();
+
+
+    /* =========================================================
+       STATE
+       ========================================================= */
+
+    let modelRoot = null;
+
+    const modelBox =
+      new THREE.Box3();
+
+    const modelSize =
+      new THREE.Vector3();
+
+    const modelCenter =
+      new THREE.Vector3();
+
+    let loaded =
+      false;
+
+    let started =
+      false;
+
+    let paused =
+      true;
+
+    let popupOpen =
+      false;
+
+    let overview =
+      false;
+
+    let activeStopIndex =
+      0;
+
+    let nearbyStop =
+      null;
+
+    let animationMixer =
+      null;
+
+    let embeddedLightCount =
+      0;
+
+    const keys =
+      new Set();
+
+    const mobileInput = {
+      x: 0,
+      y: 0
+    };
+
+
+    /* =========================================================
+       INVISIBLE NAVIGATION POSITION
+
+       There is intentionally no visible third-person guest,
+       capsule, head, ring, arrow or character model.
+
+       This position is used only for walking, collision,
+       distances and camera movement.
+       ========================================================= */
+
+    const navigatorState = {
+
+      feet:
+        new THREE.Vector3(),
+
+      groundY:
+        0,
+
+      heading:
+        0,
+
+      moving:
+        false
+    };
+
+
+    /* =========================================================
+       CAMERA
+       ========================================================= */
+
+    const cameraState = {
+
+      yaw:
+        Math.PI * 0.18,
+
+      pitch:
+        0.68,
+
+      distance:
+        12.5,
+
+      minDistance:
+        6.5,
+
+      maxDistance:
+        25,
+
+      target:
+        new THREE.Vector3(),
+
+      desired:
+        new THREE.Vector3()
+    };
+
+
+    /* =========================================================
+       WEDDING STOPS
+       ========================================================= */
+
+    const stops = [
+
+      makeStop(
+        "ceremony",
+        CONFIG.ceremony,
+        $("#label-ceremony"),
+        CONFIG.ceremonyPosition
+      ),
+
+      makeStop(
+        "reception",
+        CONFIG.reception,
+        $("#label-reception"),
+        CONFIG.receptionPosition
+      ),
+
+      makeStop(
+        "rsvp",
+        CONFIG.rsvp,
+        $("#label-rsvp"),
+        CONFIG.rsvpPosition
+      )
+    ];
+
+    stops.forEach((stop) => {
+
+      stop.label.addEventListener(
+        "click",
+        () => openStop(stop)
+      );
+    });
+
+
+    /* =========================================================
+       GLTF LOADER
+       ========================================================= */
+
+    const draco =
+      new DRACOLoader();
+
+    draco.setDecoderPath(
+      "https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/libs/draco/"
+    );
+
+    const gltfLoader =
+      new GLTFLoader();
+
+    gltfLoader.setDRACOLoader(
+      draco
+    );
+
+
+    /* =========================================================
+       INITIAL LOAD
+       ========================================================= */
+
+    loadTown();
+
+
+    /* =========================================================
+       STOP CREATION
+       ========================================================= */
+
+    function makeStop(
+      id,
+      data,
+      label,
+      manualPosition
+    ) {
+
+      return {
+        id,
+        data,
+        label,
+        manualPosition,
+
+        position:
+          new THREE.Vector3(),
+
+        marker:
+          null,
+
+        visited:
+          false
+      };
+    }
+
+
+    function createStopMarker(
+      stop,
+      index
+    ) {
+
+      const group =
+        new THREE.Group();
+
+      group.position.copy(
+        stop.position
+      );
+
+      /*
+       * The wedding location marker is separate from the GLB.
+       * It does not modify or recolor the city.
+       */
+      const markerColors = [
+        0xffffff,
+        0xfff0d2,
+        0xffffff
+      ];
+
+      const ring =
+        new THREE.Mesh(
+          new THREE.TorusGeometry(
+            0.78,
+            0.055,
+            10,
+            60
+          ),
+          new THREE.MeshBasicMaterial({
+            color:
+              markerColors[index],
+
+            transparent:
+              true,
+
+            opacity:
+              0.9,
+
+            depthWrite:
+              false,
+
+            toneMapped:
+              false
+          })
+        );
+
+      ring.rotation.x =
+        Math.PI / 2;
+
+      ring.position.y =
+        0.08;
+
+      ring.castShadow =
+        false;
+
+      ring.receiveShadow =
+        false;
+
+      group.add(ring);
+
+      const pin =
+        new THREE.Mesh(
+          new THREE.SphereGeometry(
+            0.16,
+            16,
+            12
+          ),
+          new THREE.MeshBasicMaterial({
+            color:
+              0xffffff,
+
+            toneMapped:
+              false
+          })
+        );
+
+      pin.position.y =
+        1.55;
+
+      pin.castShadow =
+        false;
+
+      pin.receiveShadow =
+        false;
+
+      group.add(pin);
+
+      const stem =
+        new THREE.Mesh(
+          new THREE.CylinderGeometry(
+            0.018,
+            0.018,
+            1.4,
+            8
+          ),
+          new THREE.MeshBasicMaterial({
+            color:
+              0xffffff,
+
+            transparent:
+              true,
+
+            opacity:
+              0.75,
+
+            toneMapped:
+              false
+          })
+        );
+
+      stem.position.y =
+        0.8;
+
+      stem.castShadow =
+        false;
+
+      stem.receiveShadow =
+        false;
+
+      group.add(stem);
+
+      group.userData.ring =
+        ring;
+
+      group.userData.pin =
+        pin;
+
+      scene.add(group);
+
+      return group;
+    }
+
+
+    /* =========================================================
+       LOAD THE BLENDER GLB
+       ========================================================= */
+
+    function loadTown() {
+
+      gltfLoader.load(
+
+        CONFIG.modelUrl,
+
+        async (gltf) => {
+
+          try {
+
+            modelRoot =
+              gltf.scene;
+
+            embeddedLightCount =
+              0;
+
+            /*
+             * Preserve every original GLB material and texture.
+             *
+             * No material replacement.
+             * No texture replacement.
+             * No hue modification.
+             * No saturation modification.
+             * No color multiplication.
+             */
+            modelRoot.traverse((object) => {
+
+              if (object.isMesh) {
+
+                object.castShadow =
+                  true;
+
+                object.receiveShadow =
+                  true;
+
+                object.frustumCulled =
+                  true;
+
+                const materials =
+                  Array.isArray(object.material)
+                    ? object.material
+                    : [object.material];
+
+                materials.forEach((material) => {
+
+                  if (!material) {
+                    return;
+                  }
+
+                  /*
+                   * The original material properties remain
+                   * unchanged. This only tells WebGL to compile
+                   * the material with shadow support.
+                   */
+                  material.needsUpdate =
+                    true;
+                });
+              }
+
+              if (object.isLight) {
+
+                embeddedLightCount++;
+
+                object.castShadow =
+                  true;
+              }
+            });
+
+            world.add(
+              modelRoot
+            );
+
+            normalizeTown(
+              modelRoot
+            );
+
+            configureLightingAndShadows();
+
+            if (
+              gltf.animations &&
+              gltf.animations.length
+            ) {
+
+              animationMixer =
+                new THREE.AnimationMixer(
+                  modelRoot
+                );
+
+              gltf.animations.forEach((clip) => {
+
+                animationMixer
+                  .clipAction(clip)
+                  .play();
+              });
+            }
+
+            placeRoute();
+
+            stops.forEach(
+              (stop, index) => {
+
+                stop.marker =
+                  createStopMarker(
+                    stop,
+                    index
+                  );
+              }
+            );
+
+            updateObjective();
+
+            setInitialCamera();
+
+            /*
+             * Compile the city before displaying it to reduce
+             * the first visible shader/shadow stutter.
+             */
+            if (renderer.compileAsync) {
+
+              try {
+
+                loaderNote.textContent =
+                  "Preparing Blender materials and shadows…";
+
+                await renderer.compileAsync(
+                  scene,
+                  camera
+                );
+
+              } catch (compileError) {
+
+                console.warn(
+                  "Async shader compilation was unavailable:",
+                  compileError
+                );
+              }
+            }
+
+            loaded =
+              true;
+
+            canvas.classList.add(
+              "ready"
+            );
+
+            loaderBar.style.width =
+              "100%";
+
+            loaderNote.textContent =
+              embeddedLightCount > 0
+                ? "The original Blender lights are ready."
+                : "The town is ready.";
+
+            setTimeout(() => {
+
+              loader.classList.add(
+                "hidden"
+              );
+
+              introCard.classList.add(
+                "visible"
+              );
+
+            }, 420);
+
+          } catch (error) {
+
+            showLoadError(error);
+          }
+        },
+
+        (event) => {
+
+          const ratio =
+            event.total
+              ? event.loaded / event.total
+              : Math.min(
+                  0.94,
+                  event.loaded / 7_800_000
+                );
+
+          const percent =
+            Math.max(
+              2,
+              Math.min(
+                97,
+                Math.round(ratio * 100)
+              )
+            );
+
+          loaderBar.style.width =
+            `${percent}%`;
+
+          loaderNote.textContent =
+            percent < 72
+              ? `Loading the original town… ${percent}%`
+              : "Preparing the Blender materials…";
+        },
+
+        (error) => {
+
+          showLoadError(error);
+        }
+      );
+    }
+
+
+    function showLoadError(error) {
+
+      console.error(error);
+
+      loader.style.display =
+        "none";
+
+      errorBox.style.display =
+        "block";
+
+      errorBox.textContent =
+        "The GLB city could not load. Make sure the GitHub " +
+        "repository is public and open this page through GitHub " +
+        "Pages or Cloudflare Pages instead of directly from your computer.";
+    }
+
+
+    /* =========================================================
+       MODEL POSITION AND SCALE
+       ========================================================= */
+
+    function normalizeTown(root) {
+
+      root.updateMatrixWorld(true);
+
+      let box =
+        new THREE.Box3()
+          .setFromObject(root);
+
+      const originalSize =
+        box.getSize(
+          new THREE.Vector3()
+        );
+
+      const horizontalSize =
+        Math.max(
+          originalSize.x,
+          originalSize.z,
+          0.001
+        );
+
+      const scale =
+        CONFIG.worldSize /
+        horizontalSize;
+
+      root.scale.multiplyScalar(
+        scale
+      );
+
+      root.updateMatrixWorld(true);
+
+      box =
+        new THREE.Box3()
+          .setFromObject(root);
+
+      const center =
+        box.getCenter(
+          new THREE.Vector3()
+        );
+
+      root.position.x -=
+        center.x;
+
+      root.position.z -=
+        center.z;
+
+      root.position.y -=
+        box.min.y;
+
+      root.updateMatrixWorld(true);
+
+      modelBox.setFromObject(
+        root
+      );
+
+      modelBox.getSize(
+        modelSize
+      );
+
+      modelBox.getCenter(
+        modelCenter
+      );
+    }
+
+
+    /* =========================================================
+       BLENDER-LIKE LIGHTING AND SHADOWS
+       ========================================================= */
+
+    function configureLightingAndShadows() {
+
+      const shadowSize =
+        isTouch
+          ? CONFIG.shadowMapSizeMobile
+          : CONFIG.shadowMapSizeDesktop;
+
+      const horizontalSize =
+        Math.max(
+          modelSize.x,
+          modelSize.z
+        );
+
+      /*
+       * First configure lights that were exported from Blender.
+       */
+      modelRoot.traverse((object) => {
+
+        if (!object.isLight) {
+          return;
+        }
+
+        object.castShadow =
+          true;
+
+        if (!object.shadow) {
+          return;
+        }
+
+        object.shadow.mapSize.set(
+          shadowSize,
+          shadowSize
+        );
+
+        object.shadow.bias =
+          -0.00018;
+
+        object.shadow.normalBias =
+          0.025;
+
+        object.shadow.camera.near =
+          0.05;
+
+        object.shadow.camera.far =
+          Math.max(
+            180,
+            horizontalSize * 4
+          );
+
+        if (
+          object.isDirectionalLight &&
+          object.shadow.camera
+        ) {
+
+          const shadowExtent =
+            horizontalSize * 0.75;
+
+          object.shadow.camera.left =
+            -shadowExtent;
+
+          object.shadow.camera.right =
+            shadowExtent;
+
+          object.shadow.camera.top =
+            shadowExtent;
+
+          object.shadow.camera.bottom =
+            -shadowExtent;
+        }
+
+        object.shadow.camera.updateProjectionMatrix();
+      });
+
+      /*
+       * GLB does not always contain Blender's lights.
+       *
+       * Only in that case, add restrained neutral-white
+       * fallback illumination.
+       */
+      if (embeddedLightCount === 0) {
+
+        const hemisphere =
+          new THREE.HemisphereLight(
+            0xffffff,
+            0x34444a,
+            CONFIG.fallbackHemisphereIntensity
+          );
+
+        hemisphere.name =
+          "Neutral fallback hemisphere light";
+
+        scene.add(
+          hemisphere
+        );
+
+        const sun =
+          new THREE.DirectionalLight(
+            0xffffff,
+            CONFIG.fallbackSunIntensity
+          );
+
+        sun.name =
+          "Neutral fallback sun";
+
+        sun.position.set(
+          modelBox.max.x + horizontalSize * 0.35,
+          modelBox.max.y + horizontalSize * 0.75,
+          modelBox.max.z + horizontalSize * 0.3
+        );
+
+        sun.target.position.copy(
+          modelCenter
+        );
+
+        scene.add(
+          sun
+        );
+
+        scene.add(
+          sun.target
+        );
+
+        sun.castShadow =
+          true;
+
+        sun.shadow.mapSize.set(
+          shadowSize,
+          shadowSize
+        );
+
+        sun.shadow.bias =
+          -0.00018;
+
+        sun.shadow.normalBias =
+          0.025;
+
+        const shadowExtent =
+          horizontalSize * 0.72;
+
+        sun.shadow.camera.left =
+          -shadowExtent;
+
+        sun.shadow.camera.right =
+          shadowExtent;
+
+        sun.shadow.camera.top =
+          shadowExtent;
+
+        sun.shadow.camera.bottom =
+          -shadowExtent;
+
+        sun.shadow.camera.near =
+          0.1;
+
+        sun.shadow.camera.far =
+          horizontalSize * 4;
+
+        sun.shadow.camera.updateProjectionMatrix();
+      }
+    }
+
+
+    /* =========================================================
+       WALKABLE SURFACES
+       ========================================================= */
+
+    function getGroundCandidates(
+      x,
+      z
+    ) {
+
+      if (!modelRoot) {
+        return [];
+      }
+
+      groundRay.set(
+        new THREE.Vector3(
+          x,
+          modelBox.max.y + 18,
+          z
+        ),
+        down
+      );
+
+      groundRay.far =
+        modelSize.y + 50;
+
+      const hits =
+        groundRay.intersectObject(
+          modelRoot,
+          true
+        );
+
+      return hits.filter((hit) => {
+
+        const searchableName =
+          `${hit.object.name || ""} ` +
+          `${hit.object.material?.name || ""}`
+            .toLowerCase();
+
+        /*
+         * Prevent named water surfaces from becoming roads.
+         */
+        if (
+          /water|sea|ocean|river|lake|glass/.test(
+            searchableName
+          )
+        ) {
+          return false;
+        }
+
+        if (!hit.face) {
+          return true;
+        }
+
+        normalMatrix.getNormalMatrix(
+          hit.object.matrixWorld
+        );
+
+        const normal =
+          hit.face.normal
+            .clone()
+            .applyNormalMatrix(
+              normalMatrix
+            );
+
+        /*
+         * Only approximately horizontal surfaces may be walked on.
+         */
+        return normal.dot(up) > 0.52;
+      });
+    }
+
+
+    function getGroundPoint(
+      x,
+      z,
+      referenceY = null
+    ) {
+
+      const hits =
+        getGroundCandidates(
+          x,
+          z
+        );
+
+      if (!hits.length) {
+        return null;
+      }
+
+      /*
+       * While walking, choose the surface closest to the
+       * previous walking height.
+       */
+      if (Number.isFinite(referenceY)) {
+
+        hits.sort(
+          (a, b) =>
+            Math.abs(a.point.y - referenceY) -
+            Math.abs(b.point.y - referenceY)
+        );
+
+        return hits[0].point.clone();
+      }
+
+      /*
+       * During automatic route placement, prefer streets and
+       * lower accessible terraces over rooftops.
+       */
+      const preferredMaximumHeight =
+        modelBox.min.y +
+        Math.max(
+          3.5,
+          modelSize.y * 0.34
+        );
+
+      const streetHit =
+        hits.find(
+          (hit) =>
+            hit.point.y <=
+            preferredMaximumHeight
+        );
+
+      return (
+        streetHit ||
+        hits[hits.length - 1]
+      ).point.clone();
+    }
+
+
+    function collectWalkableSamples() {
+
+      const samples =
+        [];
+
+      const grid =
+        25;
+
+      const insetX =
+        Math.max(
+          1,
+          modelSize.x * 0.035
+        );
+
+      const insetZ =
+        Math.max(
+          1,
+          modelSize.z * 0.035
+        );
+
+      for (
+        let xIndex = 0;
+        xIndex < grid;
+        xIndex++
+      ) {
+
+        const x =
+          THREE.MathUtils.lerp(
+            modelBox.min.x + insetX,
+            modelBox.max.x - insetX,
+            xIndex / (grid - 1)
+          );
+
+        for (
+          let zIndex = 0;
+          zIndex < grid;
+          zIndex++
+        ) {
+
+          const z =
+            THREE.MathUtils.lerp(
+              modelBox.min.z + insetZ,
+              modelBox.max.z - insetZ,
+              zIndex / (grid - 1)
+            );
+
+          const point =
+            getGroundPoint(
+              x,
+              z
+            );
+
+          if (point) {
+            samples.push(point);
+          }
+        }
+      }
+
+      return samples;
+    }
+
+
+    function closestSample(
+      samples,
+      target
+    ) {
+
+      let best =
+        samples[0] ||
+        new THREE.Vector3();
+
+      let bestDistance =
+        Infinity;
+
+      for (const sample of samples) {
+
+        const distance =
+          sample.distanceToSquared(
+            target
+          );
+
+        if (distance < bestDistance) {
+
+          bestDistance =
+            distance;
+
+          best =
+            sample;
+        }
+      }
+
+      return best.clone();
+    }
+
+
+    function farthestSample(
+      samples,
+      anchors,
+      heightReference = null
+    ) {
+
+      let best =
+        samples[0] ||
+        new THREE.Vector3();
+
+      let bestScore =
+        -Infinity;
+
+      for (const sample of samples) {
+
+        const distanceScore =
+          Math.min(
+            ...anchors.map(
+              (anchor) =>
+                sample.distanceTo(anchor)
+            )
+          );
+
+        const heightPenalty =
+          Number.isFinite(heightReference)
+            ? Math.abs(
+                sample.y -
+                heightReference
+              ) * 5
+            : 0;
+
+        const score =
+          distanceScore -
+          heightPenalty;
+
+        if (score > bestScore) {
+
+          bestScore =
+            score;
+
+          best =
+            sample;
+        }
+      }
+
+      return best.clone();
+    }
+
+
+    function manualOrSample(
+      manual,
+      samples,
+      fallback
+    ) {
+
+      if (!manual) {
+        return fallback.clone();
+      }
+
+      const target =
+        new THREE.Vector3(
+          manual.x,
+          0,
+          manual.z
+        );
+
+      return closestSample(
+        samples,
+        target
+      );
+    }
+
+
+    /* =========================================================
+       AUTOMATIC WALKING ROUTE
+       ========================================================= */
+
+    function placeRoute() {
+
+      const samples =
+        collectWalkableSamples();
+
+      if (!samples.length) {
+
+        const fallback =
+          new THREE.Vector3(
+            0,
+            modelBox.min.y,
+            0
+          );
+
+        navigatorState.feet.copy(
+          fallback
+        );
+
+        navigatorState.groundY =
+          fallback.y;
+
+        stops.forEach((stop) => {
+
+          stop.position.copy(
+            fallback
+          );
+        });
+
+        return;
+      }
+
+      /*
+       * Start near the front portion of the city.
+       */
+      const frontTarget =
+        new THREE.Vector3(
+          0,
+          0,
+          modelBox.max.z -
+          modelSize.z * 0.08
+        );
+
+      const automaticSpawn =
+        closestSample(
+          samples,
+          frontTarget
+        );
+
+      const spawn =
+        manualOrSample(
+          CONFIG.spawn,
+          samples,
+          automaticSpawn
+        );
+
+      const automaticCeremony =
+        farthestSample(
+          samples,
+          [spawn],
+          spawn.y
+        );
+
+      const ceremony =
+        manualOrSample(
+          CONFIG.ceremonyPosition,
+          samples,
+          automaticCeremony
+        );
+
+      const automaticReception =
+        farthestSample(
+          samples,
+          [spawn, ceremony],
+          ceremony.y
+        );
+
+      const reception =
+        manualOrSample(
+          CONFIG.receptionPosition,
+          samples,
+          automaticReception
+        );
+
+      const centerTarget =
+        new THREE.Vector3(
+          0,
+          0,
+          0
+        );
+
+      let automaticRsvp =
+        closestSample(
+          samples,
+          centerTarget
+        );
+
+      if (
+        automaticRsvp.distanceTo(ceremony) < 7 ||
+        automaticRsvp.distanceTo(reception) < 7
+      ) {
+
+        automaticRsvp =
+          farthestSample(
+            samples,
+            [ceremony, reception],
+            spawn.y
+          );
+      }
+
+      const rsvp =
+        manualOrSample(
+          CONFIG.rsvpPosition,
+          samples,
+          automaticRsvp
+        );
+
+      navigatorState.feet.copy(
+        spawn
+      );
+
+      navigatorState.groundY =
+        spawn.y;
+
+      stops[0].position.copy(
+        ceremony
+      );
+
+      stops[1].position.copy(
+        reception
+      );
+
+      stops[2].position.copy(
+        rsvp
+      );
+    }
+
+
+    /* =========================================================
+       START EXPERIENCE
+       ========================================================= */
+
+    function setInitialCamera() {
+
+      cameraState.target
+        .copy(navigatorState.feet)
+        .add(
+          new THREE.Vector3(
+            0,
+            1.05,
+            0
+          )
+        );
+
+      updateCamera(
+        1,
+        true
+      );
+    }
+
+
+    function startExperience() {
+
+      if (!loaded) {
+        return;
+      }
+
+      started =
+        true;
+
+      paused =
+        false;
+
+      introCard.classList.add(
+        "closed"
+      );
+
+      hud.classList.add(
+        "visible"
+      );
+
+      if (isTouch) {
+
+        mobileControls.classList.add(
+          "active"
+        );
+      }
+    }
+
+
+    /* =========================================================
+       OBJECTIVES AND POPUPS
+       ========================================================= */
+
+    function updateObjective() {
+
+      const stop =
+        stops[activeStopIndex];
+
+      objectiveText.textContent =
+        stop
+          ? stop.data.title
+          : "Explore the town";
+    }
+
+
+    function openStop(stop) {
+
+      if (!stop) {
+        return;
+      }
+
+      popupOpen =
+        true;
+
+      paused =
+        true;
+
+      mobileControls.classList.remove(
+        "active"
+      );
+
+      stop.visited =
+        true;
+
+      popupKicker.textContent =
+        stop.id === "rsvp"
+          ? "Your invitation"
+          : "Wedding details";
+
+      popupTitle.textContent =
+        stop.data.title;
+
+      popupText.textContent =
+        `${stop.data.place}\n${stop.data.details}`;
+
+      popupDate.textContent =
+        CONFIG.weddingDateLong;
+
+      popupLink.href =
+        stop.data.link || "#";
+
+      popupLink.textContent =
+        stop.id === "rsvp"
+          ? "RSVP"
+          : "Open location";
+
+      popupLink.style.display =
+        stop.data.link
+          ? "inline-flex"
+          : "none";
+
+      popupNext.textContent =
+        stop.id === "rsvp"
+          ? "Return to the town"
+          : "Continue walking";
+
+      popup.classList.add(
+        "visible"
+      );
+
+      const stopIndex =
+        stops.indexOf(stop);
+
+      if (
+        stopIndex >= activeStopIndex &&
+        activeStopIndex < stops.length - 1
+      ) {
+
+        activeStopIndex =
+          stopIndex + 1;
+
+      } else if (
+        stops.every(
+          (item) => item.visited
+        )
+      ) {
+
+        activeStopIndex =
+          -1;
+      }
+
+      updateObjective();
+    }
+
+
+    function closePopup() {
+
+      popupOpen =
+        false;
+
+      popup.classList.remove(
+        "visible"
+      );
+
+      paused =
+        false;
+
+      if (
+        isTouch &&
+        started
+      ) {
+
+        mobileControls.classList.add(
+          "active"
+        );
+      }
+    }
+
+
+    /* =========================================================
+       OVERVIEW
+       ========================================================= */
+
+    function toggleOverview() {
+
+      overview =
+        !overview;
+
+      if (overview) {
+
+        cameraState.distance =
+          Math.min(
+            Math.max(
+              modelSize.x,
+              modelSize.z
+            ) * 0.75,
+            58
+          );
+
+        cameraState.pitch =
+          1.05;
+
+      } else {
+
+        cameraState.distance =
+          12.5;
+
+        cameraState.pitch =
+          0.68;
+      }
+    }
+
+
+    /* =========================================================
+       MOVEMENT
+       ========================================================= */
+
+    function getMovement(delta) {
+
+      const keyboardX =
+        (
+          keys.has("KeyD") ||
+          keys.has("ArrowRight")
+            ? 1
+            : 0
+        ) -
+        (
+          keys.has("KeyA") ||
+          keys.has("ArrowLeft")
+            ? 1
+            : 0
+        );
+
+      const keyboardY =
+        (
+          keys.has("KeyW") ||
+          keys.has("ArrowUp")
+            ? 1
+            : 0
+        ) -
+        (
+          keys.has("KeyS") ||
+          keys.has("ArrowDown")
+            ? 1
+            : 0
+        );
+
+      let x =
+        THREE.MathUtils.clamp(
+          keyboardX +
+          mobileInput.x,
+          -1,
+          1
+        );
+
+      let y =
+        THREE.MathUtils.clamp(
+          keyboardY +
+          mobileInput.y,
+          -1,
+          1
+        );
+
+      const length =
+        Math.hypot(
+          x,
+          y
+        );
+
+      if (length < 0.08) {
+        return null;
+      }
+
+      x /=
+        Math.max(
+          1,
+          length
+        );
+
+      y /=
+        Math.max(
+          1,
+          length
+        );
+
+      const forward =
+        tempA.set(
+          -Math.sin(cameraState.yaw),
+          0,
+          -Math.cos(cameraState.yaw)
+        );
+
+      const right =
+        tempB.set(
+          Math.cos(cameraState.yaw),
+          0,
+          -Math.sin(cameraState.yaw)
+        );
+
+      const direction =
+        tempC
+          .set(0, 0, 0)
+          .addScaledVector(
+            forward,
+            y
+          )
+          .addScaledVector(
+            right,
+            x
+          )
+          .normalize();
+
+      const running =
+        !isTouch &&
+        (
+          keys.has("ShiftLeft") ||
+          keys.has("ShiftRight")
+        );
+
+      return {
+
+        direction:
+          direction.clone(),
+
+        distance:
+          (
+            running
+              ? CONFIG.runSpeed
+              : CONFIG.walkSpeed
+          ) * delta
+      };
+    }
+
+
+    function updateNavigator(delta) {
+
+      if (
+        !started ||
+        paused ||
+        popupOpen ||
+        !modelRoot ||
+        overview
+      ) {
+
+        navigatorState.moving =
+          false;
+
+        return;
+      }
+
+      const movement =
+        getMovement(delta);
+
+      navigatorState.moving =
+        Boolean(movement);
+
+      if (!movement) {
+        return;
+      }
+
+      tryMove(
+        movement.direction,
+        movement.distance
+      );
+
+      navigatorState.heading =
+        Math.atan2(
+          movement.direction.x,
+          movement.direction.z
+        );
+    }
+
+
+    function tryMove(
+      direction,
+      distance
+    ) {
+
+      const proposed =
+        navigatorState.feet
+          .clone()
+          .addScaledVector(
+            direction,
+            distance
+          );
+
+      proposed.x =
+        THREE.MathUtils.clamp(
+          proposed.x,
+          modelBox.min.x + 0.5,
+          modelBox.max.x - 0.5
+        );
+
+      proposed.z =
+        THREE.MathUtils.clamp(
+          proposed.z,
+          modelBox.min.z + 0.5,
+          modelBox.max.z - 0.5
+        );
+
+      if (
+        wallAhead(
+          direction,
+          distance + 0.3
+        )
+      ) {
+        return;
+      }
+
+      const ground =
+        getGroundPoint(
+          proposed.x,
+          proposed.z,
+          navigatorState.groundY
+        );
+
+      if (!ground) {
+        return;
+      }
+
+      const step =
+        ground.y -
+        navigatorState.groundY;
+
+      /*
+       * Stop the navigation point from climbing walls,
+       * roofs or falling through large gaps.
+       */
+      if (
+        step > 0.78 ||
+        step < -1.15
+      ) {
+        return;
+      }
+
+      navigatorState.groundY =
+        THREE.MathUtils.lerp(
+          navigatorState.groundY,
+          ground.y,
+          Math.min(
+            1,
+            distance * 6
+          )
+        );
+
+      navigatorState.feet.set(
+        proposed.x,
+        navigatorState.groundY,
+        proposed.z
+      );
+    }
+
+
+    function wallAhead(
+      direction,
+      maxDistance
+    ) {
+
+      const checkHeights = [
+        0.32,
+        0.85,
+        1.35
+      ];
+
+      for (
+        const height of checkHeights
+      ) {
+
+        const origin =
+          new THREE.Vector3(
+            navigatorState.feet.x,
+            navigatorState.groundY + height,
+            navigatorState.feet.z
+          );
+
+        wallRay.set(
+          origin,
+          direction
+        );
+
+        wallRay.far =
+          maxDistance;
+
+        const hits =
+          wallRay.intersectObject(
+            modelRoot,
+            true
+          );
+
+        for (const hit of hits) {
+
+          if (!hit.face) {
+            return true;
+          }
+
+          normalMatrix.getNormalMatrix(
+            hit.object.matrixWorld
+          );
+
+          const normal =
+            hit.face.normal
+              .clone()
+              .applyNormalMatrix(
+                normalMatrix
+              );
+
+          /*
+           * A nearly vertical face is treated as a wall.
+           */
+          if (
+            Math.abs(
+              normal.dot(up)
+            ) < 0.62
+          ) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+
+    /* =========================================================
+       CAMERA FOLLOW
+
+       The camera follows an invisible navigation position.
+       There is no visible third-person character.
+       ========================================================= */
+
+    function updateCamera(
+      delta,
+      instant = false
+    ) {
+
+      const followTarget =
+        overview
+          ? modelBox
+              .getCenter(tempA)
+              .setY(
+                modelBox.min.y +
+                modelSize.y * 0.16
+              )
+          : tempA
+              .copy(navigatorState.feet)
+              .add(
+                new THREE.Vector3(
+                  0,
+                  1.05,
+                  0
+                )
+              );
+
+      const targetSmoothing =
+        instant
+          ? 1
+          : 1 -
+            Math.exp(
+              -delta * 7.5
+            );
+
+      cameraState.target.lerp(
+        followTarget,
+        targetSmoothing
+      );
+
+      const horizontalDistance =
+        Math.cos(cameraState.pitch) *
+        cameraState.distance;
+
+      cameraState.desired.set(
+
+        cameraState.target.x +
+        Math.sin(cameraState.yaw) *
+        horizontalDistance,
+
+        cameraState.target.y +
+        Math.sin(cameraState.pitch) *
+        cameraState.distance,
+
+        cameraState.target.z +
+        Math.cos(cameraState.yaw) *
+        horizontalDistance
+      );
+
+      const cameraDirection =
+        tempB
+          .copy(cameraState.desired)
+          .sub(cameraState.target);
+
+      const desiredDistance =
+        cameraDirection.length();
+
+      cameraDirection.normalize();
+
+      cameraRay.set(
+        cameraState.target,
+        cameraDirection
+      );
+
+      cameraRay.far =
+        desiredDistance;
+
+      const obstruction =
+        modelRoot
+          ? cameraRay
+              .intersectObject(
+                modelRoot,
+                true
+              )
+              .find(
+                (hit) =>
+                  hit.distance > 0.55
+              )
+          : null;
+
+      if (
+        obstruction &&
+        !overview
+      ) {
+
+        cameraState.desired
+          .copy(cameraState.target)
+          .addScaledVector(
+            cameraDirection,
+            Math.max(
+              2.5,
+              obstruction.distance - 0.35
+            )
+          );
+      }
+
+      const cameraSmoothing =
+        instant
+          ? 1
+          : 1 -
+            Math.exp(
+              -delta * 9
+            );
+
+      camera.position.lerp(
+        cameraState.desired,
+        cameraSmoothing
+      );
+
+      camera.lookAt(
+        cameraState.target
+      );
+    }
+
+
+    /* =========================================================
+       HOTSPOTS
+       ========================================================= */
+
+    function updateStops(elapsed) {
+
+      if (!loaded) {
+        return;
+      }
+
+      let closestStop =
+        null;
+
+      let closestDistance =
+        Infinity;
+
+      stops.forEach(
+        (stop, index) => {
+
+          if (!stop.marker) {
+            return;
+          }
+
+          const ring =
+            stop.marker.userData.ring;
+
+          const pin =
+            stop.marker.userData.pin;
+
+          ring.rotation.z =
+            elapsed *
+            (
+              0.35 +
+              index * 0.07
+            );
+
+          ring.material.opacity =
+            0.68 +
+            Math.sin(
+              elapsed * 2 +
+              index
+            ) * 0.18;
+
+          pin.position.y =
+            1.55 +
+            Math.sin(
+              elapsed * 1.8 +
+              index
+            ) * 0.09;
+
+          const distance =
+            navigatorState.feet.distanceTo(
+              stop.position
+            );
+
+          if (
+            distance <
+            closestDistance
+          ) {
+
+            closestDistance =
+              distance;
+
+            closestStop =
+              stop;
+          }
+
+          const projectedPosition =
+            stop.position
+              .clone()
+              .add(
+                new THREE.Vector3(
+                  0,
+                  2.05,
+                  0
+                )
+              )
+              .project(camera);
+
+          const x =
+            (
+              projectedPosition.x *
+              0.5 +
+              0.5
+            ) * innerWidth;
+
+          const y =
+            (
+              -projectedPosition.y *
+              0.5 +
+              0.5
+            ) * innerHeight;
+
+          const inFront =
+            projectedPosition.z > -1 &&
+            projectedPosition.z < 1;
+
+          const visible =
+            loaded &&
+            inFront &&
+            x > -90 &&
+            x < innerWidth + 90 &&
+            y > -70 &&
+            y < innerHeight + 70;
+
+          stop.label.style.left =
+            `${x}px`;
+
+          stop.label.style.top =
+            `${y}px`;
+
+          stop.label.style.display =
+            visible
+              ? "block"
+              : "none";
+
+          stop.label.classList.toggle(
+            "active",
+            stop === nearbyStop
+          );
+        }
+      );
+
+      nearbyStop =
+        closestDistance <=
+        CONFIG.interactionRadius
+          ? closestStop
+          : null;
+
+      nearbyPrompt.classList.toggle(
+        "visible",
+        Boolean(nearbyStop) &&
+        started &&
+        !popupOpen
+      );
+
+      const targetStop =
+        activeStopIndex >= 0
+          ? stops[activeStopIndex]
+          : closestStop;
+
+      distanceValue.textContent =
+        targetStop
+          ? Math.max(
+              0,
+              Math.round(
+                navigatorState.feet.distanceTo(
+                  targetStop.position
+                )
+              )
+            )
+          : "0";
+    }
+
+
+    /* =========================================================
+       DESKTOP CAMERA INPUT
+       ========================================================= */
+
+    let dragPointer =
+      null;
+
+    let dragLast = {
+      x: 0,
+      y: 0
+    };
+
+    canvas.addEventListener(
+      "pointerdown",
+      (event) => {
+
+        if (
+          !started ||
+          popupOpen ||
+          isTouch
+        ) {
+          return;
+        }
+
+        dragPointer =
+          event.pointerId;
+
+        dragLast = {
+          x: event.clientX,
+          y: event.clientY
+        };
+
+        canvas.setPointerCapture(
+          event.pointerId
+        );
+      }
+    );
+
+
+    canvas.addEventListener(
+      "pointermove",
+      (event) => {
+
+        if (
+          event.pointerId !==
+          dragPointer
+        ) {
+          return;
+        }
+
+        const deltaX =
+          event.clientX -
+          dragLast.x;
+
+        const deltaY =
+          event.clientY -
+          dragLast.y;
+
+        dragLast = {
+          x: event.clientX,
+          y: event.clientY
+        };
+
+        overview =
+          false;
+
+        cameraState.yaw -=
+          deltaX * 0.006;
+
+        cameraState.pitch =
+          THREE.MathUtils.clamp(
+            cameraState.pitch +
+            deltaY * 0.004,
+            0.28,
+            1.22
+          );
+      }
+    );
+
+
+    canvas.addEventListener(
+      "pointerup",
+      (event) => {
+
+        if (
+          event.pointerId ===
+          dragPointer
+        ) {
+          dragPointer =
+            null;
+        }
+      }
+    );
+
+
+    canvas.addEventListener(
+      "pointercancel",
+      (event) => {
+
+        if (
+          event.pointerId ===
+          dragPointer
+        ) {
+          dragPointer =
+            null;
+        }
+      }
+    );
+
+
+    canvas.addEventListener(
+      "wheel",
+      (event) => {
+
+        if (!started) {
+          return;
+        }
+
+        event.preventDefault();
+
+        overview =
+          false;
+
+        cameraState.distance =
+          THREE.MathUtils.clamp(
+
+            cameraState.distance +
+            event.deltaY * 0.012,
+
+            cameraState.minDistance,
+            cameraState.maxDistance
+          );
+      },
+      {
+        passive: false
+      }
+    );
+
+
+    /* =========================================================
+       KEYBOARD
+       ========================================================= */
+
+    const movementKeys =
+      new Set([
+        "KeyW",
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight"
+      ]);
+
+    document.addEventListener(
+      "keydown",
+      (event) => {
+
+        keys.add(
+          event.code
+        );
+
+        if (
+          movementKeys.has(
+            event.code
+          )
+        ) {
+
+          overview =
+            false;
+        }
+
+        if (
+          [
+            "ArrowUp",
+            "ArrowDown",
+            "ArrowLeft",
+            "ArrowRight",
+            "Space"
+          ].includes(event.code)
+        ) {
+
+          event.preventDefault();
+        }
+
+        if (
+          (
+            event.code === "KeyE" ||
+            event.code === "Enter"
+          ) &&
+          nearbyStop &&
+          started &&
+          !popupOpen
+        ) {
+
+          openStop(
+            nearbyStop
+          );
+        }
+
+        if (
+          event.code === "Escape" &&
+          popupOpen
+        ) {
+
+          closePopup();
+        }
+      }
+    );
+
+
+    document.addEventListener(
+      "keyup",
+      (event) => {
+
+        keys.delete(
+          event.code
+        );
+      }
+    );
+
+
+    /* =========================================================
+       BUTTONS
+       ========================================================= */
+
+    enterButton.addEventListener(
+      "click",
+      startExperience
+    );
+
+    $("#help-button").addEventListener(
+      "click",
+      () => {
+
+        helpCard.classList.toggle(
+          "visible"
+        );
+      }
+    );
+
+    $("#overview-button").addEventListener(
+      "click",
+      toggleOverview
+    );
+
+    $("#popup-close").addEventListener(
+      "click",
+      closePopup
+    );
+
+    popupNext.addEventListener(
+      "click",
+      closePopup
+    );
+
+    popup.addEventListener(
+      "pointerdown",
+      (event) => {
+
+        if (
+          event.target === popup
+        ) {
+
+          closePopup();
+        }
+      }
+    );
+
+
+    /* =========================================================
+       MOBILE JOYSTICK
+       ========================================================= */
+
+    const moveZone =
+      $("#move-zone");
+
+    const lookZone =
+      $("#look-zone");
+
+    const joystickBase =
+      $("#joystick-base");
+
+    const joystickKnob =
+      $("#joystick-knob");
+
+    let movePointer =
+      null;
+
+    let moveCenter = {
+      x: 0,
+      y: 0
+    };
+
+    let lookPointer =
+      null;
+
+    let lookLast = {
+      x: 0,
+      y: 0
+    };
+
+
+    moveZone.addEventListener(
+      "pointerdown",
+      (event) => {
+
+        if (
+          !started ||
+          paused
+        ) {
+          return;
+        }
+
+        overview =
+          false;
+
+        movePointer =
+          event.pointerId;
+
+        moveZone.setPointerCapture(
+          movePointer
+        );
+
+        const rect =
+          joystickBase.getBoundingClientRect();
+
+        moveCenter = {
+
+          x:
+            rect.left +
+            rect.width / 2,
+
+          y:
+            rect.top +
+            rect.height / 2
+        };
+
+        updateJoystick(
+          event.clientX,
+          event.clientY
+        );
+      }
+    );
+
+
+    moveZone.addEventListener(
+      "pointermove",
+      (event) => {
+
+        if (
+          event.pointerId ===
+          movePointer
+        ) {
+
+          updateJoystick(
+            event.clientX,
+            event.clientY
+          );
+        }
+      }
+    );
+
+
+    moveZone.addEventListener(
+      "pointerup",
+      endJoystick
+    );
+
+    moveZone.addEventListener(
+      "pointercancel",
+      endJoystick
+    );
+
+
+    function updateJoystick(
+      x,
+      y
+    ) {
+
+      const maximumDistance =
+        34;
+
+      let deltaX =
+        x -
+        moveCenter.x;
+
+      let deltaY =
+        y -
+        moveCenter.y;
+
+      const length =
+        Math.hypot(
+          deltaX,
+          deltaY
+        );
+
+      if (
+        length >
+        maximumDistance
+      ) {
+
+        deltaX =
+          deltaX /
+          length *
+          maximumDistance;
+
+        deltaY =
+          deltaY /
+          length *
+          maximumDistance;
+      }
+
+      joystickKnob.style.transform =
+        `translate(${deltaX}px, ${deltaY}px)`;
+
+      mobileInput.x =
+        deltaX /
+        maximumDistance;
+
+      mobileInput.y =
+        -deltaY /
+        maximumDistance;
+    }
+
+
+    function endJoystick(event) {
+
+      if (
+        event.pointerId !==
+        movePointer
+      ) {
+        return;
+      }
+
+      movePointer =
+        null;
+
+      mobileInput.x =
+        0;
+
+      mobileInput.y =
+        0;
+
+      joystickKnob.style.transform =
+        "translate(0, 0)";
+    }
+
+
+    /* =========================================================
+       MOBILE CAMERA
+       ========================================================= */
+
+    lookZone.addEventListener(
+      "pointerdown",
+      (event) => {
+
+        if (
+          !started ||
+          paused
+        ) {
+          return;
+        }
+
+        lookPointer =
+          event.pointerId;
+
+        lookZone.setPointerCapture(
+          lookPointer
+        );
+
+        lookLast = {
+          x: event.clientX,
+          y: event.clientY
+        };
+      }
+    );
+
+
+    lookZone.addEventListener(
+      "pointermove",
+      (event) => {
+
+        if (
+          event.pointerId !==
+            lookPointer ||
+          paused
+        ) {
+          return;
+        }
+
+        const deltaX =
+          event.clientX -
+          lookLast.x;
+
+        const deltaY =
+          event.clientY -
+          lookLast.y;
+
+        lookLast = {
+          x: event.clientX,
+          y: event.clientY
+        };
+
+        overview =
+          false;
+
+        cameraState.yaw -=
+          deltaX * 0.006;
+
+        cameraState.pitch =
+          THREE.MathUtils.clamp(
+            cameraState.pitch +
+            deltaY * 0.0045,
+            0.32,
+            1.18
+          );
+      }
+    );
+
+
+    lookZone.addEventListener(
+      "pointerup",
+      (event) => {
+
+        if (
+          event.pointerId ===
+          lookPointer
+        ) {
+
+          lookPointer =
+            null;
+        }
+      }
+    );
+
+
+    lookZone.addEventListener(
+      "pointercancel",
+      (event) => {
+
+        if (
+          event.pointerId ===
+          lookPointer
+        ) {
+
+          lookPointer =
+            null;
+        }
+      }
+    );
+
+
+    /* =========================================================
+       ANIMATION
+       ========================================================= */
+
+    function animate() {
+
+      const delta =
+        Math.min(
+          clock.getDelta(),
+          0.05
+        );
+
+      const elapsed =
+        clock.elapsedTime;
+
+      if (animationMixer) {
+
+        animationMixer.update(
+          delta
+        );
+      }
+
+      updateNavigator(
+        delta
+      );
+
+      updateCamera(
+        delta
+      );
+
+      updateStops(
+        elapsed
+      );
+
+      renderer.render(
+        scene,
+        camera
+      );
+    }
+
+    renderer.setAnimationLoop(
+      animate
+    );
+
+
+    /* =========================================================
+       RESIZE
+       ========================================================= */
+
+    addEventListener(
+      "resize",
+      () => {
+
+        camera.aspect =
+          innerWidth /
+          innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setPixelRatio(
+          Math.min(
+            devicePixelRatio,
+            isTouch
+              ? 1.45
+              : 1.85
+          )
+        );
+
+        renderer.setSize(
+          innerWidth,
+          innerHeight,
+          false
+        );
+      },
+      {
+        passive: true
+      }
+    );
+
+  </script>
+
+</body>
+</html>
